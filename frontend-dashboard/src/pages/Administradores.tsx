@@ -1,14 +1,15 @@
 import { Component, createSignal, onMount } from 'solid-js';
-import axios from 'axios';
 import { showNotification } from '../components/Notification';
+import { Administrador } from '../interfaces/Administrador';
+import { apiService } from '../services/apiService';
 
 const Administradores: Component = () => {
-  const [administradores, setAdministradores] = createSignal([]);
+  const [administradores, setAdministradores] = createSignal<Administrador[]>([]);
   const [searchTerm, setSearchTerm] = createSignal('');
-  const [filteredAdministradores, setFilteredAdministradores] = createSignal([]);
+  const [filteredAdministradores, setFilteredAdministradores] = createSignal<Administrador[]>([]);
 
   onMount(() => {
-    axios.get('/api/administradores')
+    apiService.getAdministradores()
       .then(response => {
         setAdministradores(response.data);
         setFilteredAdministradores(response.data);
@@ -41,4 +42,11 @@ const Administradores: Component = () => {
       />
       <ul>
         {filteredAdministradores().map(administrador => (
-          <li>{administrador.nombre} - {administrador.email}</li
+          <li>{administrador.nombre} - {administrador.email}</li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export default Administradores;

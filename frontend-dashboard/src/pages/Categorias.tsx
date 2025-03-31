@@ -1,14 +1,15 @@
 import { Component, createSignal, onMount } from 'solid-js';
-import axios from 'axios';
 import { showNotification } from '../components/Notification';
+import { Categoria } from '../interfaces/Categoria';
+import { apiService } from '../services/apiService';
 
 const Categorias: Component = () => {
-  const [categorias, setCategorias] = createSignal([]);
+  const [categorias, setCategorias] = createSignal<Categoria[]>([]);
   const [searchTerm, setSearchTerm] = createSignal('');
-  const [filteredCategorias, setFilteredCategorias] = createSignal([]);
+  const [filteredCategorias, setFilteredCategorias] = createSignal<Categoria[]>([]);
 
   onMount(() => {
-    axios.get('/api/categorias')
+    apiService.getCategorias()
       .then(response => {
         setCategorias(response.data);
         setFilteredCategorias(response.data);

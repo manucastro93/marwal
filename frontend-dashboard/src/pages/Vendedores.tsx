@@ -1,14 +1,15 @@
 import { Component, createSignal, onMount } from 'solid-js';
-import axios from 'axios';
 import { showNotification } from '../components/Notification';
+import { Vendedor } from '../interfaces/Vendedor';
+import { apiService } from '../services/apiService';
 
 const Vendedores: Component = () => {
-  const [vendedores, setVendedores] = createSignal([]);
+  const [vendedores, setVendedores] = createSignal<Vendedor[]>([]);
   const [searchTerm, setSearchTerm] = createSignal('');
-  const [filteredVendedores, setFilteredVendedores] = createSignal([]);
+  const [filteredVendedores, setFilteredVendedores] = createSignal<Vendedor[]>([]);
 
   onMount(() => {
-    axios.get('/api/vendedores')
+    apiService.getVendedores()
       .then(response => {
         setVendedores(response.data);
         setFilteredVendedores(response.data);

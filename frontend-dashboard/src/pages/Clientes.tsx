@@ -1,14 +1,15 @@
 import { Component, createSignal, onMount } from 'solid-js';
-import axios from 'axios';
 import { showNotification } from '../components/Notification';
+import { Cliente } from '../interfaces/Cliente';
+import { apiService } from '../services/apiService';
 
 const Clientes: Component = () => {
-  const [clientes, setClientes] = createSignal([]);
+  const [clientes, setClientes] = createSignal<Cliente[]>([]);
   const [searchTerm, setSearchTerm] = createSignal('');
-  const [filteredClientes, setFilteredClientes] = createSignal([]);
+  const [filteredClientes, setFilteredClientes] = createSignal<Cliente[]>([]);
 
   onMount(() => {
-    axios.get('/api/clientes')
+    apiService.getClientes()
       .then(response => {
         setClientes(response.data);
         setFilteredClientes(response.data);

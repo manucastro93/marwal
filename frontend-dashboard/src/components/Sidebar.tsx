@@ -1,5 +1,5 @@
 import { Component } from 'solid-js';
-import { NavLink } from '@solidjs/router';
+import { A } from '@solidjs/router';
 
 const Sidebar: Component = () => {
   return (
@@ -10,31 +10,31 @@ const Sidebar: Component = () => {
       <hr />
       <ul class="nav nav-pills flex-column mb-auto">
         <li class="nav-item">
-          <NavLink href="/" class="nav-link link-dark">Dashboard</NavLink>
+          <A href="/" class="nav-link link-dark">Dashboard</A>
         </li>
         <li>
-          <NavLink href="/usuarios" class="nav-link link-dark">Usuarios</NavLink>
+          <A href="/usuarios" class="nav-link link-dark">Usuarios</A>
         </li>
         <li>
-          <NavLink href="/productos" class="nav-link link-dark">Productos</NavLink>
+          <A href="/productos" class="nav-link link-dark">Productos</A>
         </li>
         <li>
-          <NavLink href="/pedidos" class="nav-link link-dark">Pedidos</NavLink>
+          <A href="/pedidos" class="nav-link link-dark">Pedidos</A>
         </li>
         <li>
-          <NavLink href="/clientes" class="nav-link link-dark">Clientes</NavLink>
+          <A href="/clientes" class="nav-link link-dark">Clientes</A>
         </li>
         <li>
-          <NavLink href="/categorias" class="nav-link link-dark">Categorías</NavLink>
+          <A href="/categorias" class="nav-link link-dark">Categorías</A>
         </li>
         <li>
-          <NavLink href="/pagina" class="nav-link link-dark">Página</NavLink>
+          <A href="/pagina" class="nav-link link-dark">Página</A>
         </li>
         <li>
-          <NavLink href="/vendedores" class="nav-link link-dark">Vendedores</NavLink>
+          <A href="/vendedores" class="nav-link link-dark">Vendedores</A>
         </li>
         <li>
-          <NavLink href="/administradores" class="nav-link link-dark">Administradores</NavLink>
+          <A href="/administradores" class="nav-link link-dark">Administradores</A>
         </li>
       </ul>
     </nav>

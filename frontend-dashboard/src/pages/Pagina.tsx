@@ -1,12 +1,13 @@
 import { Component, createSignal, onMount } from 'solid-js';
-import axios from 'axios';
 import { showNotification } from '../components/Notification';
+import { Pagina as PaginaInterface } from '../interfaces/Pagina';
+import { apiService } from '../services/apiService';
 
 const Pagina: Component = () => {
-  const [pagina, setPagina] = createSignal({});
+  const [pagina, setPagina] = createSignal<PaginaInterface | null>(null);
 
   onMount(() => {
-    axios.get('/api/pagina')
+    apiService.getPagina()
       .then(response => setPagina(response.data))
       .catch(error => {
         console.error('Error al obtener la página:', error);
@@ -17,7 +18,7 @@ const Pagina: Component = () => {
   return (
     <div>
       <h1>Página</h1>
-      <div>{pagina().contenido}</div>
+      {pagina() ? <div>{pagina()!.contenido}</div> : <p>Cargando...</p>}
     </div>
   );
 };
