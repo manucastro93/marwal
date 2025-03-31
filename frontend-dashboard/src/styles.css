@@ -1,0 +1,30 @@
+body {
+    font-family: Arial, sans-serif;
+  }
+  
+  .navbar {
+    background-color: #343a40;
+    color: white;
+  }
+  
+  .navbar .navbar-brand, .navbar .btn {
+    color: white;
+  }
+  
+  .sidebar {
+    background-color: #f8f9fa;
+    height: 100vh;
+    position: fixed;
+  }
+  
+  .container {
+    margin-left: 300px;
+  }
+  
+  .modal {
+    display: block;
+  }
+  
+  .modal-backdrop {
+    display: none;
+  }
