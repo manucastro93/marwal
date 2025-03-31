@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { Cliente } from '../interfaces/Cliente';
+import { BASE_URL } from '../config';
 
 const clientService = {
   getAll: async (): Promise<Cliente[]> => {

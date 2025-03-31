@@ -1,7 +1,7 @@
 import { Component, createSignal, onMount } from 'solid-js';
 import { showNotification } from '../components/Notification';
 import { Pedido } from '../interfaces/Pedido';
-import { apiService } from '../services/apiService';
+import apiService from '../services/apiService';
 
 const Pedidos: Component = () => {
   const [pedidos, setPedidos] = createSignal<Pedido[]>([]);

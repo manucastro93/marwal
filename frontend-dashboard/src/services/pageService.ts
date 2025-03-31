@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { Pagina } from '../interfaces/Pagina';
+import { BASE_URL } from '../config';
 
 const pageService = {
   get: async (): Promise<Pagina> => {

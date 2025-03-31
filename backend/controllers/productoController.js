@@ -90,7 +90,10 @@ exports.buscarProductos = async (req, res) => {
 
     const productos = await Producto.findAll({
       where,
-      include: [ImagenProducto],
+      include: {
+        model: ImagenProducto,
+        as: 'imagenes',
+      },
     });
 
     res.status(200).json(productos);

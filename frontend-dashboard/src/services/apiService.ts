@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { BASE_URL } from '../config';
 import { Producto } from '../interfaces/Producto';
 import { Cliente } from '../interfaces/Cliente';
 import { Administrador } from '../interfaces/Administrador';
@@ -7,12 +8,96 @@ import { Pedido } from '../interfaces/Pedido';
 import { Vendedor } from '../interfaces/Vendedor';
 import { Pagina } from '../interfaces/Pagina';
 
-export const apiService = {
-  getProductos: () => axios.get<Producto[]>('/api/productos'),
-  getClientes: () => axios.get<Cliente[]>('/api/clientes'),
-  getAdministradores: () => axios.get<Administrador[]>('/api/administradores'),
-  getCategorias: () => axios.get<Categoria[]>('/api/categorias'),
-  getPedidos: () => axios.get<Pedido[]>('/api/pedidos'),
-  getVendedores: () => axios.get<Vendedor[]>('/api/vendedores'),
-  getPagina: () => axios.get<Pagina>('/api/pagina'),
+const apiService = {
+  // Productos
+  getProductos: async (): Promise<Producto[]> => {
+    const response = await axios.get(`${BASE_URL}/productos`);
+    return response.data;
+  },
+  createProducto: async (producto: Producto): Promise<Producto> => {
+    const response = await axios.post(`${BASE_URL}/productos`, producto);
+    return response.data;
+  },
+  updateProducto: async (id: number, producto: Producto): Promise<Producto> => {
+    const response = await axios.put(`${BASE_URL}/productos/${id}`, producto);
+    return response.data;
+  },
+  deleteProducto: async (id: number): Promise<void> => {
+    await axios.delete(`${BASE_URL}/productos/${id}`);
+  },
+
+  // Categorías
+  getCategorias: async (): Promise<Categoria[]> => {
+    const response = await axios.get(`${BASE_URL}/categorias`);
+    return response.data;
+  },
+  createCategoria: async (categoria: Categoria): Promise<Categoria> => {
+    const response = await axios.post(`${BASE_URL}/categorias`, categoria);
+    return response.data;
+  },
+  updateCategoria: async (id: number, categoria: Categoria): Promise<Categoria> => {
+    const response = await axios.put(`${BASE_URL}/categorias/${id}`, categoria);
+    return response.data;
+  },
+  deleteCategoria: async (id: number): Promise<void> => {
+    await axios.delete(`${BASE_URL}/categorias/${id}`);
+  },
+
+  // Vendedores
+  getVendedores: async (): Promise<Vendedor[]> => {
+    const response = await axios.get(`${BASE_URL}/vendedores`);
+    return response.data;
+  },
+  createVendedor: async (vendedor: Vendedor): Promise<Vendedor> => {
+    const response = await axios.post(`${BASE_URL}/vendedores`, vendedor);
+    return response.data;
+  },
+  updateVendedor: async (id: number, vendedor: Vendedor): Promise<Vendedor> => {
+    const response = await axios.put(`${BASE_URL}/vendedores/${id}`, vendedor);
+    return response.data;
+  },
+  deleteVendedor: async (id: number): Promise<void> => {
+    await axios.delete(`${BASE_URL}/vendedores/${id}`);
+  },
+
+  // Administradores
+  getAdministradores: async (): Promise<Administrador[]> => {
+    const response = await axios.get(`${BASE_URL}/administradores`);
+    return response.data;
+  },
+  createAdministrador: async (administrador: Administrador): Promise<Administrador> => {
+    const response = await axios.post(`${BASE_URL}/administradores`, administrador);
+    return response.data;
+  },
+  updateAdministrador: async (id: number, administrador: Administrador): Promise<Administrador> => {
+    const response = await axios.put(`${BASE_URL}/administradores/${id}`, administrador);
+    return response.data;
+  },
+  deleteAdministrador: async (id: number): Promise<void> => {
+    await axios.delete(`${BASE_URL}/administradores/${id}`);
+  },
+
+  // Clientes
+  getClientes: async (): Promise<Cliente[]> => {
+    const response = await axios.get(`${BASE_URL}/clientes`);
+    return response.data;
+  },
+
+  // Pedidos
+  getPedidos: async (): Promise<Pedido[]> => {
+    const response = await axios.get(`${BASE_URL}/pedidos`);
+    return response.data;
+  },
+
+  // Página
+  getPagina: async (): Promise<Pagina> => {
+    const response = await axios.get(`${BASE_URL}/pagina`);
+    return response.data;
+  },
+  updatePagina: async (pagina: Pagina): Promise<Pagina> => {
+    const response = await axios.put(`${BASE_URL}/pagina`, pagina);
+    return response.data;
+  }
 };
+
+export default apiService;

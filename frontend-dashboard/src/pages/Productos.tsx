@@ -1,17 +1,17 @@
 import { Component, createSignal, onMount } from 'solid-js';
 import { showNotification } from '../components/Notification';
 import { Producto } from '../interfaces/Producto';
-import { apiService } from '../services/apiService';
+import apiService from '../services/apiService';
 
 const Productos: Component = () => {
   const [productos, setProductos] = createSignal<Producto[]>([]);
   const [editProducto, setEditProducto] = createSignal<Producto | null>(null);
-  const [newProducto, setNewProducto] = createSignal<Producto>({ id: 0, nombre: '', precio: 0 });
+  const [newProducto, setNewProducto] = createSignal<Producto>({ id: 0, nombre: '', precio: 0, categoria: '' });
 
   onMount(() => {
     apiService.getProductos()
-      .then(response => setProductos(response.data))
-      .catch(error => {
+      .then((response: any) => setProductos(response.data))
+      .catch((error: any) => {
         console.error('Error al obtener los productos:', error);
         showNotification('Error al obtener los productos', 'error');
       });
@@ -29,12 +29,12 @@ const Productos: Component = () => {
 
   const handleSaveNew = () => {
     apiService.createProducto(newProducto())
-      .then(response => {
+      .then((response: any) => {
         setProductos([...productos(), response.data]);
         showNotification('Producto creado con éxito', 'success');
-        setNewProducto({ id: 0, nombre: '', precio: 0 });
+        setNewProducto({ id: 0, nombre: '', precio: 0, categoria: '' });
       })
-      .catch(error => {
+      .catch((error: any) => {
         console.error('Error al crear el producto:', error);
         showNotification('Error al crear el producto', 'error');
       });
@@ -43,13 +43,13 @@ const Productos: Component = () => {
   const handleSaveEdit = () => {
     if (editProducto()) {
       apiService.updateProducto(editProducto()!.id, editProducto()!)
-        .then(response => {
+        .then((response: any) => {
           const updatedProductos = productos().map(p => p.id === response.data.id ? response.data : p);
           setProductos(updatedProductos);
           showNotification('Producto actualizado con éxito', 'success');
           setEditProducto(null);
         })
-        .catch(error => {
+        .catch((error: any) => {
           console.error('Error al actualizar el producto:', error);
           showNotification('Error al actualizar el producto', 'error');
         });
@@ -63,6 +63,7 @@ const Productos: Component = () => {
         <h2>Nuevo Producto</h2>
         <input type="text" placeholder="Nombre" value={newProducto().nombre} onInput={(e) => handleInputChange('nombre', e.currentTarget.value)} />
         <input type="number" placeholder="Precio" value={newProducto().precio} onInput={(e) => handleInputChange('precio', parseFloat(e.currentTarget.value))} />
+        <input type="text" placeholder="Categoría" value={newProducto().categoria} onInput={(e) => handleInputChange('categoria', e.currentTarget.value)} />
         <button onClick={handleSaveNew}>Guardar</button>
       </div>
       <ul>
@@ -72,11 +73,12 @@ const Productos: Component = () => {
               <div>
                 <input type="text" value={editProducto()!.nombre} onInput={(e) => handleEditChange('nombre', e.currentTarget.value)} />
                 <input type="number" value={editProducto()!.precio} onInput={(e) => handleEditChange('precio', parseFloat(e.currentTarget.value))} />
+                <input type="text" value={editProducto()!.categoria} onInput={(e) => handleEditChange('categoria', e.currentTarget.value)} />
                 <button onClick={handleSaveEdit}>Actualizar</button>
               </div>
             ) : (
               <div>
-                {producto.nombre} - {producto.precio}
+                {producto.nombre} - {producto.precio} - {producto.categoria}
                 <button onClick={() => setEditProducto(producto)}>Editar</button>
               </div>
             )}

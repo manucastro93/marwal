@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { Pedido } from '../interfaces/Pedido';
+import { BASE_URL } from '../config';
 
 const orderService = {
   getAll: async (): Promise<Pedido[]> => {

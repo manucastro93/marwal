@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { Administrador } from '../interfaces/Administrador';
+import { BASE_URL } from '../config';
 
 const adminService = {
   getAll: async (): Promise<Administrador[]> => {

@@ -1,6 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 const Categoria = require('./Categoria');
+const ImagenProducto = require('./ImagenProducto');
 
 const Producto = sequelize.define('producto', {
   id: {
@@ -49,5 +50,9 @@ const Producto = sequelize.define('producto', {
 
 // Definir la relación entre Producto y Categoria
 Producto.belongsTo(Categoria, { foreignKey: 'categoria_id' });
+
+// Definir la relación entre Producto e ImagenProducto
+Producto.hasMany(ImagenProducto, { foreignKey: 'producto_id', as: 'imagenes' });
+
 
 module.exports = Producto;

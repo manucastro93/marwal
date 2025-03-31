@@ -34,7 +34,6 @@ exports.registrarUsuario = async (req, res) => {
 // Login de usuarios
 exports.loginUsuario = async (req, res) => {
   const { usuario, contraseña } = req.body;
-
   // Agregar logs para verificar los datos recibidos
   console.log("Usuario:", usuario);
   console.log("Contraseña:", contraseña);

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { Vendedor } from '../interfaces/Vendedor';
+import { BASE_URL } from '../config';
 
 const sellerService = {
   getAll: async (): Promise<Vendedor[]> => {

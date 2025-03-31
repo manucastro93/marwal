@@ -36,6 +36,8 @@ const ImagenProducto = sequelize.define('imagenproducto', {
 });
 
 // Definir la relación entre ImagenProducto y Producto
-ImagenProducto.belongsTo(Producto, { foreignKey: 'producto_id' });
+ImagenProducto.associate = (models) => {
+  ImagenProducto.belongsTo(models.Producto, { foreignKey: 'producto_id', as: 'producto' });
+};
 
 module.exports = ImagenProducto;

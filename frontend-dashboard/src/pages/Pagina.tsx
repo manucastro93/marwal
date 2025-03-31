@@ -1,7 +1,7 @@
 import { Component, createSignal, onMount } from 'solid-js';
 import { showNotification } from '../components/Notification';
 import { Pagina as PaginaInterface } from '../interfaces/Pagina';
-import { apiService } from '../services/apiService';
+import apiService from '../services/apiService';
 
 const Pagina: Component = () => {
   const [pagina, setPagina] = createSignal<PaginaInterface | null>(null);

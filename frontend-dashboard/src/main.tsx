@@ -1,10 +1,12 @@
-import "bootstrap/dist/css/bootstrap.min.css";
 import { render } from "solid-js/web";
-import { Router } from "@solidjs/router";
 import App from "./App";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./styles.css";
 
-render(() => (
-  <Router>
-    <App />
-  </Router>
-), document.getElementById("root") as HTMLElement);
+const rootElement = document.getElementById("root");
+
+if (rootElement) {
+  render(() => <App />, rootElement);
+} else {
+  console.error("Root element not found");
+}
