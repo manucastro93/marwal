@@ -31,6 +31,8 @@ const Producto = sequelize.define('producto', {
       model: Categoria,
       key: 'id',
     },
+  },stock: {
+    type: DataTypes.INTEGER,
   },
   createdAt: {
     type: DataTypes.DATE,

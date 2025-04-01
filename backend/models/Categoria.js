@@ -1,39 +1,15 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-const Usuario = sequelize.define('Usuario', {
+const Categoria = sequelize.define('categoria', {
   id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true,
   },
-  usuario: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true,
-  },
   nombre: {
     type: DataTypes.STRING,
     allowNull: false,
-  },
-  email: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true,
-  },
-  telefono: {
-    type: DataTypes.STRING,
-  },
-  contraseña: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  rol: {
-    type: DataTypes.ENUM('supremo', 'administrador', 'vendedor'),
-    allowNull: false,
-  },
-  link: {
-    type: DataTypes.CHAR(4),
     unique: true,
   },
   createdAt: {
@@ -47,9 +23,9 @@ const Usuario = sequelize.define('Usuario', {
     field: 'updated_at', // Mapear al nombre de columna en la base de datos
   },
 }, {
-  tableName: 'usuarios', // Nombre de la tabla en minúsculas
+  tableName: 'categorias', // Nombre de la tabla en minúsculas
   timestamps: true,
   underscored: true, // Utilizar snake_case en lugar de camelCase
 });
 
-module.exports = Usuario;
+module.exports = Categoria;

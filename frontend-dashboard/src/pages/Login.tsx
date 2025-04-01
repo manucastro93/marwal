@@ -12,7 +12,7 @@ const Login: Component = () => {
       const response = await authService.login(usuario(), contraseña());
       // Manejar la respuesta de autenticación
       console.log('Login exitoso:', response);
-      window.location.href = '/productos';
+      window.location.href = '/home';
     } catch (error) {
       console.error('Error en el login:', error);
       showNotification('Error en el login', 'error');

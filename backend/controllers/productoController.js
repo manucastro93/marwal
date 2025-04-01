@@ -3,7 +3,7 @@ const ImagenProducto = require('../models/ImagenProducto');
 
 // Crear producto
 exports.crearProducto = async (req, res) => {
-  const { codigo, nombre, descripcion, precio, categoria_id, imagenes } = req.body;
+  const { codigo, nombre, descripcion, precio, categoria_id, stock, imagenes } = req.body;
 
   try {
     const newProducto = await Producto.create({
@@ -12,6 +12,7 @@ exports.crearProducto = async (req, res) => {
       descripcion,
       precio,
       categoria_id,
+      stock
     });
 
     if (imagenes && imagenes.length > 0) {
@@ -31,7 +32,7 @@ exports.crearProducto = async (req, res) => {
 // Modificar producto
 exports.modificarProducto = async (req, res) => {
   const { id } = req.params;
-  const { codigo, nombre, descripcion, precio, categoria_id, imagenes } = req.body;
+  const { codigo, nombre, descripcion, precio, categoria_id, stock, imagenes } = req.body;
 
   try {
     const producto = await Producto.findByPk(id);
@@ -45,6 +46,7 @@ exports.modificarProducto = async (req, res) => {
       descripcion,
       precio,
       categoria_id,
+      stock
     });
 
     if (imagenes && imagenes.length > 0) {

@@ -1,7 +1,18 @@
-import { Component } from 'solid-js';
+import { Component, createSignal, onMount } from "solid-js";
 import authService from '../services/authService';
 
 const Header: Component = () => {
+  const [usuario, setUsername] = createSignal("");
+
+  onMount(async () => {
+    try {
+      const user = await authService.getCurrentUser();
+      setUsername(user.usuario); // Aquí se usa 'user.usuario' según el campo correcto
+    } catch (error) {
+      console.error("Error al obtener el usuario actual:", error);
+    }
+  });
+
   const handleLogout = async () => {
     try {
       await authService.logout();

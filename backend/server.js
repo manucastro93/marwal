@@ -1,4 +1,5 @@
 const express = require('express');
+const session = require('express-session');
 const cors = require('cors');
 const config = require('./config/config');
 const sequelize = require('./config/database');
@@ -12,8 +13,21 @@ const vendedorRoutes = require('./routes/vendedorRoutes');
 
 const app = express();
 
+// Configuración de la sesión
+app.use(session({
+  secret: config.sessionSecret,
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false } // Cambia a true si usas HTTPS
+}));
+
+
 // Middlewares
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5000', // Reemplaza con el origen de tu frontend
+  credentials: true // Permitir que las cookies se envíen a través de CORS
+}));
+
 app.use(express.json());
 
 // Rutas
