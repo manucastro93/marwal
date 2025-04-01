@@ -19,12 +19,15 @@ exports.crearProducto = async (req, res) => {
       const imagenesData = imagenes.map(url => ({
         producto_id: newProducto.id,
         url,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       }));
       await ImagenProducto.bulkCreate(imagenesData);
     }
 
     res.status(201).json(newProducto);
   } catch (error) {
+    console.error('Error al crear el producto:', error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -54,12 +57,15 @@ exports.modificarProducto = async (req, res) => {
       const imagenesData = imagenes.map(url => ({
         producto_id: id,
         url,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       }));
       await ImagenProducto.bulkCreate(imagenesData);
     }
 
     res.status(200).json(producto);
   } catch (error) {
+    console.error('Error al actualizar el producto:', error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -77,6 +83,7 @@ exports.eliminarProducto = async (req, res) => {
     await producto.destroy();
     res.status(204).send();
   } catch (error) {
+    console.error('Error al eliminar el producto:', error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -100,6 +107,7 @@ exports.buscarProductos = async (req, res) => {
 
     res.status(200).json(productos);
   } catch (error) {
+    console.error('Error al buscar productos:', error);
     res.status(500).json({ error: error.message });
   }
 };

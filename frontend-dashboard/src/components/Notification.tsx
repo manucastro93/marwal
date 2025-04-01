@@ -1,10 +1,11 @@
 import { Component, createSignal } from 'solid-js';
 
 const [notification, setNotification] = createSignal<{ message: string, type: 'success' | 'error' | null }>({ message: '', type: null });
+const [show, setShow] = createSignal(false);
 
 const Notification: Component = () => {
   return (
-    <div class={`alert ${notification().type === 'success' ? 'alert-success' : 'alert-danger'}`} role="alert" style={{ display: notification().message ? 'block' : 'none' }}>
+    <div class={`notification ${notification().type === 'success' ? 'notification-success' : 'notification-error'} ${show() ? 'notification-show' : ''}`} role="alert">
       {notification().message}
     </div>
   );
@@ -12,7 +13,11 @@ const Notification: Component = () => {
 
 export const showNotification = (message: string, type: 'success' | 'error') => {
   setNotification({ message, type });
-  setTimeout(() => setNotification({ message: '', type: null }), 3000);
+  setShow(true);
+  setTimeout(() => {
+    setShow(false);
+    setNotification({ message: '', type: null });
+  }, 3000);
 };
 
 export default Notification;

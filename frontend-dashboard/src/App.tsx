@@ -5,15 +5,18 @@ import Categorias from "./pages/Categorias";
 import Vendedores from "./pages/Vendedores";
 import Pedidos from "./pages/Pedidos";
 import Pagina from "./pages/Pagina";
-import Home from "./pages/Home";  // Importar la nueva página Home
+import Home from "./pages/Home";
+import Notification from "./components/Notification";
 
 const App = () => {
   return (
+    <div>
+      <Notification />
       <Router>
         <Route path="/login" component={Login} />
         
         {/* Rutas protegidas con dashboard layout */}
-        <Route path="/home" component={Home} />  {/* Agregar la ruta para Home */}
+        <Route path="/home" component={Home} /> 
         <Route path="/productos" component={Productos} />
         <Route path="/categorias" component={Categorias} />
         <Route path="/vendedores" component={Vendedores} />
@@ -32,6 +35,7 @@ const App = () => {
           return null;
         }} />
       </Router>
+    </div>
   );
 };
 

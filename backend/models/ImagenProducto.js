@@ -26,7 +26,7 @@ const ImagenProducto = sequelize.define('imagenproducto', {
   },
   updatedAt: {
     type: DataTypes.DATE,
-    allowNull: false,
+    allowNull: true, // Permitir valores nulos si es necesario
     field: 'updated_at', // Mapear al nombre de columna en la base de datos
   },
 }, {

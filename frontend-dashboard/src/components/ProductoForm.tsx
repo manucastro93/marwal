@@ -42,14 +42,22 @@ const ProductoForm: Component<ProductoFormProps> = (props) => {
   };
 
   const handleSave = () => {
+    // Ensure all required fields are properly formatted
+    const currentProducto = producto();
+    if (!currentProducto.nombre || !currentProducto.precio || !currentProducto.categoria_id) {
+      console.error("Todos los campos obligatorios deben ser completados");
+      return;
+    }
+    
     props.onSave(producto());
   };
 
   return (
     <div>
       <h2>{props.initialProducto.id ? 'Editar Producto' : 'Nuevo Producto'}</h2>
+      <input type="text" placeholder="Código" value={producto().codigo} onInput={(e) => handleInputChange('codigo', e.currentTarget.value)} />
       <input type="text" placeholder="Nombre" value={producto().nombre} onInput={(e) => handleInputChange('nombre', e.currentTarget.value)} />
-      <input type="number" placeholder="Precio" value={producto().precio} onInput={(e) => handleInputChange('precio', parseFloat(e.currentTarget.value))} />
+      <input type="number" placeholder="Precio" value={producto().precio} onInput={(e) => handleInputChange('precio', isNaN(parseFloat(e.currentTarget.value)) ? 0 : parseFloat(e.currentTarget.value))} />
       <select value={producto().categoria_id} onChange={(e) => handleInputChange('categoria_id', parseInt(e.currentTarget.value))}>
         <option value="">Seleccionar Categoría</option>
         {categorias().map(categoria => (
@@ -57,7 +65,7 @@ const ProductoForm: Component<ProductoFormProps> = (props) => {
         ))}
       </select>
       <textarea placeholder="Descripción" value={producto().descripcion} onInput={(e) => handleInputChange('descripcion', e.currentTarget.value)}></textarea>
-      <input type="number" placeholder="Stock" value={producto().stock} onInput={(e) => handleInputChange('stock', parseInt(e.currentTarget.value))} />
+      <input type="number" placeholder="Stock" value={producto().stock} onInput={(e) => handleInputChange('stock', isNaN(parseInt(e.currentTarget.value)) ? 0 : parseInt(e.currentTarget.value))} />
       <input type="file" multiple onChange={handleImageUpload} />
       <div>
         {imagenes().map((url, index) => (

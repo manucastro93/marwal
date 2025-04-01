@@ -12,11 +12,12 @@ const Productos: Component = () => {
   const [categorias, setCategorias] = createSignal<Categoria[]>([]);
   const [filteredProductos, setFilteredProductos] = createSignal<Producto[]>([]);
   const [editProducto, setEditProducto] = createSignal<Producto | null>(null);
-  const [newProducto] = createSignal<Producto>({ id: 0, nombre: '', precio: 0, categoria_id: 0, descripcion: '', stock: 0, imagenes: [] });
+  const [newProducto] = createSignal<Producto>({ id: 0, codigo: '', nombre: '', precio: 0, categoria_id: 0, descripcion: '', stock: 0, imagenes: [] });
   const [searchTerm, setSearchTerm] = createSignal('');
   const [currentPage, setCurrentPage] = createSignal(1);
   const [isModalOpen, setIsModalOpen] = createSignal(false);
-  const itemsPerPage = 5;
+  const [isEditModalOpen, setIsEditModalOpen] = createSignal(false);
+  const itemsPerPage = 10;
 
   onMount(() => {
     apiService.getProductos()
@@ -39,16 +40,12 @@ const Productos: Component = () => {
       });
   });
 
-  const handleEditChange = (field: keyof Producto, value: string | number) => {
-    if (editProducto()) {
-      setEditProducto({ ...editProducto()!, [field]: value });
-    }
-  };
-
   const handleSaveNew = (producto: Producto) => {
     apiService.createProducto(producto)
       .then((newProducto) => {
-        setProductos([...productos(), newProducto]);
+        const updatedProductos = [...productos(), newProducto];
+        setProductos(updatedProductos);
+        setFilteredProductos(updatedProductos);
         showNotification('Producto creado con éxito', 'success');
         setIsModalOpen(false);
       })
@@ -64,14 +61,30 @@ const Productos: Component = () => {
         .then((producto) => {
           const updatedProductos = productos().map(p => p.id === producto.id ? producto : p);
           setProductos(updatedProductos);
+          setFilteredProductos(updatedProductos);
           showNotification('Producto actualizado con éxito', 'success');
           setEditProducto(null);
+          setIsEditModalOpen(false);
         })
         .catch((error) => {
           console.error('Error al actualizar el producto:', error);
           showNotification('Error al actualizar el producto', 'error');
         });
     }
+  };
+
+  const handleDelete = (id: number) => {
+    apiService.deleteProducto(id)
+      .then(() => {
+        const updatedProductos = productos().filter(p => p.id !== id);
+        setProductos(updatedProductos);
+        setFilteredProductos(updatedProductos);
+        showNotification('Producto eliminado con éxito', 'success');
+      })
+      .catch((error) => {
+        console.error('Error al eliminar el producto:', error);
+        showNotification('Error al eliminar el producto', 'error');
+      });
   };
 
   const handleSearch = (e: Event) => {
@@ -100,13 +113,18 @@ const Productos: Component = () => {
     const categoria = categorias().find(cat => cat.id === categoria_id);
     return categoria ? categoria.nombre : 'Desconocida';
   };
-  
+
   return (
     <Layout>
       <h1>Productos</h1>
       <button onClick={() => setIsModalOpen(true)}>Nuevo Producto</button>
       <Modal isOpen={isModalOpen()} onClose={() => setIsModalOpen(false)}>
         <ProductoForm initialProducto={newProducto()} onSave={handleSaveNew} onClose={() => setIsModalOpen(false)} />
+      </Modal>
+      <Modal isOpen={isEditModalOpen()} onClose={() => setIsEditModalOpen(false)}>
+        {editProducto() && (
+          <ProductoForm initialProducto={editProducto()!} onSave={handleSaveEdit} onClose={() => setIsEditModalOpen(false)} />
+        )}
       </Modal>
       <div>
         <h2>Buscar Producto</h2>
@@ -127,42 +145,20 @@ const Productos: Component = () => {
         <tbody>
           {paginatedProductos().map(producto => (
             <tr>
-              {editProducto() && editProducto()!.id === producto.id ? (
-                <>
-                  <td><input type="text" value={editProducto()!.nombre} onInput={(e) => handleEditChange('nombre', e.currentTarget.value)} /></td>
-                  <td><input type="number" value={editProducto()!.precio} onInput={(e) => handleEditChange('precio', parseFloat(e.currentTarget.value))} /></td>
-                  <td>
-                    <select value={editProducto()!.categoria_id} onChange={(e) => handleEditChange('categoria_id', parseInt(e.currentTarget.value))}>
-                      <option value="">Seleccionar Categoría</option>
-                      {categorias().map((categoria: Categoria) => (
-                        <option value={categoria.id}>{categoria.nombre}</option>
-                      ))}
-                    </select>
-                  </td>
-                  <td><textarea value={editProducto()!.descripcion} onInput={(e) => handleEditChange('descripcion', e.currentTarget.value)}></textarea></td>
-                  <td><input type="number" value={editProducto()!.stock} onInput={(e) => handleEditChange('stock', parseInt(e.currentTarget.value))} /></td>
-                  <td>
-                    {editProducto()!.imagenes?.map((url, index) => (
-                      <img src={url} alt={`Imagen ${index + 1}`} width="50" />
-                    ))}
-                  </td>
-                  <td><button onClick={handleSaveEdit}>Actualizar</button></td>
-                </>
-              ) : (
-                <>
-                  <td>{producto.nombre}</td>
-                  <td>{producto.precio}</td>
-                  <td>{getCategoriaNombre(producto.categoria_id)}</td>
-                  <td>{producto.descripcion}</td>
-                  <td>{producto.stock}</td>
-                  <td>
-                    {producto.imagenes?.map((url, index) => (
-                      <img src={url} alt={`Imagen ${index + 1}`} width="50" />
-                    ))}
-                  </td>
-                  <td><button onClick={() => setEditProducto(producto)}>Editar</button></td>
-                </>
-              )}
+              <td>{producto.nombre}</td>
+              <td>{producto.precio}</td>
+              <td>{getCategoriaNombre(producto.categoria_id)}</td>
+              <td>{producto.descripcion}</td>
+              <td>{producto.stock}</td>
+              <td>
+                {producto.imagenes?.map((url, index) => (
+                  <img src={url} alt={`Imagen ${index + 1}`} width="50" />
+                ))}
+              </td>
+              <td>
+                <button onClick={() => { setEditProducto(producto); setIsEditModalOpen(true); }}>Editar</button>
+                <button style={{ 'background-color': 'red', color: 'white' }} onClick={() => handleDelete(producto.id)}>Eliminar</button>
+              </td>
             </tr>
           ))}
         </tbody>
