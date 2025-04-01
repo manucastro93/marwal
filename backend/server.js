@@ -1,6 +1,7 @@
 const express = require('express');
 const session = require('express-session');
 const cors = require('cors');
+const path = require('path');
 const config = require('./config/config');
 const sequelize = require('./config/database');
 const usuarioRoutes = require('./routes/usuarioRoutes');
@@ -10,6 +11,7 @@ const clienteRoutes = require('./routes/clienteRoutes');
 const categoriaRoutes = require('./routes/categoriaRoutes');
 const paginaRoutes = require('./routes/paginaRoutes');
 const vendedorRoutes = require('./routes/vendedorRoutes');
+const imagenRoutes = require('./routes/imagenRoutes');
 
 const app = express();
 
@@ -30,6 +32,9 @@ app.use(cors({
 
 app.use(express.json());
 
+// Servir archivos estáticos de la carpeta uploads
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 // Rutas
 app.use('/api/usuarios', usuarioRoutes);
 app.use('/api/productos', productoRoutes);
@@ -38,6 +43,7 @@ app.use('/api/clientes', clienteRoutes);
 app.use('/api/categorias', categoriaRoutes);
 app.use('/api/pagina', paginaRoutes);
 app.use('/api/vendedores', vendedorRoutes);
+app.use('/api/images', imagenRoutes);
 
 // Conectar a la base de datos y arrancar el servidor sin sincronizar las tablas
 sequelize.authenticate().then(() => {

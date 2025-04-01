@@ -2,6 +2,7 @@ import { Component, createSignal, onMount, createEffect } from 'solid-js';
 import { Producto } from '../interfaces/Producto';
 import { Categoria } from '../interfaces/Categoria';
 import apiService from '../services/apiService';
+import ImageUpload from './ImageUpload';
 
 interface ProductoFormProps {
   initialProducto: Producto;
@@ -12,7 +13,6 @@ interface ProductoFormProps {
 const ProductoForm: Component<ProductoFormProps> = (props) => {
   const [producto, setProducto] = createSignal(props.initialProducto);
   const [categorias, setCategorias] = createSignal<Categoria[]>([]);
-  const [imagenes, setImagenes] = createSignal<string[]>([]);
   const [error, setError] = createSignal<string | null>(null);
 
   onMount(() => {
@@ -34,21 +34,11 @@ const ProductoForm: Component<ProductoFormProps> = (props) => {
     setProducto({ ...producto(), [field]: value });
   };
 
-  const handleImageUpload = async (event: Event) => {
-    const files = (event.target as HTMLInputElement).files;
-    if (files) {
-      const urls: string[] = [];
-      for (let i = 0; i < files.length; i++) {
-        const url = await apiService.uploadImage(files[i]);
-        urls.push(url);
-      }
-      setImagenes([...imagenes(), ...urls]);
-      setProducto({ ...producto(), imagenes: [...imagenes(), ...urls] });
-    }
+  const handleImageChange = (images: string[]) => {
+    setProducto({ ...producto(), imagenes: images });
   };
 
   const handleSave = async () => {
-    // Ensure all required fields are properly formatted
     const currentProducto = producto();
     if (!currentProducto.codigo ||!currentProducto.nombre || !currentProducto.precio || !currentProducto.categoria_id) {
       setError("Hay campos vacíos que son obligatorios. (Código, Nombre, Precio y Categoría)");
@@ -77,14 +67,9 @@ const ProductoForm: Component<ProductoFormProps> = (props) => {
         ))}
       </select>
       <input type="number" placeholder="Stock" value={producto().stock} onInput={(e) => handleInputChange('stock', isNaN(parseInt(e.currentTarget.value)) ? 0 : parseInt(e.currentTarget.value))} />
-      <input type="file" multiple onChange={handleImageUpload} />
-      <div>
-        {imagenes().map((url, index) => (
-          <img src={url} alt={`Imagen ${index + 1}`} width="100" />
-        ))}
-      </div>
-      <button onClick={handleSave}>Guardar</button>
-      <button onClick={props.onClose}>Cancelar</button>
+      <ImageUpload onImagesChange={handleImageChange} />
+      <button style={{ 'background-color': 'green', color: 'white'}} onClick={handleSave}>Guardar</button>
+      <button style={{ float: 'right' }} onClick={props.onClose}>Cancelar</button>
     </div>
   );
 };

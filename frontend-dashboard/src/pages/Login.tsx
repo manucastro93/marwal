@@ -1,18 +1,23 @@
-import { Component } from 'solid-js';
 import { createSignal } from 'solid-js';
+import { useNavigate } from '@solidjs/router';
+import { useAuth } from '../context/AuthContext';
 import authService from '../services/authService';
 import { showNotification } from '../components/Notification';
 
-const Login: Component = () => {
-  const [usuario, setUsername] = createSignal('');
-  const [contraseña, setPassword] = createSignal('');
+const Login = () => {
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  const [usuario, setUsuario] = createSignal('');
+  const [contraseña, setContraseña] = createSignal('');
 
   const handleLogin = async () => {
     try {
       const response = await authService.login(usuario(), contraseña());
       // Manejar la respuesta de autenticación
       console.log('Login exitoso:', response);
-      window.location.href = '/home';
+      login(); // Actualiza el estado de autenticación
+      navigate('/home');
+      console.log('Redireccionando a /home');
     } catch (error) {
       console.error('Error en el login:', error);
       showNotification('Error en el login', 'error');
@@ -24,11 +29,11 @@ const Login: Component = () => {
       <h1>Login</h1>
       <div class="mb-3">
         <label for="usuario" class="form-label">Usuario</label>
-        <input type="text" class="form-control" id="usuario" onInput={(e) => setUsername(e.currentTarget.value)} />
+        <input type="text" class="form-control" id="usuario" onInput={(e) => setUsuario(e.currentTarget.value)} />
       </div>
       <div class="mb-3">
         <label for="contraseña" class="form-label">Contraseña</label>
-        <input type="password" class="form-control" id="contraseña" onInput={(e) => setPassword(e.currentTarget.value)} />
+        <input type="password" class="form-control" id="contraseña" onInput={(e) => setContraseña(e.currentTarget.value)} />
       </div>
       <button class="btn btn-primary" onClick={handleLogin}>Iniciar Sesión</button>
     </div>
