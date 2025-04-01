@@ -1,8 +1,9 @@
 export interface Producto {
-    id: number;
-    nombre: string;
-    categoria_id: number;
-    precio: number;
-    descripcion?: string;
-    stock?: number;
-  }
+  id: number;
+  nombre: string;
+  categoria_id: number;
+  precio: number;
+  descripcion?: string;
+  stock?: number;
+  imagenes?: string[]; // Array de URLs de imágenes
+}

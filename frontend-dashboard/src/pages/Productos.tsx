@@ -12,7 +12,7 @@ const Productos: Component = () => {
   const [categorias, setCategorias] = createSignal<Categoria[]>([]);
   const [filteredProductos, setFilteredProductos] = createSignal<Producto[]>([]);
   const [editProducto, setEditProducto] = createSignal<Producto | null>(null);
-  const [newProducto] = createSignal<Producto>({ id: 0, nombre: '', precio: 0, categoria_id: 0, descripcion: '', stock: 0 });
+  const [newProducto] = createSignal<Producto>({ id: 0, nombre: '', precio: 0, categoria_id: 0, descripcion: '', stock: 0, imagenes: [] });
   const [searchTerm, setSearchTerm] = createSignal('');
   const [currentPage, setCurrentPage] = createSignal(1);
   const [isModalOpen, setIsModalOpen] = createSignal(false);
@@ -28,7 +28,8 @@ const Productos: Component = () => {
         console.error('Error al obtener los productos:', error);
         showNotification('Error al obtener los productos', 'error');
       });
-      apiService.getCategorias()
+
+    apiService.getCategorias()
       .then((categorias) => {
         setCategorias(categorias);
       })
@@ -95,6 +96,11 @@ const Productos: Component = () => {
     setCurrentPage(page);
   };
 
+  const getCategoriaNombre = (categoria_id: number) => {
+    const categoria = categorias().find(cat => cat.id === categoria_id);
+    return categoria ? categoria.nombre : 'Desconocida';
+  };
+  
   return (
     <Layout>
       <h1>Productos</h1>
@@ -114,6 +120,7 @@ const Productos: Component = () => {
             <th>Categoría</th>
             <th>Descripción</th>
             <th>Stock</th>
+            <th>Imágenes</th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -125,24 +132,34 @@ const Productos: Component = () => {
                   <td><input type="text" value={editProducto()!.nombre} onInput={(e) => handleEditChange('nombre', e.currentTarget.value)} /></td>
                   <td><input type="number" value={editProducto()!.precio} onInput={(e) => handleEditChange('precio', parseFloat(e.currentTarget.value))} /></td>
                   <td>
-                    <select value={editProducto()!.categoria_id} onChange={(e) => handleEditChange('categoria_id', e.currentTarget.value)}>
+                    <select value={editProducto()!.categoria_id} onChange={(e) => handleEditChange('categoria_id', parseInt(e.currentTarget.value))}>
                       <option value="">Seleccionar Categoría</option>
-                      {categorias().map(categoria => (
+                      {categorias().map((categoria: Categoria) => (
                         <option value={categoria.id}>{categoria.nombre}</option>
                       ))}
                     </select>
                   </td>
                   <td><textarea value={editProducto()!.descripcion} onInput={(e) => handleEditChange('descripcion', e.currentTarget.value)}></textarea></td>
                   <td><input type="number" value={editProducto()!.stock} onInput={(e) => handleEditChange('stock', parseInt(e.currentTarget.value))} /></td>
+                  <td>
+                    {editProducto()!.imagenes?.map((url, index) => (
+                      <img src={url} alt={`Imagen ${index + 1}`} width="50" />
+                    ))}
+                  </td>
                   <td><button onClick={handleSaveEdit}>Actualizar</button></td>
                 </>
               ) : (
                 <>
                   <td>{producto.nombre}</td>
                   <td>{producto.precio}</td>
-                  <td>{producto.categoria_id}</td>
+                  <td>{getCategoriaNombre(producto.categoria_id)}</td>
                   <td>{producto.descripcion}</td>
                   <td>{producto.stock}</td>
+                  <td>
+                    {producto.imagenes?.map((url, index) => (
+                      <img src={url} alt={`Imagen ${index + 1}`} width="50" />
+                    ))}
+                  </td>
                   <td><button onClick={() => setEditProducto(producto)}>Editar</button></td>
                 </>
               )}

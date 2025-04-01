@@ -3,7 +3,6 @@ import { Producto } from '../interfaces/Producto';
 import { Categoria } from '../interfaces/Categoria';
 import apiService from '../services/apiService';
 
-
 interface ProductoFormProps {
   initialProducto: Producto;
   onSave: (producto: Producto) => void;
@@ -13,6 +12,7 @@ interface ProductoFormProps {
 const ProductoForm: Component<ProductoFormProps> = (props) => {
   const [producto, setProducto] = createSignal(props.initialProducto);
   const [categorias, setCategorias] = createSignal<Categoria[]>([]);
+  const [imagenes, setImagenes] = createSignal<string[]>([]);
 
   onMount(() => {
     apiService.getCategorias()
@@ -28,6 +28,19 @@ const ProductoForm: Component<ProductoFormProps> = (props) => {
     setProducto({ ...producto(), [field]: value });
   };
 
+  const handleImageUpload = async (event: Event) => {
+    const files = (event.target as HTMLInputElement).files;
+    if (files) {
+      const urls: string[] = [];
+      for (let i = 0; i < files.length; i++) {
+        const url = await apiService.uploadImage(files[i]);
+        urls.push(url);
+      }
+      setImagenes([...imagenes(), ...urls]);
+      setProducto({ ...producto(), imagenes: [...imagenes(), ...urls] });
+    }
+  };
+
   const handleSave = () => {
     props.onSave(producto());
   };
@@ -37,7 +50,7 @@ const ProductoForm: Component<ProductoFormProps> = (props) => {
       <h2>{props.initialProducto.id ? 'Editar Producto' : 'Nuevo Producto'}</h2>
       <input type="text" placeholder="Nombre" value={producto().nombre} onInput={(e) => handleInputChange('nombre', e.currentTarget.value)} />
       <input type="number" placeholder="Precio" value={producto().precio} onInput={(e) => handleInputChange('precio', parseFloat(e.currentTarget.value))} />
-      <select value={producto().categoria_id} onChange={(e) => handleInputChange('categoria_id', e.currentTarget.value)}>
+      <select value={producto().categoria_id} onChange={(e) => handleInputChange('categoria_id', parseInt(e.currentTarget.value))}>
         <option value="">Seleccionar Categoría</option>
         {categorias().map(categoria => (
           <option value={categoria.id}>{categoria.nombre}</option>
@@ -45,6 +58,12 @@ const ProductoForm: Component<ProductoFormProps> = (props) => {
       </select>
       <textarea placeholder="Descripción" value={producto().descripcion} onInput={(e) => handleInputChange('descripcion', e.currentTarget.value)}></textarea>
       <input type="number" placeholder="Stock" value={producto().stock} onInput={(e) => handleInputChange('stock', parseInt(e.currentTarget.value))} />
+      <input type="file" multiple onChange={handleImageUpload} />
+      <div>
+        {imagenes().map((url, index) => (
+          <img src={url} alt={`Imagen ${index + 1}`} width="100" />
+        ))}
+      </div>
       <button onClick={handleSave}>Guardar</button>
       <button onClick={props.onClose}>Cancelar</button>
     </div>

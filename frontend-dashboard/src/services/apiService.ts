@@ -26,6 +26,17 @@ const apiService = {
     await axios.delete(`${BASE_URL}/productos/${id}`);
   },
 
+  uploadImage: async (image: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append('image', image);
+    const response = await axios.post(`${BASE_URL}/upload`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    return response.data.url; // URL de la imagen subida
+  },
+
   // Categorías
   getCategorias: async (): Promise<Categoria[]> => {
     const response = await axios.get(`${BASE_URL}/categorias`);
