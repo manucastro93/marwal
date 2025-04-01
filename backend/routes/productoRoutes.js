@@ -5,7 +5,7 @@ const authMiddleware = require('../middlewares/authMiddleware');
 
 router.post('/', productoController.crearProducto);
 router.put('/:id', productoController.modificarProducto);
-router.delete('/:id', authMiddleware, productoController.eliminarProducto);
+router.delete('/:id', productoController.eliminarProducto);
 router.get('/', productoController.buscarProductos); // Nueva ruta para buscar productos
 
 module.exports = router;

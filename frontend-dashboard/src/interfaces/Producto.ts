@@ -2,9 +2,10 @@ export interface Producto {
   id: number;
   codigo: string;
   nombre: string;
-  categoria_id: number;
-  precio: number;
   descripcion?: string;
+  precio: number;
+  categoria_id: number;
   stock?: number;
-  imagenes?: string[]; // Array de URLs de imágenes
+  imagenes?: string[];
+  updatedAt?: string;
 }

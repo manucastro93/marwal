@@ -12,7 +12,7 @@ const Productos: Component = () => {
   const [categorias, setCategorias] = createSignal<Categoria[]>([]);
   const [filteredProductos, setFilteredProductos] = createSignal<Producto[]>([]);
   const [editProducto, setEditProducto] = createSignal<Producto | null>(null);
-  const [newProducto] = createSignal<Producto>({ id: 0, codigo: '', nombre: '', precio: 0, categoria_id: 0, descripcion: '', stock: 0, imagenes: [] });
+  const [newProducto] = createSignal<Producto>({ id: 0, codigo: '', nombre: '', descripcion: '', precio: 0, categoria_id: 0, stock: 0, imagenes: [] });
   const [searchTerm, setSearchTerm] = createSignal('');
   const [currentPage, setCurrentPage] = createSignal(1);
   const [isModalOpen, setIsModalOpen] = createSignal(false);
@@ -51,26 +51,25 @@ const Productos: Component = () => {
       })
       .catch((error) => {
         console.error('Error al crear el producto:', error);
-        showNotification('Error al crear el producto', 'error');
+        showNotification(`Error al crear el producto - ${error.message}`, 'error');
       });
   };
 
-  const handleSaveEdit = () => {
-    if (editProducto()) {
-      apiService.updateProducto(editProducto()!.id, editProducto()!)
-        .then((producto) => {
-          const updatedProductos = productos().map(p => p.id === producto.id ? producto : p);
-          setProductos(updatedProductos);
-          setFilteredProductos(updatedProductos);
-          showNotification('Producto actualizado con éxito', 'success');
-          setEditProducto(null);
-          setIsEditModalOpen(false);
-        })
-        .catch((error) => {
-          console.error('Error al actualizar el producto:', error);
-          showNotification('Error al actualizar el producto', 'error');
-        });
-    }
+  const handleSaveEdit = (producto: Producto) => {
+    console.log('Datos del producto a actualizar:', producto);
+    apiService.updateProducto(producto.id, producto)
+      .then((updatedProducto) => {
+        const updatedProductos = productos().map(p => p.id === updatedProducto.id ? updatedProducto : p);
+        setProductos(updatedProductos);
+        setFilteredProductos(updatedProductos);
+        showNotification('Producto actualizado con éxito', 'success');
+        setEditProducto(null);
+        setIsEditModalOpen(false);
+      })
+      .catch((error) => {
+        console.error('Error al actualizar el producto:', error);
+        showNotification(`Error al actualizar el producto - ${error.message}`, 'error');
+      });
   };
 
   const handleDelete = (id: number) => {
@@ -83,7 +82,7 @@ const Productos: Component = () => {
       })
       .catch((error) => {
         console.error('Error al eliminar el producto:', error);
-        showNotification('Error al eliminar el producto', 'error');
+        showNotification(`Error al eliminar el producto - ${error.message}`, 'error');
       });
   };
 
@@ -133,6 +132,7 @@ const Productos: Component = () => {
       <table>
         <thead>
           <tr>
+            <th>Código</th>
             <th>Nombre</th>
             <th>Precio</th>
             <th>Categoría</th>
@@ -145,6 +145,7 @@ const Productos: Component = () => {
         <tbody>
           {paginatedProductos().map(producto => (
             <tr>
+              <td>{producto.codigo}</td>
               <td>{producto.nombre}</td>
               <td>{producto.precio}</td>
               <td>{getCategoriaNombre(producto.categoria_id)}</td>
@@ -157,7 +158,7 @@ const Productos: Component = () => {
               </td>
               <td>
                 <button onClick={() => { setEditProducto(producto); setIsEditModalOpen(true); }}>Editar</button>
-                <button style={{ 'background-color': 'red', color: 'white' }} onClick={() => handleDelete(producto.id)}>Eliminar</button>
+                <button style={{ 'background-color': 'red', color: 'white', float: 'right' }} onClick={() => handleDelete(producto.id)}>Eliminar</button>
               </td>
             </tr>
           ))}

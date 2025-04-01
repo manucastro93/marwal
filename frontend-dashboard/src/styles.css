@@ -252,6 +252,18 @@ table tr:nth-child(even) {
   background-color: #f44336; /* Rojo */
 }
 
+.error-message {
+  color: #e74c3c; /* Rojo para mayor énfasis */
+  background-color: #f2dede; /* Fondo rojo claro */
+  border: 1px solid #e74c3c; /* Borde rojo */
+  padding: 10px; /* Espaciado interno */
+  margin-bottom: 15px; /* Espaciado inferior */
+  border-radius: 5px; /* Bordes redondeados */
+  font-size: 14px; /* Tamaño de fuente */
+  font-weight: bold; /* Texto en negrita */
+  text-align: center; /* Alineación centrada */
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .main-content {

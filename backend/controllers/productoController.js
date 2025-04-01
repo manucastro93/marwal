@@ -1,5 +1,6 @@
 const Producto = require('../models/Producto');
 const ImagenProducto = require('../models/ImagenProducto');
+const { Sequelize } = require('sequelize');
 
 // Crear producto
 exports.crearProducto = async (req, res) => {
@@ -28,7 +29,11 @@ exports.crearProducto = async (req, res) => {
     res.status(201).json(newProducto);
   } catch (error) {
     console.error('Error al crear el producto:', error);
-    res.status(500).json({ error: error.message });
+    if (error instanceof Sequelize.UniqueConstraintError) {
+      res.status(400).json({ error: `Código de producto duplicado - ${error.message}` });
+    } else {
+      res.status(500).json({ error: `Error al crear el producto - ${error.message}` });
+    }
   }
 };
 
@@ -43,15 +48,18 @@ exports.modificarProducto = async (req, res) => {
       return res.status(404).json({ error: 'Producto no encontrado' });
     }
 
+    // Actualizar el producto
     await producto.update({
       codigo,
       nombre,
       descripcion,
       precio,
       categoria_id,
-      stock
+      stock,
+      updatedAt: new Date() // Asegurarse de actualizar el campo updatedAt
     });
 
+    // Actualizar las imágenes
     if (imagenes && imagenes.length > 0) {
       await ImagenProducto.destroy({ where: { producto_id: id } });
       const imagenesData = imagenes.map(url => ({
@@ -63,10 +71,22 @@ exports.modificarProducto = async (req, res) => {
       await ImagenProducto.bulkCreate(imagenesData);
     }
 
-    res.status(200).json(producto);
+    // Obtener el producto actualizado con las imágenes
+    const productoActualizado = await Producto.findByPk(id, {
+      include: {
+        model: ImagenProducto,
+        as: 'imagenes',
+      },
+    });
+
+    res.status(200).json(productoActualizado);
   } catch (error) {
     console.error('Error al actualizar el producto:', error);
-    res.status(500).json({ error: error.message });
+    if (error instanceof Sequelize.UniqueConstraintError) {
+      res.status(400).json({ error: `Código de producto duplicado - ${error.message}` });
+    } else {
+      res.status(500).json({ error: `Error al actualizar el producto - ${error.message}` });
+    }
   }
 };
 
@@ -84,7 +104,7 @@ exports.eliminarProducto = async (req, res) => {
     res.status(204).send();
   } catch (error) {
     console.error('Error al eliminar el producto:', error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: `Error al eliminar el producto - ${error.message}` });
   }
 };
 
@@ -108,6 +128,6 @@ exports.buscarProductos = async (req, res) => {
     res.status(200).json(productos);
   } catch (error) {
     console.error('Error al buscar productos:', error);
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: `Error al buscar productos - ${error.message}` });
   }
 };

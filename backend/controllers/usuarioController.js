@@ -128,11 +128,9 @@ exports.getCurrentUser = async (req, res) => {
     }
     
     const token = authorizationHeader.split(' ')[1];
-    console.log('Token recibido:', token); // Log del token recibido
 
     try {
       const decoded = jwt.verify(token, config.jwtSecret);
-      console.log('Token decodificado:', decoded); // Log del token decodificado
       const user = await Usuario.findByPk(decoded.id, { attributes: { exclude: ['contraseña'] } });
 
       if (!user) {

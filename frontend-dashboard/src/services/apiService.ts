@@ -15,12 +15,28 @@ const apiService = {
     return response.data;
   },
   createProducto: async (producto: Producto): Promise<Producto> => {
-    const response = await axios.post(`${BASE_URL}/productos`, producto);
-    return response.data;
+    try {
+      const response = await axios.post(`${BASE_URL}/productos`, producto);
+      return response.data;
+    } catch (error: any) {
+      if (error.response && error.response.data && error.response.data.error) {
+        throw new Error(error.response.data.error);
+      } else {
+        throw new Error('Error al crear el producto');
+      }
+    }
   },
   updateProducto: async (id: number, producto: Producto): Promise<Producto> => {
-    const response = await axios.put(`${BASE_URL}/productos/${id}`, producto);
-    return response.data;
+    try {
+      const response = await axios.put(`${BASE_URL}/productos/${id}`, producto);
+      return response.data;
+    } catch (error: any) {
+      if (error.response && error.response.data && error.response.data.error) {
+        throw new Error(error.response.data.error);
+      } else {
+        throw new Error('Error al actualizar el producto');
+      }
+    }
   },
   deleteProducto: async (id: number): Promise<void> => {
     await axios.delete(`${BASE_URL}/productos/${id}`);
