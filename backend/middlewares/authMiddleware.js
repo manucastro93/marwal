@@ -12,6 +12,9 @@ const authMiddleware = (req, res, next) => {
     req.user = verified;
     next();
   } catch (error) {
+    if (error.name === 'TokenExpiredError') {
+      return res.status(401).json({ error: 'Token expirado' });
+    }
     res.status(400).json({ error: 'Token no válido' });
   }
 };

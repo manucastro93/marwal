@@ -14,6 +14,7 @@ const ImagenProducto = sequelize.define('imagenproducto', {
       model: Producto,
       key: 'id',
     },
+    allowNull: false,
   },
   url: {
     type: DataTypes.STRING,

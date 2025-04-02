@@ -17,16 +17,24 @@ exports.crearProducto = async (req, res) => {
     });
 
     if (imagenes && imagenes.length > 0) {
-      const imagenesData = imagenes.map(url => ({
+      const imagenesData = imagenes.map(image => ({
         producto_id: newProducto.id,
-        url,
+        url: image.url,
         createdAt: new Date(),
         updatedAt: new Date(),
       }));
       await ImagenProducto.bulkCreate(imagenesData);
     }
 
-    res.status(201).json(newProducto);
+    // Incluir imágenes en la respuesta
+    const productoConImagenes = await Producto.findByPk(newProducto.id, {
+      include: {
+        model: ImagenProducto,
+        as: 'imagenes',
+      },
+    });
+
+    res.status(201).json(productoConImagenes);
   } catch (error) {
     console.error('Error al crear el producto:', error);
     if (error instanceof Sequelize.UniqueConstraintError) {
@@ -62,9 +70,9 @@ exports.modificarProducto = async (req, res) => {
     // Actualizar las imágenes
     if (imagenes && imagenes.length > 0) {
       await ImagenProducto.destroy({ where: { producto_id: id } });
-      const imagenesData = imagenes.map(url => ({
+      const imagenesData = imagenes.map(image => ({
         producto_id: id,
-        url,
+        url: image.url,
         createdAt: new Date(),
         updatedAt: new Date(),
       }));

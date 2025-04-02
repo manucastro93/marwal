@@ -1,52 +1,34 @@
-const multer = require('multer');
 const path = require('path');
-const ftp = require('basic-ftp');
-const { url } = require('inspector');
-require('dotenv').config();
+const fs = require('fs');
+const multer = require('multer');
+const Imagen = require('../models/ImagenProducto');
 
-// Configurar Multer para almacenar archivos temporalmente en el servidor
+// Configuración de multer para la carga de archivos
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'temp_uploads/'); // Carpeta temporal
+    const uploadPath = path.join(__dirname, '../uploads/imagenes/productos');
+    if (!fs.existsSync(uploadPath)) {
+      fs.mkdirSync(uploadPath, { recursive: true });
+    }
+    cb(null, uploadPath);
   },
   filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
-  },
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));
+  }
 });
 
-const upload = multer({ storage });
+const upload = multer({ storage: storage }).single('image');
 
-const uploadImage = async (req, res) => {
-  const localPath = path.join(__dirname, '../temp_uploads', req.file.filename);
-  console.log('Ruta local:', localPath);
-  try {
-    const client = new ftp.Client();
-    client.ftp.verbose = true;
-
-    await client.access({
-      host: process.env.FTP_HOST,
-      user: process.env.FTP_USER,
-      password: process.env.FTP_PASSWORD,
-      secure: false,
-    });
-
-    const localPath = path.join(__dirname, '../temp_uploads', req.file.filename);
-    const remotePath = `public_html/uploads/${req.file.filename}`;
-
-    await client.uploadFrom(localPath, remotePath);
-
-    client.close();
-
-    res.status(200).json({
-      message: 'Imagen subida con éxito',
-      url: `http://${process.env.FTP_HOST}/${remotePath}`,
-    });
-  } catch (error) {
-    res.status(500).json({
-      message: 'Error al subir la imagen',
-      error: error.message,
-    });
-  }
+exports.uploadImage = async (req, res) => {
+  upload(req, res, (err) => {
+    if (err) {
+      return res.status(500).json({ message: 'Error al subir la imagen', error: err });
+    }
+    if (!req.file) {
+      return res.status(400).json({ message: 'No se ha subido ninguna imagen' });
+    }
+    const imageUrl = `/uploads/imagenes/productos/${req.file.filename}`;
+    res.status(200).json({ url: imageUrl });
+  });
 };
-
-module.exports = { upload, uploadImage };

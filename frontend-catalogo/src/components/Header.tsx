@@ -1,8 +1,8 @@
 /* @jsxImportSource solid-js */
 const Header = () => {
   return (
-    <header>
-      <img src="logo.png" alt="Logo" />
+    <header class="header">
+      <h1>Catálogo Online</h1>
     </header>
   );
 };

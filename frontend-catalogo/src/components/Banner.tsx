@@ -1,10 +1,12 @@
 /* @jsxImportSource solid-js */
-const Header = () => {
-    return (
-      <header>
-        <img src="logo.png" alt="Logo" />
-      </header>
-    );
-  };
-  
-  export default Header;
+
+const Banner = () => {
+  return (
+    <div class="banner">
+      <h2>¡Bienvenido a nuestro catálogo online!</h2>
+      <p>Encuentra los mejores productos aquí.</p>
+    </div>
+  );
+};
+
+export default Banner;

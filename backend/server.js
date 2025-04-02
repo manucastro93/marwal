@@ -11,7 +11,7 @@ const clienteRoutes = require('./routes/clienteRoutes');
 const categoriaRoutes = require('./routes/categoriaRoutes');
 const paginaRoutes = require('./routes/paginaRoutes');
 const vendedorRoutes = require('./routes/vendedorRoutes');
-const imagenRoutes = require('./routes/imagenRoutes');
+const imagenRoutes = require('./routes/imagenRoutes'); 
 
 const app = express();
 
@@ -23,10 +23,19 @@ app.use(session({
   cookie: { secure: false } // Cambia a true si usas HTTPS
 }));
 
-
+const allowedOrigins = [
+  'http://localhost:8000',
+  'http://localhost:5000'
+];
 // Middlewares
 app.use(cors({
-  origin: 'http://localhost:8000', // Reemplaza con el origen de tu frontend
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }, // Reemplaza con el origen de tu frontend
   credentials: true // Permitir que las cookies se envíen a través de CORS
 }));
 

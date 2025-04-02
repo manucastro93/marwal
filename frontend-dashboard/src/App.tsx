@@ -30,7 +30,7 @@ const App = () => {
           
           {/* Ruta por defecto dentro de dashboard */}
           <Route path="/" component={() => {
-            window.location.href = "/home";
+            window.location.href = "/login";
             return null;
           }} />
 

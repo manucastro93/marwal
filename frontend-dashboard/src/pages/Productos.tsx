@@ -112,7 +112,7 @@ const Productos: Component = () => {
     const categoria = categorias().find(cat => cat.id === categoria_id);
     return categoria ? categoria.nombre : 'Desconocida';
   };
-
+  const url = 'http://localhost:3000';
   return (
     <Layout>
       <h1>Productos</h1>
@@ -138,7 +138,7 @@ const Productos: Component = () => {
             <th>Categoría</th>
             <th>Descripción</th>
             <th>Stock</th>
-            <th>Imágenes</th>
+            <th>Imagen</th> {/* Cambiado a singular */}
             <th>Acciones</th>
           </tr>
         </thead>
@@ -152,9 +152,9 @@ const Productos: Component = () => {
               <td>{producto.descripcion}</td>
               <td>{producto.stock}</td>
               <td>
-                {producto.imagenes?.map((url, index) => (
-                  <img src={url} alt={`Imagen ${index + 1}`} width="50" />
-                ))}
+                {producto.imagenes && producto.imagenes.length > 0 && (
+                  <img src={url + producto.imagenes[0].url} alt={`Imagen principal`} width="80" />
+                )}
               </td>
               <td>
                 <button onClick={() => { setEditProducto(producto); setIsEditModalOpen(true); }}>Editar</button>

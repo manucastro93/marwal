@@ -1,3 +1,11 @@
+export interface Imagen {
+  id: number;
+  producto_id: number;
+  url: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Producto {
   id: number;
   codigo: string;
@@ -6,6 +14,5 @@ export interface Producto {
   precio: number;
   categoria_id: number;
   stock?: number;
-  imagenes?: string[];
-  updatedAt?: string;
+  imagenes: Imagen[];
 }

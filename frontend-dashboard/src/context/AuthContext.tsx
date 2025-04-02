@@ -1,9 +1,11 @@
-import { createContext, createSignal, useContext, JSX } from 'solid-js';
+import { createContext, createSignal, useContext, JSX, onCleanup } from 'solid-js';
+import authService from '../services/authService';
 
 interface AuthContextProps {
   isAuthenticated: boolean;
   login: () => void;
   logout: () => void;
+  checkAuth: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
@@ -16,18 +18,30 @@ export const AuthProvider = (props: AuthProviderProps) => {
   const [isAuthenticated, setIsAuthenticated] = createSignal<boolean>(localStorage.getItem('token') !== null);
 
   const login = () => {
-    console.log("Logging in");
     setIsAuthenticated(true);
   };
 
   const logout = () => {
-    console.log("Logging out");
     setIsAuthenticated(false);
     localStorage.removeItem('token'); // Remover el token al cerrar sesión
   };
 
+  const checkAuth = async () => {
+    try {
+      await authService.getCurrentUser();
+      setIsAuthenticated(true);
+    } catch (error) {
+      setIsAuthenticated(false);
+    }
+  };
+
+  // Check authentication status on mount
+  onCleanup(() => {
+    checkAuth();
+  });
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated: isAuthenticated(), login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated: isAuthenticated(), login, logout, checkAuth }}>
       {props.children}
     </AuthContext.Provider>
   );

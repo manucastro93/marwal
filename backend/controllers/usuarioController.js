@@ -74,7 +74,60 @@ exports.logoutUsuario = async (req, res) => {
   }
 };
 
-// Búsqueda de usuarios por parámetro
+// Renovar token
+exports.renovarToken = async (req, res) => {
+  try {
+    const authorizationHeader = req.headers.authorization;
+    if (!authorizationHeader) {
+      return res.status(401).json({ error: 'No token provided' });
+    }
+
+    const token = authorizationHeader.split(' ')[1];
+    const decoded = jwt.verify(token, config.jwtSecret, { ignoreExpiration: true });
+    const user = await Usuario.findByPk(decoded.id);
+
+    if (!user) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+
+    const newToken = jwt.sign({ id: user.id, rol: user.rol }, config.jwtSecret, {
+      expiresIn: '1h',
+    });
+
+    res.json({ token: newToken });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Obtener usuario actual logueado
+exports.getCurrentUser = async (req, res) => {
+  try {
+    const authorizationHeader = req.headers.authorization;
+    if (!authorizationHeader) {
+      return res.status(401).json({ error: 'No token provided' });
+    }
+
+    const token = authorizationHeader.split(' ')[1];
+
+    try {
+      const decoded = jwt.verify(token, config.jwtSecret);
+      const user = await Usuario.findByPk(decoded.id, { attributes: { exclude: ['contraseña'] } });
+
+      if (!user) {
+        return res.status(404).json({ error: 'Usuario no encontrado' });
+      }
+
+      res.json(user);
+    } catch (err) {
+      return res.status(401).json({ error: 'Token inválido' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Buscar usuarios
 exports.buscarUsuarios = async (req, res) => {
   const { nombre, email, rol } = req.query;
 
@@ -88,62 +141,6 @@ exports.buscarUsuarios = async (req, res) => {
 
     res.status(200).json(usuarios);
   } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
-
-// Renovar token
-exports.renovarToken = async (req, res) => {
-  try {
-    const authorizationHeader = req.headers.authorization;
-    if (!authorizationHeader) {
-      return res.status(401).json({ error: 'No token provided' });
-    }
-
-    const token = authorizationHeader.split(' ')[1];
-    const decoded = jwt.verify(token, config.jwtSecret, { ignoreExpiration: true });
-    const user = await Usuario.findByPk(decoded.id);
-    
-    if (!user) {
-      return res.status(404).json({ error: 'Usuario no encontrado' });
-    }
-
-    const newToken = jwt.sign({ id: user.id, rol: user.rol }, config.jwtSecret, {
-      expiresIn: '1h',
-    });
-
-    res.json({ token: newToken });
-  } catch (error) {
-    //console.error('Error al renovar el token JWT:', error);
-    res.status(500).json({ error: error.message });
-  }
-};
-
-// Obtener usuario actual logueado
-exports.getCurrentUser = async (req, res) => {
-  try {
-    const authorizationHeader = req.headers.authorization;
-    if (!authorizationHeader) {
-      return res.status(401).json({ error: 'No token provided' });
-    }
-    
-    const token = authorizationHeader.split(' ')[1];
-
-    try {
-      const decoded = jwt.verify(token, config.jwtSecret);
-      const user = await Usuario.findByPk(decoded.id, { attributes: { exclude: ['contraseña'] } });
-
-      if (!user) {
-        return res.status(404).json({ error: 'Usuario no encontrado' });
-      }
-
-      res.json(user);
-    } catch (err) {
-      //console.error('Error al decodificar el token:', err);
-      return res.status(401).json({ error: 'Token inválido' });
-    }
-  } catch (error) {
-    //console.error('Error al validar el token JWT:', error);
     res.status(500).json({ error: error.message });
   }
 };

@@ -25,6 +25,9 @@ const authService = {
   },
   getCurrentUser: async (): Promise<any> => {
     const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error("No token found");
+    }
     try {
       const response = await axios.get(`${BASE_URL}/usuarios/current`, {
         headers: {
@@ -44,22 +47,20 @@ const authService = {
             withCredentials: true // Permitir que las cookies se envíen con las solicitudes
           });
           const newToken = newTokenResponse.data.token;
-          localStorage.setItem('token', newToken);
-          // Reintentar obtener el usuario actual con el nuevo token
-          const retryResponse = await axios.get(`${BASE_URL}/usuarios/current`, {
-            headers: {
-              Authorization: `Bearer ${newToken}`
-            },
-            withCredentials: true // Permitir que las cookies se envíen con las solicitudes
-          });
-          return retryResponse.data;
-        } else {
-          throw error;
+          if (newToken) {
+            localStorage.setItem('token', newToken);
+            // Reintentar obtener el usuario actual con el nuevo token
+            const retryResponse = await axios.get(`${BASE_URL}/usuarios/current`, {
+              headers: {
+                Authorization: `Bearer ${newToken}`
+              },
+              withCredentials: true // Permitir que las cookies se envíen con las solicitudes
+            });
+            return retryResponse.data;
+          }
         }
-      } else {
-        console.error("Error desconocido:", error);
-        throw error;
       }
+      throw error;
     }
   },
 };

@@ -24,7 +24,7 @@ const CheckoutForm = () => {
 
     await placePedido(pedido);
 
-    window.location.href = `https://wa.me/1234567890?text=Pedido%20de%20${nombre()}`;
+    window.location.href = `https://wa.me/1130544702?text=Pedido%20de%20${nombre()}`;
   };
 
   return (
