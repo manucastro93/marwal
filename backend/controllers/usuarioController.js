@@ -114,7 +114,7 @@ exports.renovarToken = async (req, res) => {
 
     res.json({ token: newToken });
   } catch (error) {
-    console.error('Error al renovar el token JWT:', error);
+    //console.error('Error al renovar el token JWT:', error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -139,11 +139,11 @@ exports.getCurrentUser = async (req, res) => {
 
       res.json(user);
     } catch (err) {
-      console.error('Error al decodificar el token:', err);
+      //console.error('Error al decodificar el token:', err);
       return res.status(401).json({ error: 'Token inválido' });
     }
   } catch (error) {
-    console.error('Error al validar el token JWT:', error);
+    //console.error('Error al validar el token JWT:', error);
     res.status(500).json({ error: error.message });
   }
 };

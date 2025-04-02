@@ -8,6 +8,7 @@ import Vendedores from './pages/Vendedores';
 import Pedidos from './pages/Pedidos';
 import Pagina from './pages/Pagina';
 import Home from './pages/Home';
+import Clientes from './pages/Clientes';
 import Notification from './components/Notification';
 
 const App = () => {
@@ -25,6 +26,7 @@ const App = () => {
           <Route path="/vendedores" component={() => <ProtectedRoute component={Vendedores} />} />
           <Route path="/pedidos" component={() => <ProtectedRoute component={Pedidos} />} />
           <Route path="/pagina" component={() => <ProtectedRoute component={Pagina} />} />
+          <Route path="/clientes" component={() => <ProtectedRoute component={Clientes} />} />
           
           {/* Ruta por defecto dentro de dashboard */}
           <Route path="/" component={() => {

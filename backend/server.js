@@ -26,7 +26,7 @@ app.use(session({
 
 // Middlewares
 app.use(cors({
-  origin: 'http://localhost:5000', // Reemplaza con el origen de tu frontend
+  origin: 'http://localhost:8000', // Reemplaza con el origen de tu frontend
   credentials: true // Permitir que las cookies se envíen a través de CORS
 }));
 

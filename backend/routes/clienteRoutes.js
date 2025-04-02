@@ -6,6 +6,6 @@ const authMiddleware = require('../middlewares/authMiddleware');
 router.post('/', authMiddleware, clienteController.crearCliente);
 router.put('/:id', authMiddleware, clienteController.modificarCliente);
 router.delete('/:id', authMiddleware, clienteController.eliminarCliente);
-router.get('/', authMiddleware, clienteController.obtenerClientes); // Ruta combinada para obtener clientes
+router.get('/', clienteController.obtenerClientes); // Ruta combinada para obtener clientes
 
 module.exports = router;

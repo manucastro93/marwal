@@ -1,0 +1,170 @@
+/* Variables de Colores */
+:root {
+  --primary-color: #d0d0d0;
+  --secondary-color: #2c3e50;
+  --text-color: #ecf0f1;
+  --background-color: #0000;
+  --button-color: #e74c3c;
+  --button-text-color: #ecf0f1;
+}
+
+/* Reset CSS */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Estilo Global */
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-size: 16px;
+  line-height: 1.6;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Header */
+header {
+  background-color: var(--primary-color);
+  color: var(--button-text-color);
+  padding: 20px;
+  text-align: center;
+  width: 100%;
+}
+
+header img {
+  max-width: 150px;
+}
+
+/* Banner */
+.banner {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+  width: 100%;
+}
+
+.banner img {
+  max-width: 100%;
+  height: auto;
+  margin: 0 10px;
+  border-radius: 10px;
+}
+
+/* Product List */
+/* Contenedor principal de los productos */
+.product-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px; /* Espacio entre productos */
+  justify-content: space-around;
+  padding: 20px;
+}
+
+/* Cada producto individual */
+.product-item {
+  background-color: #fff;
+  border-radius: 10px; /* Bordes redondeados */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra */
+  padding: 20px;
+  width: calc(33.333% - 20px); /* Tres columnas con espacio */
+  box-sizing: border-box;
+  transition: transform 0.3s;
+}
+
+.product-item:hover {
+  transform: translateY(-5px); /* Efecto al pasar el ratón */
+}
+
+/* Imagen del producto */
+.product-item img {
+  max-width: 100%;
+  border-radius: 10px 10px 0 0; /* Bordes redondeados en la parte superior */
+}
+
+/* Nombre del producto */
+.product-item h2 {
+  font-size: 1.5em;
+  margin: 10px 0;
+}
+
+/* Precio del producto */
+.product-item .price {
+  font-size: 1.2em;
+  color: #333;
+  margin-top: 10px;
+}
+
+/* Descripción del producto */
+.product-item p {
+  color: #555;
+}
+/* Cart Button */
+.cart-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: var(--button-color);
+  color: var(--button-text-color);
+  border: none;
+  padding: 15px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 24px;
+  transition: background-color 0.3s;
+}
+
+.cart-button:hover {
+  background-color: darken(var(--button-color), 10%);
+}
+
+.cart-details {
+  position: fixed;
+  bottom: 70px;
+  right: 20px;
+  background-color: var(--secondary-color);
+  border: 1px solid var(--primary-color);
+  border-radius: 10px;
+  padding: 20px;
+  width: 300px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.cart-details h2 {
+  margin-bottom: 10px;
+  color: var(--primary-color);
+}
+
+/* Checkout Form */
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+form input {
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid var(--primary-color);
+  border-radius: 5px;
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+form button {
+  background-color: var(--button-color);
+  color: var(--button-text-color);
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+form button:hover {
+  background-color: darken(var(--button-color), 10%);
+}

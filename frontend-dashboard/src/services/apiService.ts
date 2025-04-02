@@ -41,7 +41,6 @@ const apiService = {
   deleteProducto: async (id: number): Promise<void> => {
     await axios.delete(`${BASE_URL}/productos/${id}`);
   },
-
   uploadImage: async (image: File): Promise<string> => {
     const formData = new FormData();
     formData.append('image', image);
@@ -107,6 +106,11 @@ const apiService = {
   // Clientes
   getClientes: async (): Promise<Cliente[]> => {
     const response = await axios.get(`${BASE_URL}/clientes`);
+    console.log('Clientes:', response.data);
+    return response.data;
+  },
+  updateCliente: async (id: number, cliente: Cliente): Promise<Cliente> => {
+    const response = await axios.put(`${BASE_URL}/clientes/${id}`, cliente);
     return response.data;
   },
 
