@@ -1,6 +1,6 @@
 /* @jsxImportSource solid-js */
 import { createSignal } from "solid-js";
-import { placePedidoConDetalles } from "../services/PedidoService"; // Importar la nueva función
+import { placePedido, placePedidoConDetalles } from "../services/PedidoService"; // Importar las funciones necesarias
 import { saveCliente } from "../services/ClienteService";
 import { Pedido } from "../interfaces/Pedido";
 import { Cliente } from "../interfaces/Cliente";
@@ -53,15 +53,30 @@ const CheckoutForm = () => {
       return;
     }
 
-    // Crear los detalles del pedido
-    const detalles: DetallePedido[] = Object.values(carrito).map((item: any) => ({
+    // Crear los detalles del pedido sin el pedido_id
+    const detalles = Object.values(carrito).map((item: any) => ({
       producto_id: item.producto.id,
       cantidad: item.cantidad,
       precio: item.producto.precio,
     }));
 
     try {
-      await placePedidoConDetalles(pedido, detalles); // Guardar el pedido y los detalles del pedido
+      // Guardar el pedido y obtener el pedido_id
+      const savedPedido = await placePedido(pedido);
+
+      if (!savedPedido.id) {
+        throw new Error('Failed to save pedido: ID is not defined');
+      }
+
+      // Agregar pedido_id a cada detalle
+      const detallesConPedidoId: DetallePedido[] = detalles.map(detalle => ({
+        ...detalle,
+        pedido_id: savedPedido.id!
+      }));
+
+      // Guardar los detalles del pedido
+      await placePedidoConDetalles(savedPedido.id, detallesConPedidoId);
+
     } catch (error) {
       console.error("Error saving pedido:", error);
       alert("Error al guardar el pedido. Por favor, inténtelo de nuevo.");
@@ -73,6 +88,11 @@ const CheckoutForm = () => {
 
     // Abrir WhatsApp en una nueva ventana
     window.open(`https://wa.me/1130544702?text=Pedido%20de%20${nombre()}`, '_blank');
+
+    // Recargar la página después de un pequeño retraso para asegurarse de que el enlace de WhatsApp se abra
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
   };
 
   return (

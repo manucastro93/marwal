@@ -4,4 +4,5 @@ export interface Pedido {
   vendedor_id: number;
   estado?: 'Pendiente' | 'En Proceso' | 'Finalizado' | 'Rechazado';
   createdAt?: string;
+  updated_at?: string;
 }

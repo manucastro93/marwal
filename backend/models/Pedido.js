@@ -32,6 +32,11 @@ const Pedido = sequelize.define('pedido', {
     allowNull: false,
     field: 'created_at',
   },
+  updatedAt: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    field: 'updated_at',
+  }
 }, {
   tableName: 'pedidos',
   timestamps: true,

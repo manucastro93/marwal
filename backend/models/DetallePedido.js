@@ -36,10 +36,15 @@ const DetallePedido = sequelize.define('detallepedido', {
     allowNull: false,
     field: 'created_at',
   },
+  updatedAt: {
+    type: DataTypes.DATE,
+    allowNull: false,
+    field: 'updated_at',
+  },
 }, {
   tableName: 'detalles_pedidos',
   timestamps: true,
-  underscored: true,
+  underscored: true
 });
 
 DetallePedido.belongsTo(Pedido, { foreignKey: 'pedido_id' });

@@ -10,11 +10,10 @@ export const saveCliente = async (cliente: Cliente): Promise<Cliente> => {
     body: JSON.stringify(cliente)
   });
 
-  const savedCliente = await response.json();
-
-  if (!savedCliente.id) {
-    throw new Error('Failed to save client: ID is not defined');
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error || 'Failed to save client');
   }
 
-  return savedCliente;
+  return await response.json();
 };
