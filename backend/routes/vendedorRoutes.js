@@ -7,6 +7,7 @@ router.post('/', vendedorController.agregarVendedor);
 router.put('/:id', vendedorController.modificarVendedor);
 router.put('/:id/eliminar', vendedorController.eliminarVendedor);
 router.get('/', vendedorController.obtenerVendedores);
+router.get('/:id', vendedorController.obtenerVendedorPorId);
 router.get('/by-link/:link', vendedorController.obtenerVendedorPorLink);
 
 module.exports = router;

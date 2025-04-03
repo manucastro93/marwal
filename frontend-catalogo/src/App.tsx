@@ -1,10 +1,12 @@
 /* @jsxImportSource solid-js */
-import { createSignal, onMount } from "solid-js";
+import { createSignal, onMount, Show } from "solid-js";
 import Header from "./components/Header";
 import ProductList from "./components/ProductList";
 import CategoryList from "./components/CategoryList";
 import Banner from "./components/Banner";
 import CartButton from "./components/CartButton";
+import ProductSearch from "./components/ProductSearch";
+import ProductDetails from "./components/ProductDetails";
 import { Producto } from "./interfaces/Producto";
 import vendedorService from "./services/VendedorService";
 
@@ -12,9 +14,23 @@ const App = () => {
   const [selectedCategoryId, setSelectedCategoryId] = createSignal<number>(0);
   const [mostrarCarrito, setMostrarCarrito] = createSignal<boolean>(false);
   const [carrito, setCarrito] = createSignal<{ [id: string]: { producto: Producto, cantidad: number } }>(JSON.parse(localStorage.getItem('carrito') || '{}'));
+  const [searchQuery, setSearchQuery] = createSignal<string>("");
+  const [selectedProduct, setSelectedProduct] = createSignal<null | Producto>(null);
 
   const handleSelectCategory = (categoryId: number) => {
     setSelectedCategoryId(categoryId);
+  };
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+  };
+
+  const handleProductClick = (product: Producto) => {
+    setSelectedProduct(product);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedProduct(null);
   };
 
   onMount(() => {
@@ -51,23 +67,29 @@ const App = () => {
     <div class="home-container">
       <Header />
       <Banner />
+      <ProductSearch onSearch={handleSearch} />
       <div class="main-content">
         <CategoryList onSelectCategory={handleSelectCategory} activeCategoryId={selectedCategoryId()} />
         <div class="content">
-          <ProductList 
-            selectedCategoryId={selectedCategoryId()} 
-            carrito={carrito()} 
-            setCarrito={setCarrito} 
-            setMostrarCarrito={setMostrarCarrito} 
+          <ProductList
+            selectedCategoryId={selectedCategoryId()}
+            carrito={carrito()}
+            setCarrito={setCarrito}
+            setMostrarCarrito={setMostrarCarrito}
+            searchQuery={searchQuery()}
+            onProductDblClick={handleProductClick}
           />
         </div>
       </div>
-      <CartButton 
-        mostrarCarrito={mostrarCarrito} 
-        setMostrarCarrito={setMostrarCarrito} 
-        carrito={carrito} 
-        setCarrito={setCarrito} 
+      <CartButton
+        mostrarCarrito={mostrarCarrito}
+        setMostrarCarrito={setMostrarCarrito}
+        carrito={carrito}
+        setCarrito={setCarrito}
       />
+      <Show when={selectedProduct()} fallback={<></>}>
+        <ProductDetails product={selectedProduct() as Producto} onClose={handleCloseModal} />
+      </Show>
     </div>
   );
 };

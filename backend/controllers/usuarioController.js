@@ -1,7 +1,12 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const Usuario = require('../models/Usuario');
+const { Usuario } = require('../models');
 const config = require('../config/config');
+
+// Generar link único para vendedores
+const generateLink = () => {
+  return Math.random().toString(36).substring(2, 6);
+};
 
 // Registro de usuarios
 exports.registrarUsuario = async (req, res) => {

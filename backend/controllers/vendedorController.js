@@ -1,5 +1,4 @@
-const Usuario = require('../models/Usuario');
-const Cliente = require('../models/Cliente');
+const { Usuario } = require('../models');
 const bcrypt = require('bcrypt');
 const { generateLink } = require('../utils/generateLink');
 
@@ -110,6 +109,24 @@ exports.obtenerVendedorPorLink = async (req, res) => {
     res.status(200).json({ id: vendedor.id });
   } catch (error) {
     console.error('Error al obtener el vendedor por link:', error);
+    res.status(500).json({ error: 'Error al obtener el vendedor' });
+  }
+};
+
+// Obtener vendedor por ID
+exports.obtenerVendedorPorId = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const vendedor = await Usuario.findOne({ where: { id, rol: 'vendedor' } });
+
+    if (!vendedor) {
+      return res.status(404).json({ error: 'Vendedor no encontrado' });
+    }
+
+    res.status(200).json(vendedor);
+  } catch (error) {
+    console.error('Error al obtener el vendedor por ID:', error);
     res.status(500).json({ error: 'Error al obtener el vendedor' });
   }
 };

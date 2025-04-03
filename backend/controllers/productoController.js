@@ -1,6 +1,4 @@
-const Producto = require('../models/Producto');
-const ImagenProducto = require('../models/ImagenProducto');
-const { Sequelize } = require('sequelize');
+const { Producto, ImagenProducto, Sequelize } = require('../models');
 
 // Crear producto
 exports.crearProducto = async (req, res) => {

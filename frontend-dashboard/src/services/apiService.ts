@@ -122,8 +122,38 @@ const apiService = {
 
   // Pedidos
   getPedidos: async (): Promise<Pedido[]> => {
-    const response = await axios.get(`${BASE_URL_API}/pedidos`);
-    return response.data;
+    const response = await axios.get<Pedido[]>(`${BASE_URL_API}/pedidos`);
+    const pedidos = response.data; 
+
+    // Obtener los nombres de clientes y vendedores
+    for (const pedido of pedidos) {
+      const clienteResponse = await axios.get(`${BASE_URL_API}/clientes/${pedido.cliente_id}`);
+      pedido.cliente = clienteResponse.data.nombre;
+
+      const vendedorResponse = await axios.get(`${BASE_URL_API}/vendedores/${pedido.vendedor_id}`);
+      pedido.vendedor = vendedorResponse.data.nombre;
+    }
+
+    return pedidos;
+  },
+  getPedidoById: async (id: number): Promise<Pedido> => {
+    const response = await axios.get<Pedido>(`${BASE_URL_API}/pedidos/${id}`);
+    const pedido = response.data;
+
+    // Obtener los nombres de cliente y vendedor
+    const clienteId = pedido.cliente_id;
+    const vendedorId = pedido.vendedor_id;
+
+    const clienteResponse = await axios.get(`${BASE_URL_API}/clientes/${clienteId}`);
+    pedido.cliente = clienteResponse.data.nombre;
+
+    const vendedorResponse = await axios.get(`${BASE_URL_API}/vendedores/${vendedorId}`);
+    pedido.vendedor = vendedorResponse.data.nombre;
+
+    return pedido;
+  },
+  updatePedidoEstado: async (id: number, estado: string): Promise<void> => {
+    await axios.put(`${BASE_URL_API}/pedidos/${id}`, { estado });
   },
 
   // Página

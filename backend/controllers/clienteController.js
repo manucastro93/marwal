@@ -1,9 +1,8 @@
-const Cliente = require('../models/Cliente');
-const Usuario = require('../models/Usuario');
+const { Cliente, Usuario } = require('../models');
 
 // Crear o actualizar cliente
 exports.crearOActualizarCliente = async (req, res) => {
-  const { nombre, email, telefono, cuit_cuil, dirección, localidad, provincia, ip, vendedor_id } = req.body;
+  const { nombre, email, telefono, cuit_cuil, direccion, localidad, provincia, ip, vendedor_id } = req.body;
 
   if (!nombre || !email || !cuit_cuil) {
     return res.status(400).json({ error: 'Nombre, email y CUIT/CUIL son obligatorios' });
@@ -19,7 +18,7 @@ exports.crearOActualizarCliente = async (req, res) => {
         nombre,
         email,
         telefono,
-        dirección,
+        direccion,
         localidad,
         provincia,
         ip,
@@ -33,7 +32,7 @@ exports.crearOActualizarCliente = async (req, res) => {
         email,
         telefono,
         cuit_cuil,
-        dirección,
+        direccion,
         localidad,
         provincia,
         ip,
@@ -68,7 +67,7 @@ exports.obtenerClientePorIp = async (req, res) => {
 // Modificar cliente
 exports.modificarCliente = async (req, res) => {
   const { id } = req.params;
-  const { nombre, email, telefono, cuit_cuil, dirección, localidad, provincia, ip, vendedor_id } = req.body;
+  const { nombre, email, telefono, cuit_cuil, direccion, localidad, provincia, ip, vendedor_id } = req.body;
 
   if (!id) {
     return res.status(400).json({ error: 'ID del cliente es obligatorio' });
@@ -85,7 +84,7 @@ exports.modificarCliente = async (req, res) => {
       email,
       telefono,
       cuit_cuil,
-      dirección,
+      direccion,
       localidad,
       provincia,
       ip,

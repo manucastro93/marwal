@@ -6,6 +6,7 @@ const authMiddleware = require('../middlewares/authMiddleware');
 router.post('/', pedidoController.crearPedido);
 router.put('/:id', pedidoController.modificarEstadoPedido);
 router.get('/', pedidoController.obtenerPedidos);
+router.get('/:id', pedidoController.buscarPedidoById);
 router.post('/:pedidoId/detalles', pedidoController.agregarDetallesPedido);
 
 module.exports = router;

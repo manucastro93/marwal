@@ -1,4 +1,5 @@
 const { Sequelize } = require('sequelize');
+require('dotenv').config();
 
 // Configuración de la base de datos
 const sequelize = new Sequelize(

@@ -4,7 +4,7 @@ export interface Cliente {
     email: string;
     telefono: string;
     cuit_cuil: string;
-    dirección: string;
+    direccion: string;
     localidad: string;
     provincia: string;
     ip?: string;

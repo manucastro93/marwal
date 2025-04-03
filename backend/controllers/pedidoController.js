@@ -1,5 +1,4 @@
-const Pedido = require('../models/Pedido');
-const DetallePedido = require('../models/DetallePedido');
+const { Pedido, DetallePedido } = require('../models');
 const nodemailer = require('nodemailer');
 
 // Crear un pedido sin los detalles
@@ -85,6 +84,27 @@ exports.obtenerPedidos = async (req, res) => {
     res.status(200).json(pedidos);
   } catch (error) {
     console.error("Error fetching pedidos:", error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+// Buscar un pedido por ID
+exports.buscarPedidoById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const pedido = await Pedido.findByPk(id, {
+      include: [{ model: DetallePedido, as: 'detalles' }]
+    });
+
+    if (!pedido) {
+      return res.status(404).json({ error: 'Pedido no encontrado' });
+    }
+
+    console.log("Pedido encontrado:", pedido);
+    res.status(200).json(pedido);
+  } catch (error) {
+    console.error("Error fetching pedido:", error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };

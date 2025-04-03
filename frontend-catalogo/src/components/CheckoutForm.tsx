@@ -28,7 +28,7 @@ const CheckoutForm = () => {
       setEmail(cliente.email);
       setCuit(cliente.cuit_cuil);
       setTelefono(cliente.telefono);
-      setDireccion(cliente.dirección);
+      setDireccion(cliente.direccion);
       setLocalidad(cliente.localidad);
       setProvincia(cliente.provincia);
     }
@@ -49,7 +49,7 @@ const CheckoutForm = () => {
       email: email(),
       telefono: telefono(),
       cuit_cuil: cuit(),
-      dirección: direccion(),
+      direccion: direccion(),
       localidad: localidad(),
       provincia: provincia(),
       ip: ipAddress,

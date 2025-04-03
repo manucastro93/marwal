@@ -147,7 +147,7 @@ input[type="text"],
 input[type="number"],
 input[type="email"],
 input[type="password"],
-textarea, select{
+textarea, select {
   width: 100%;
   padding: 10px;
   margin-bottom: 10px;
@@ -351,6 +351,61 @@ table tr:nth-child(even) {
   border: 1px solid #ccc;
   padding: 20px;
   background-color: white;
+}
+
+/* PedidoDetalle Specific Styles */
+.pedido-detalle-container {
+  background: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.pedido-detalle-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.pedido-detalle-header h2 {
+  font-size: 24px;
+  color: #333;
+}
+
+/* Table */
+.pedido-detalle-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.pedido-detalle-table th,
+.pedido-detalle-table td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.pedido-detalle-table th {
+  background-color: #f4f4f4;
+}
+
+.pedido-detalle-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.print-button {
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  margin-top: 20px;
+}
+
+.print-button:hover {
+  background-color: #218838;
+  transform: translateY(-2px);
 }
 
 /* Responsive Design */
