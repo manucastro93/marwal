@@ -1,10 +1,10 @@
 /* @jsxImportSource solid-js */
-import { createSignal } from "solid-js";
-import { placePedido, placePedidoConDetalles } from "../services/PedidoService"; // Importar las funciones necesarias
-import { saveCliente } from "../services/ClienteService";
+import { createSignal, onMount } from "solid-js";
+import { placePedido, placePedidoConDetalles } from "../services/PedidoService";
+import { saveOrUpdateCliente, getClienteByIp } from "../services/ClienteService";
 import { Pedido } from "../interfaces/Pedido";
 import { Cliente } from "../interfaces/Cliente";
-import { DetallePedido } from "../interfaces/DetallePedido"; // Importar la interfaz DetallePedido
+import { DetallePedido } from "../interfaces/DetallePedido";
 
 const CheckoutForm = () => {
   const [nombre, setNombre] = createSignal('');
@@ -15,10 +15,35 @@ const CheckoutForm = () => {
   const [localidad, setLocalidad] = createSignal('');
   const [provincia, setProvincia] = createSignal('');
 
+  onMount(async () => {
+    // Obtener la IP real del cliente
+    const ipResponse = await fetch('https://api.ipify.org?format=json');
+    const ipData = await ipResponse.json();
+    const ipAddress = ipData.ip;
+
+    // Buscar los datos del cliente por IP
+    const cliente = await getClienteByIp(ipAddress);
+    if (cliente) {
+      setNombre(cliente.nombre);
+      setEmail(cliente.email);
+      setCuit(cliente.cuit_cuil);
+      setTelefono(cliente.telefono);
+      setDireccion(cliente.dirección);
+      setLocalidad(cliente.localidad);
+      setProvincia(cliente.provincia);
+    }
+  });
+
   const handleSubmit = async (event: Event) => {
     event.preventDefault();
     const vendedorId = localStorage.getItem('vendedorId');
 
+    // Obtener la IP real del cliente
+    const ipResponse = await fetch('https://api.ipify.org?format=json');
+    const ipData = await ipResponse.json();
+    const ipAddress = ipData.ip;
+
+    // Crear el cliente con la IP real
     const cliente: Cliente = {
       nombre: nombre(),
       email: email(),
@@ -27,16 +52,16 @@ const CheckoutForm = () => {
       dirección: direccion(),
       localidad: localidad(),
       provincia: provincia(),
-      ip: '192.168.1.1',
+      ip: ipAddress,
       vendedor_id: vendedorId ? parseInt(vendedorId) : null,
     };
 
-    const savedCliente = await saveCliente(cliente);
+    const savedCliente = await saveOrUpdateCliente(cliente);
 
     // Crear el pedido sin los detalles
     const pedido: Pedido = {
       cliente_id: savedCliente.id!,
-      vendedor_id: vendedorId ? parseInt(vendedorId) : 0, // Asignar 0 si es null
+      vendedor_id: vendedorId ? parseInt(vendedorId) : 0,
     };
 
     // Obtener el carrito desde el localStorage
@@ -77,6 +102,28 @@ const CheckoutForm = () => {
       // Guardar los detalles del pedido
       await placePedidoConDetalles(savedPedido.id, detallesConPedidoId);
 
+      // Enviar el pedido por correo electrónico
+      await fetch('/api/sendOrderEmail', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ pedido: savedPedido, detalles: detallesConPedidoId, cliente: savedCliente })
+      });
+
+      // Preparar el mensaje de WhatsApp
+      const mensajeWhatsApp = `Pedido de ${nombre()}:
+${detallesConPedidoId.map(detalle => `Producto ID: ${detalle.producto_id}, Cantidad: ${detalle.cantidad}, Precio: ${detalle.precio}`).join('\n')}
+Total: ${detallesConPedidoId.reduce((acc, detalle) => acc + detalle.precio * detalle.cantidad, 0)}`;
+
+      // Abrir WhatsApp en una nueva ventana
+      window.open(`https://wa.me/1130544702?text=${encodeURIComponent(mensajeWhatsApp)}`, '_blank');
+
+      // Recargar la página después de un pequeño retraso para asegurarse de que el enlace de WhatsApp se abra
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+
     } catch (error) {
       console.error("Error saving pedido:", error);
       alert("Error al guardar el pedido. Por favor, inténtelo de nuevo.");
@@ -85,14 +132,6 @@ const CheckoutForm = () => {
 
     // Limpiar el carrito después de enviar el pedido correctamente
     localStorage.removeItem('carrito');
-
-    // Abrir WhatsApp en una nueva ventana
-    window.open(`https://wa.me/1130544702?text=Pedido%20de%20${nombre()}`, '_blank');
-
-    // Recargar la página después de un pequeño retraso para asegurarse de que el enlace de WhatsApp se abra
-    setTimeout(() => {
-      window.location.reload();
-    }, 1000);
   };
 
   return (

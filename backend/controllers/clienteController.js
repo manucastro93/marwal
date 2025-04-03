@@ -1,8 +1,8 @@
 const Cliente = require('../models/Cliente');
 const Usuario = require('../models/Usuario');
 
-// Crear cliente
-exports.crearCliente = async (req, res) => {
+// Crear o actualizar cliente
+exports.crearOActualizarCliente = async (req, res) => {
   const { nombre, email, telefono, cuit_cuil, dirección, localidad, provincia, ip, vendedor_id } = req.body;
 
   if (!nombre || !email || !cuit_cuil) {
@@ -10,21 +10,58 @@ exports.crearCliente = async (req, res) => {
   }
 
   try {
-    const newCliente = await Cliente.create({
-      nombre,
-      email,
-      telefono,
-      cuit_cuil,
-      dirección,
-      localidad,
-      provincia,
-      ip,
-      vendedor_id,
-    });
-    res.status(201).json(newCliente);
+    // Buscar cliente por CUIT/CUIL
+    let cliente = await Cliente.findOne({ where: { cuit_cuil } });
+
+    if (cliente) {
+      // Si existe, actualizar el cliente
+      cliente = await cliente.update({
+        nombre,
+        email,
+        telefono,
+        dirección,
+        localidad,
+        provincia,
+        ip,
+        vendedor_id,
+      });
+      res.status(200).json(cliente);
+    } else {
+      // Si no existe, crear un nuevo cliente
+      cliente = await Cliente.create({
+        nombre,
+        email,
+        telefono,
+        cuit_cuil,
+        dirección,
+        localidad,
+        provincia,
+        ip,
+        vendedor_id,
+      });
+      res.status(201).json(cliente);
+    }
   } catch (error) {
-    console.error('Error al crear el cliente:', error);
-    res.status(500).json({ error: 'Error al crear el cliente' });
+    console.error('Error al crear o actualizar el cliente:', error);
+    res.status(500).json({ error: 'Error al crear o actualizar el cliente' });
+  }
+};
+
+// Buscar cliente por IP
+exports.obtenerClientePorIp = async (req, res) => {
+  const { ip } = req.params;
+
+  try {
+    const cliente = await Cliente.findOne({ where: { ip } });
+
+    if (!cliente) {
+      return res.status(404).json({ error: 'Cliente no encontrado' });
+    }
+
+    res.status(200).json(cliente);
+  } catch (error) {
+    console.error('Error al obtener el cliente:', error);
+    res.status(500).json({ error: 'Error al obtener el cliente' });
   }
 };
 

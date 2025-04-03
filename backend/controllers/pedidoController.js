@@ -1,5 +1,6 @@
 const Pedido = require('../models/Pedido');
 const DetallePedido = require('../models/DetallePedido');
+const nodemailer = require('nodemailer');
 
 // Crear un pedido sin los detalles
 exports.crearPedido = async (req, res) => {
@@ -85,5 +86,34 @@ exports.obtenerPedidos = async (req, res) => {
   } catch (error) {
     console.error("Error fetching pedidos:", error);
     res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+// Enviar pedido por correo electrónico
+exports.sendOrderEmail = async (req, res) => {
+  const { pedido, detalles, cliente } = req.body;
+
+  // Configurar el transportador de correo
+  const transporter = nodemailer.createTransport({
+    service: 'Gmail',
+    auth: {
+      user: 'tuemail@gmail.com',
+      pass: 'tucontraseña'
+    }
+  });
+
+  const mailOptions = {
+    from: 'marwal@gmail.com',
+    to: cliente.email,
+    subject: 'Detalles de tu pedido',
+    text: `Hola ${cliente.nombre},\n\nAquí están los detalles de tu pedido:\n\n${detalles.map(detalle => `Producto ID: ${detalle.producto_id}, Cantidad: ${detalle.cantidad}, Precio: ${detalle.precio}`).join('\n')}\n\nTotal: ${detalles.reduce((acc, detalle) => acc + detalle.precio * detalle.cantidad, 0)}`
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    res.status(200).json({ message: 'Correo enviado correctamente' });
+  } catch (error) {
+    console.error("Error sending email:", error);
+    res.status(500).json({ error: 'Error enviando el correo' });
   }
 };
