@@ -1,14 +1,7 @@
-import { Producto } from "./Producto";
-
 export interface Pedido {
-  nombre: string;
-  email: string;
-  cuit: string;
-  telefono: string;
-  direccion: string;
-  localidad: string;
-  provincia: string;
-  carrito: { [id: string]: { producto: Producto, cantidad: number } };
-  vendedorId: string;
-  ip: string;
+  id?: number;
+  cliente_id: number;
+  vendedor_id: number;
+  estado?: 'Pendiente' | 'En Proceso' | 'Finalizado' | 'Rechazado';
+  createdAt?: string;
 }

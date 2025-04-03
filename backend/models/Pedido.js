@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 const Usuario = require('./Usuario');
-const Producto = require('./Producto');
+const Cliente = require('./Cliente');
 
 const Pedido = sequelize.define('pedido', {
   id: {
@@ -9,48 +9,36 @@ const Pedido = sequelize.define('pedido', {
     autoIncrement: true,
     primaryKey: true,
   },
-  usuario_id: {
+  cliente_id: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: Cliente,
+      key: 'id',
+    },
+  },
+  vendedor_id: {
     type: DataTypes.INTEGER,
     references: {
       model: Usuario,
       key: 'id',
     },
   },
-  producto_id: {
-    type: DataTypes.INTEGER,
-    references: {
-      model: Producto,
-      key: 'id',
-    },
-  },
-  cantidad: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
   estado: {
-    type: DataTypes.STRING,
-    allowNull: false,
+    type: DataTypes.ENUM('Pendiente', 'En Proceso', 'Finalizado', 'Rechazado'),
+    defaultValue: 'Pendiente',
   },
   createdAt: {
     type: DataTypes.DATE,
     allowNull: false,
-    field: 'created_at', // Mapear al nombre de columna en la base de datos
-  },
-  updatedAt: {
-    type: DataTypes.DATE,
-    allowNull: false,
-    field: 'updated_at', // Mapear al nombre de columna en la base de datos
+    field: 'created_at',
   },
 }, {
-  tableName: 'pedidos', // Nombre de la tabla en minúsculas
+  tableName: 'pedidos',
   timestamps: true,
-  underscored: true, // Utilizar snake_case en lugar de camelCase
+  underscored: true,
 });
 
-// Definir la relación entre Pedido y Usuario
-Pedido.belongsTo(Usuario, { foreignKey: 'usuario_id' });
-
-// Definir la relación entre Pedido y Producto
-Pedido.belongsTo(Producto, { foreignKey: 'producto_id' });
+Pedido.belongsTo(Cliente, { foreignKey: 'cliente_id' });
+Pedido.belongsTo(Usuario, { foreignKey: 'vendedor_id' });
 
 module.exports = Pedido;

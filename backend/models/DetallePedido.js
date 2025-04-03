@@ -27,30 +27,22 @@ const DetallePedido = sequelize.define('detallepedido', {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  precio_unitario: {
+  precio: {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: false,
   },
   createdAt: {
     type: DataTypes.DATE,
     allowNull: false,
-    field: 'created_at', // Mapear al nombre de columna en la base de datos
-  },
-  updatedAt: {
-    type: DataTypes.DATE,
-    allowNull: false,
-    field: 'updated_at', // Mapear al nombre de columna en la base de datos
+    field: 'created_at',
   },
 }, {
-  tableName: 'detalles_pedidos', // Nombre de la tabla en minúsculas
+  tableName: 'detalles_pedidos',
   timestamps: true,
-  underscored: true, // Utilizar snake_case en lugar de camelCase
+  underscored: true,
 });
 
-// Definir la relación entre DetallePedido y Pedido
 DetallePedido.belongsTo(Pedido, { foreignKey: 'pedido_id' });
-
-// Definir la relación entre DetallePedido y Producto
 DetallePedido.belongsTo(Producto, { foreignKey: 'producto_id' });
 
 module.exports = DetallePedido;

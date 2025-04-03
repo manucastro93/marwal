@@ -1,7 +1,10 @@
 /* @jsxImportSource solid-js */
 import { createSignal } from "solid-js";
-import { placePedido } from "../services/PedidoService";
+import { placePedidoConDetalles } from "../services/PedidoService"; // Importar la nueva función
+import { saveCliente } from "../services/ClienteService";
 import { Pedido } from "../interfaces/Pedido";
+import { Cliente } from "../interfaces/Cliente";
+import { DetallePedido } from "../interfaces/DetallePedido"; // Importar la interfaz DetallePedido
 
 const CheckoutForm = () => {
   const [nombre, setNombre] = createSignal('');
@@ -15,22 +18,61 @@ const CheckoutForm = () => {
   const handleSubmit = async (event: Event) => {
     event.preventDefault();
     const vendedorId = localStorage.getItem('vendedorId');
-    const pedido: Pedido = {
+
+    const cliente: Cliente = {
       nombre: nombre(),
       email: email(),
-      cuit: cuit(),
       telefono: telefono(),
-      direccion: direccion(),
+      cuit_cuil: cuit(),
+      dirección: direccion(),
       localidad: localidad(),
       provincia: provincia(),
-      carrito: JSON.parse(localStorage.getItem('carrito') || '[]'),
-      vendedorId: vendedorId || '',
-      ip: '192.168.1.1'  // Placeholder para la IP del cliente
+      ip: '192.168.1.1',
+      vendedor_id: vendedorId ? parseInt(vendedorId) : null,
     };
 
-    await placePedido(pedido);
+    const savedCliente = await saveCliente(cliente);
 
-    window.location.href = `https://wa.me/1130544702?text=Pedido%20de%20${nombre()}`;
+    // Crear el pedido sin los detalles
+    const pedido: Pedido = {
+      cliente_id: savedCliente.id!,
+      vendedor_id: vendedorId ? parseInt(vendedorId) : 0, // Asignar 0 si es null
+    };
+
+    // Obtener el carrito desde el localStorage
+    let carrito = {};
+    try {
+      carrito = JSON.parse(localStorage.getItem('carrito') || '{}');
+      console.log('Parsed carrito:', carrito);
+      if (typeof carrito !== 'object' || carrito === null) {
+        throw new Error("Carrito is not an object");
+      }
+    } catch (error) {
+      console.error("Error parsing carrito from localStorage:", error);
+      alert("Error al procesar el carrito. Por favor, inténtelo de nuevo.");
+      return;
+    }
+
+    // Crear los detalles del pedido
+    const detalles: DetallePedido[] = Object.values(carrito).map((item: any) => ({
+      producto_id: item.producto.id,
+      cantidad: item.cantidad,
+      precio: item.producto.precio,
+    }));
+
+    try {
+      await placePedidoConDetalles(pedido, detalles); // Guardar el pedido y los detalles del pedido
+    } catch (error) {
+      console.error("Error saving pedido:", error);
+      alert("Error al guardar el pedido. Por favor, inténtelo de nuevo.");
+      return;
+    }
+
+    // Limpiar el carrito después de enviar el pedido correctamente
+    localStorage.removeItem('carrito');
+
+    // Abrir WhatsApp en una nueva ventana
+    window.open(`https://wa.me/1130544702?text=Pedido%20de%20${nombre()}`, '_blank');
   };
 
   return (
