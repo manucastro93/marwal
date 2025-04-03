@@ -25,11 +25,10 @@ const Clientes: Component = () => {
       });
   });
 
-
   const handleSaveEdit = (cliente: Cliente) => {
     apiService.updateCliente(cliente.id, cliente)
-      .then((response: any) => {
-        const updatedClientes = clientes().map(c => c.id === response.data.id ? response.data : c);
+      .then((updatedCliente: Cliente) => {
+        const updatedClientes = clientes().map(c => c.id === updatedCliente.id ? updatedCliente : c);
         setClientes(updatedClientes);
         setFilteredClientes(updatedClientes);
         showNotification('Cliente actualizado con éxito', 'success');
@@ -69,6 +68,13 @@ const Clientes: Component = () => {
               <th>ID</th>
               <th>Nombre</th>
               <th>Email</th>
+              <th>Teléfono</th>
+              <th>CUIT/CUIL</th>
+              <th>Dirección</th>
+              <th>Localidad</th>
+              <th>Provincia</th>
+              <th>IP</th>
+              <th>Vendedor</th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -97,6 +103,75 @@ const Clientes: Component = () => {
                   ) : (
                     cliente.email
                   )}
+                </td>
+                <td>
+                  {editCliente() && editCliente()!.id === cliente.id ? (
+                    <input 
+                      type="text" 
+                      value={editCliente()!.telefono} 
+                      onInput={(e) => setEditCliente({ ...editCliente()!, telefono: e.currentTarget.value })} 
+                    />
+                  ) : (
+                    cliente.telefono
+                  )}
+                </td>
+                <td>
+                  {editCliente() && editCliente()!.id === cliente.id ? (
+                    <input 
+                      type="text" 
+                      value={editCliente()!.cuit_cuil} 
+                      onInput={(e) => setEditCliente({ ...editCliente()!, cuit_cuil: e.currentTarget.value })} 
+                    />
+                  ) : (
+                    cliente.cuit_cuil
+                  )}
+                </td>
+                <td>
+                  {editCliente() && editCliente()!.id === cliente.id ? (
+                    <input 
+                      type="text" 
+                      value={editCliente()!.dirección} 
+                      onInput={(e) => setEditCliente({ ...editCliente()!, dirección: e.currentTarget.value })} 
+                    />
+                  ) : (
+                    cliente.dirección
+                  )}
+                </td>
+                <td>
+                  {editCliente() && editCliente()!.id === cliente.id ? (
+                    <input 
+                      type="text" 
+                      value={editCliente()!.localidad} 
+                      onInput={(e) => setEditCliente({ ...editCliente()!, localidad: e.currentTarget.value })} 
+                    />
+                  ) : (
+                    cliente.localidad
+                  )}
+                </td>
+                <td>
+                  {editCliente() && editCliente()!.id === cliente.id ? (
+                    <input 
+                      type="text" 
+                      value={editCliente()!.provincia} 
+                      onInput={(e) => setEditCliente({ ...editCliente()!, provincia: e.currentTarget.value })} 
+                    />
+                  ) : (
+                    cliente.provincia
+                  )}
+                </td>
+                <td>
+                  {editCliente() && editCliente()!.id === cliente.id ? (
+                    <input 
+                      type="text" 
+                      value={editCliente()!.ip} 
+                      onInput={(e) => setEditCliente({ ...editCliente()!, ip: e.currentTarget.value })} 
+                    />
+                  ) : (
+                    cliente.ip
+                  )}
+                </td>
+                <td>
+                  {cliente.vendedor ? cliente.vendedor.nombre : 'N/A'}
                 </td>
                 <td>
                   {editCliente() && editCliente()!.id === cliente.id ? (

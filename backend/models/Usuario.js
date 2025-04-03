@@ -29,13 +29,17 @@ const Usuario = sequelize.define('Usuario', {
     allowNull: false,
   },
   rol: {
-    type: DataTypes.ENUM('supremo', 'administrador', 'vendedor'),
+    type: DataTypes.STRING,
     allowNull: false,
   },
   link: {
     type: DataTypes.CHAR(4),
     unique: true,
   },
+  estado: {
+    type: DataTypes.STRING,
+    allowNull: false
+    },
   createdAt: {
     type: DataTypes.DATE,
     allowNull: false,

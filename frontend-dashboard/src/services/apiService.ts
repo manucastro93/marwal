@@ -1,22 +1,23 @@
 import axios from 'axios';
-import { BASE_URL } from '../config';
+import { BASE_URL_API } from '../config';
 import { Producto } from '../interfaces/Producto';
 import { Cliente } from '../interfaces/Cliente';
 import { Administrador } from '../interfaces/Administrador';
 import { Categoria } from '../interfaces/Categoria';
 import { Pedido } from '../interfaces/Pedido';
 import { Vendedor } from '../interfaces/Vendedor';
-import { Pagina } from '../interfaces/Pagina';
+import { Banner } from '../interfaces/Pagina';
+import { Logo } from '../interfaces/Pagina';
 
 const apiService = {
   // Productos
   getProductos: async (): Promise<Producto[]> => {
-    const response = await axios.get(`${BASE_URL}/productos`);
+    const response = await axios.get(`${BASE_URL_API}/productos`);
     return response.data;
   },
   createProducto: async (producto: Producto): Promise<Producto> => {
     try {
-      const response = await axios.post(`${BASE_URL}/productos`, producto);
+      const response = await axios.post(`${BASE_URL_API}/productos`, producto);
       return response.data;
     } catch (error: any) {
       if (error.response && error.response.data && error.response.data.error) {
@@ -28,7 +29,7 @@ const apiService = {
   },
   updateProducto: async (id: number, producto: Producto): Promise<Producto> => {
     try {
-      const response = await axios.put(`${BASE_URL}/productos/${id}`, producto);
+      const response = await axios.put(`${BASE_URL_API}/productos/${id}`, producto);
       return response.data;
     } catch (error: any) {
       if (error.response && error.response.data && error.response.data.error) {
@@ -39,12 +40,12 @@ const apiService = {
     }
   },
   deleteProducto: async (id: number): Promise<void> => {
-    await axios.delete(`${BASE_URL}/productos/${id}`);
+    await axios.delete(`${BASE_URL_API}/productos/${id}`);
   },
   uploadImage: async (image: File): Promise<string> => {
     const formData = new FormData();
     formData.append('image', image);
-    const response = await axios.post(`${BASE_URL}/images/upload`, formData, {
+    const response = await axios.post(`${BASE_URL_API}/images/upload`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
@@ -54,79 +55,111 @@ const apiService = {
 
   // Categorías
   getCategorias: async (): Promise<Categoria[]> => {
-    const response = await axios.get(`${BASE_URL}/categorias`);
+    const response = await axios.get(`${BASE_URL_API}/categorias`);
     return response.data;
   },
   createCategoria: async (categoria: Categoria): Promise<Categoria> => {
-    const response = await axios.post(`${BASE_URL}/categorias`, categoria);
+    const response = await axios.post(`${BASE_URL_API}/categorias`, categoria);
     return response.data;
   },
   updateCategoria: async (id: number, categoria: Categoria): Promise<Categoria> => {
-    const response = await axios.put(`${BASE_URL}/categorias/${id}`, categoria);
+    const response = await axios.put(`${BASE_URL_API}/categorias/${id}`, categoria);
     return response.data;
   },
   deleteCategoria: async (id: number): Promise<void> => {
-    await axios.delete(`${BASE_URL}/categorias/${id}`);
+    await axios.delete(`${BASE_URL_API}/categorias/${id}`);
   },
 
   // Vendedores
   getVendedores: async (): Promise<Vendedor[]> => {
-    const response = await axios.get(`${BASE_URL}/vendedores`);
-    return response.data;
+    try {
+      const response = await axios.get(`${BASE_URL_API}/vendedores`);
+      console.log('Respuesta de la API:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error en getVendedores:', error);
+      throw error;
+    }
   },
   createVendedor: async (vendedor: Vendedor): Promise<Vendedor> => {
-    const response = await axios.post(`${BASE_URL}/vendedores`, vendedor);
+    const response = await axios.post(`${BASE_URL_API}/vendedores`, vendedor);
     return response.data;
   },
   updateVendedor: async (id: number, vendedor: Vendedor): Promise<Vendedor> => {
-    const response = await axios.put(`${BASE_URL}/vendedores/${id}`, vendedor);
+    const response = await axios.put(`${BASE_URL_API}/vendedores/${id}`, vendedor);
     return response.data;
   },
   deleteVendedor: async (id: number): Promise<void> => {
-    await axios.delete(`${BASE_URL}/vendedores/${id}`);
+    await axios.put(`${BASE_URL_API}/vendedores/${id}/eliminar`);
   },
 
   // Administradores
   getAdministradores: async (): Promise<Administrador[]> => {
-    const response = await axios.get(`${BASE_URL}/administradores`);
+    const response = await axios.get(`${BASE_URL_API}/administradores`);
     return response.data;
   },
   createAdministrador: async (administrador: Administrador): Promise<Administrador> => {
-    const response = await axios.post(`${BASE_URL}/administradores`, administrador);
+    const response = await axios.post(`${BASE_URL_API}/administradores`, administrador);
     return response.data;
   },
   updateAdministrador: async (id: number, administrador: Administrador): Promise<Administrador> => {
-    const response = await axios.put(`${BASE_URL}/administradores/${id}`, administrador);
+    const response = await axios.put(`${BASE_URL_API}/administradores/${id}`, administrador);
     return response.data;
   },
   deleteAdministrador: async (id: number): Promise<void> => {
-    await axios.delete(`${BASE_URL}/administradores/${id}`);
+    await axios.delete(`${BASE_URL_API}/administradores/${id}`);
   },
 
   // Clientes
   getClientes: async (): Promise<Cliente[]> => {
-    const response = await axios.get(`${BASE_URL}/clientes`);
-    console.log('Clientes:', response.data);
+    const response = await axios.get(`${BASE_URL_API}/clientes`);
     return response.data;
   },
   updateCliente: async (id: number, cliente: Cliente): Promise<Cliente> => {
-    const response = await axios.put(`${BASE_URL}/clientes/${id}`, cliente);
+    const response = await axios.put(`${BASE_URL_API}/clientes/${id}`, cliente);
     return response.data;
   },
 
   // Pedidos
   getPedidos: async (): Promise<Pedido[]> => {
-    const response = await axios.get(`${BASE_URL}/pedidos`);
+    const response = await axios.get(`${BASE_URL_API}/pedidos`);
     return response.data;
   },
 
   // Página
-  getPagina: async (): Promise<Pagina> => {
-    const response = await axios.get(`${BASE_URL}/pagina`);
+  getBanners: async (): Promise<Banner[]> => {
+    const response = await axios.get(`${BASE_URL_API}/pagina/banners`);
     return response.data;
   },
-  updatePagina: async (pagina: Pagina): Promise<Pagina> => {
-    const response = await axios.put(`${BASE_URL}/pagina`, pagina);
+  createBanner: async (banner: FormData): Promise<Banner> => {
+    const response = await axios.post(`${BASE_URL_API}/pagina/banners`, banner, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    return response.data;
+  },
+  updateBanner: async (id: number, banner: FormData): Promise<Banner> => {
+    const response = await axios.put(`${BASE_URL_API}/pagina/banners/${id}`, banner, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    return response.data;
+  },
+  deleteBanner: async (id: number): Promise<void> => {
+    await axios.delete(`${BASE_URL_API}/pagina/banners/${id}`);
+  },
+  getLogo: async (): Promise<Logo> => {
+    const response = await axios.get(`${BASE_URL_API}/pagina/logo`);
+    return response.data;
+  },
+  createOrUpdateLogo: async (logo: FormData): Promise<Logo> => {
+    const response = await axios.post(`${BASE_URL_API}/pagina/logo`, logo, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
     return response.data;
   }
 };

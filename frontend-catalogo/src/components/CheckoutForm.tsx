@@ -8,6 +8,9 @@ const CheckoutForm = () => {
   const [email, setEmail] = createSignal('');
   const [cuit, setCuit] = createSignal('');
   const [telefono, setTelefono] = createSignal('');
+  const [direccion, setDireccion] = createSignal('');
+  const [localidad, setLocalidad] = createSignal('');
+  const [provincia, setProvincia] = createSignal('');
 
   const handleSubmit = async (event: Event) => {
     event.preventDefault();
@@ -17,6 +20,9 @@ const CheckoutForm = () => {
       email: email(),
       cuit: cuit(),
       telefono: telefono(),
+      direccion: direccion(),
+      localidad: localidad(),
+      provincia: provincia(),
       carrito: JSON.parse(localStorage.getItem('carrito') || '[]'),
       vendedorId: vendedorId || '',
       ip: '192.168.1.1'  // Placeholder para la IP del cliente
@@ -33,6 +39,9 @@ const CheckoutForm = () => {
       <input type="email" placeholder="Email" value={email()} onInput={(e) => setEmail((e.target as HTMLInputElement).value)} required />
       <input type="text" placeholder="CUIT o CUIL" value={cuit()} onInput={(e) => setCuit((e.target as HTMLInputElement).value)} required />
       <input type="text" placeholder="Teléfono" value={telefono()} onInput={(e) => setTelefono((e.target as HTMLInputElement).value)} required />
+      <input type="text" placeholder="Dirección" value={direccion()} onInput={(e) => setDireccion((e.target as HTMLInputElement).value)} required />
+      <input type="text" placeholder="Localidad" value={localidad()} onInput={(e) => setLocalidad((e.target as HTMLInputElement).value)} required />
+      <input type="text" placeholder="Provincia" value={provincia()} onInput={(e) => setProvincia((e.target as HTMLInputElement).value)} required />
       <button type="submit">Finalizar Pedido</button>
     </form>
   );

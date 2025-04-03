@@ -1,25 +1,18 @@
-import { Component, createSignal, onMount } from 'solid-js';
-import { showNotification } from '../components/Notification';
-import { Pagina as PaginaInterface } from '../interfaces/Pagina';
-import apiService from '../services/apiService';
+import Layout from '../components/Layout';
+import Banners from '../components/Banners';
+import Logo from '../components/Logo';
 
-const Pagina: Component = () => {
-  const [pagina, setPagina] = createSignal<PaginaInterface | null>(null);
-
-  onMount(() => {
-    apiService.getPagina()
-      .then(response => setPagina(response.data))
-      .catch(error => {
-        console.error('Error al obtener la página:', error);
-        showNotification('Error al obtener la página', 'error');
-      });
-  });
-
+const Pagina = () => {
   return (
-    <div>
-      <h1>Página</h1>
-      {pagina() ? <div>{pagina()!.contenido}</div> : <p>Cargando...</p>}
-    </div>
+    <Layout>
+      <div>
+        <h1>Página</h1>
+        <div>
+          <Banners />
+          <Logo />
+        </div>
+      </div>
+    </Layout>
   );
 };
 

@@ -2,6 +2,7 @@ import { Component, createSignal } from 'solid-js';
 import { showNotification } from '../components/Notification';
 import { Imagen } from '../interfaces/Producto';
 import apiService from '../services/apiService';
+import { BASE_URL } from '../config';
 
 interface ImageUploadProps {
   onImagesChange: (images: Imagen[]) => void;
@@ -11,7 +12,7 @@ interface ImageUploadProps {
 
 const ImageUpload: Component<ImageUploadProps> = (props) => {
   const [images, setImages] = createSignal<Imagen[]>(props.initialImages || []);
-  const BASE_URL = 'http://localhost:3000';
+  //const BASE_URL = 'http://localhost:3000';
 
   const handleImageUpload = async (event: Event) => {
     const files = (event.target as HTMLInputElement).files;

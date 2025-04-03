@@ -3,9 +3,10 @@ const router = express.Router();
 const clienteController = require('../controllers/clienteController');
 const authMiddleware = require('../middlewares/authMiddleware');
 
-router.post('/', authMiddleware, clienteController.crearCliente);
-router.put('/:id', authMiddleware, clienteController.modificarCliente);
-router.delete('/:id', authMiddleware, clienteController.eliminarCliente);
-router.get('/', clienteController.obtenerClientes); // Ruta combinada para obtener clientes
+router.post('/', clienteController.crearCliente);
+router.put('/:id', clienteController.modificarCliente);
+router.delete('/:id', clienteController.eliminarCliente);
+router.get('/', clienteController.obtenerClientes);
+router.get('/clientes/:id', clienteController.obtenerClientePorId);
 
 module.exports = router;

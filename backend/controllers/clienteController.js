@@ -1,28 +1,41 @@
 const Cliente = require('../models/Cliente');
+const Usuario = require('../models/Usuario');
 
 // Crear cliente
 exports.crearCliente = async (req, res) => {
-  const { nombre, email, cuit_cuil, ip, vendedor_id } = req.body;
+  const { nombre, email, telefono, cuit_cuil, dirección, localidad, provincia, ip, vendedor_id } = req.body;
+
+  if (!nombre || !email || !cuit_cuil) {
+    return res.status(400).json({ error: 'Nombre, email y CUIT/CUIL son obligatorios' });
+  }
 
   try {
     const newCliente = await Cliente.create({
       nombre,
       email,
+      telefono,
       cuit_cuil,
+      dirección,
+      localidad,
+      provincia,
       ip,
       vendedor_id,
     });
-
     res.status(201).json(newCliente);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Error al crear el cliente:', error);
+    res.status(500).json({ error: 'Error al crear el cliente' });
   }
 };
 
 // Modificar cliente
 exports.modificarCliente = async (req, res) => {
   const { id } = req.params;
-  const { nombre, email, cuit_cuil, ip, vendedor_id } = req.body;
+  const { nombre, email, telefono, cuit_cuil, dirección, localidad, provincia, ip, vendedor_id } = req.body;
+
+  if (!id) {
+    return res.status(400).json({ error: 'ID del cliente es obligatorio' });
+  }
 
   try {
     const cliente = await Cliente.findByPk(id);
@@ -30,23 +43,32 @@ exports.modificarCliente = async (req, res) => {
       return res.status(404).json({ error: 'Cliente no encontrado' });
     }
 
-    await cliente.update({
+    const updatedCliente = await cliente.update({
       nombre,
       email,
+      telefono,
       cuit_cuil,
+      dirección,
+      localidad,
+      provincia,
       ip,
       vendedor_id,
     });
 
-    res.status(200).json(cliente);
+    res.status(200).json(updatedCliente);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Error al modificar el cliente:', error);
+    res.status(500).json({ error: 'Error al modificar el cliente' });
   }
 };
 
 // Eliminar cliente
 exports.eliminarCliente = async (req, res) => {
   const { id } = req.params;
+
+  if (!id) {
+    return res.status(400).json({ error: 'ID del cliente es obligatorio' });
+  }
 
   try {
     const cliente = await Cliente.findByPk(id);
@@ -57,7 +79,8 @@ exports.eliminarCliente = async (req, res) => {
     await cliente.destroy();
     res.status(204).send();
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Error al eliminar el cliente:', error);
+    res.status(500).json({ error: 'Error al eliminar el cliente' });
   }
 };
 
@@ -72,10 +95,41 @@ exports.obtenerClientes = async (req, res) => {
     if (cuit_cuil) where.cuit_cuil = cuit_cuil;
     if (vendedor_id) where.vendedor_id = vendedor_id;
 
-    const clientes = await Cliente.findAll({ where });
-
+    const clientes = await Cliente.findAll({
+      where,
+      include: {
+        model: Usuario,
+        as: 'vendedor',
+        attributes: ['id', 'nombre', 'email'], // Asegúrate de seleccionar los campos necesarios del vendedor
+      },
+    });
     res.status(200).json(clientes);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Error al obtener los clientes:', error);
+    res.status(500).json({ error: 'Error al obtener los clientes' });
+  }
+};
+
+// Obtener cliente por ID
+exports.obtenerClientePorId = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const cliente = await Cliente.findByPk(id, {
+      include: {
+        model: Usuario,
+        as: 'vendedor',
+        attributes: ['id', 'nombre', 'email'], // Asegúrate de seleccionar los campos necesarios del vendedor
+      },
+    });
+
+    if (!cliente) {
+      return res.status(404).json({ error: 'Cliente no encontrado' });
+    }
+
+    res.status(200).json(cliente);
+  } catch (error) {
+    console.error('Error al obtener el cliente:', error);
+    res.status(500).json({ error: 'Error al obtener el cliente' });
   }
 };

@@ -1,7 +1,7 @@
-const crypto = require('crypto');
+function generateLink() {
+  return Math.random().toString(36).substring(2, 6);
+}
 
-const generateLink = (length = 2) => {
-  return crypto.randomBytes(length).toString('hex');
+module.exports = {
+  generateLink,
 };
-
-module.exports = generateLink;

@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 const Usuario = require('./Usuario');
-// 
+
 const Cliente = sequelize.define('cliente', {
   id: {
     type: DataTypes.INTEGER,
@@ -9,43 +9,63 @@ const Cliente = sequelize.define('cliente', {
     primaryKey: true,
   },
   nombre: {
-    type: DataTypes.STRING,
+    type: DataTypes.STRING(100),
     allowNull: false,
   },
   email: {
-    type: DataTypes.STRING,
+    type: DataTypes.STRING(100),
     allowNull: false,
     unique: true,
   },
   telefono: {
-    type: DataTypes.STRING,
+    type: DataTypes.STRING(30),
+    allowNull: false,
   },
-  direccion: {
-    type: DataTypes.STRING,
+  cuit_cuil: {
+    type: DataTypes.STRING(20),
+    allowNull: false,
+    unique: true,
+  },
+  dirección: {
+    type: DataTypes.STRING(200),
+    allowNull: false,
+  },
+  localidad: {
+    type: DataTypes.STRING(200),
+    allowNull: false,
+  },
+  provincia: {
+    type: DataTypes.STRING(200),
+    allowNull: false,
   },
   ip: {
-    type: DataTypes.STRING,
+    type: DataTypes.STRING(45),
+    allowNull: true,
   },
   vendedor_id: {
-    type: DataTypes.NUMBER,
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    references: {
+      model: 'usuarios',
+      key: 'id',
+    },
   },
   createdAt: {
     type: DataTypes.DATE,
     allowNull: false,
-    field: 'created_at', // Mapear al nombre de columna en la base de datos
+    field: 'created_at',
   },
   updatedAt: {
     type: DataTypes.DATE,
     allowNull: false,
-    field: 'updated_at', // Mapear al nombre de columna en la base de datos
+    field: 'updated_at',
   },
 }, {
-  tableName: 'clientes', // Nombre de la tabla en minúsculas
+  tableName: 'clientes',
   timestamps: true,
-  underscored: true, // Utilizar snake_case en lugar de camelCase
+  underscored: true,
 });
 
-// Definir la relación entre Cliente y Usuario
-Cliente.belongsTo(Usuario, { foreignKey: 'vendedor_id' });
+Cliente.belongsTo(Usuario, { foreignKey: 'vendedor_id', as: 'vendedor' });
 
 module.exports = Cliente;

@@ -1,9 +1,9 @@
 import axios from 'axios';
-import { BASE_URL } from '../config';
+import { BASE_URL_API } from '../config';
 
 const authService = {
   login: async (usuario: string, contraseña: string): Promise<any> => {
-    const response = await axios.post(`${BASE_URL}/usuarios/login`, { usuario, contraseña }, {
+    const response = await axios.post(`${BASE_URL_API}/usuarios/login`, { usuario, contraseña }, {
       withCredentials: true // Permitir que las cookies se envíen con las solicitudes
     });
     const token = response.data.token;
@@ -14,7 +14,7 @@ const authService = {
   },
   logout: async (): Promise<any> => {
     const token = localStorage.getItem('token');
-    const response = await axios.post(`${BASE_URL}/usuarios/logout`, {}, {
+    const response = await axios.post(`${BASE_URL_API}/usuarios/logout`, {}, {
       headers: {
         Authorization: `Bearer ${token}`
       },
@@ -29,7 +29,7 @@ const authService = {
       throw new Error("No token found");
     }
     try {
-      const response = await axios.get(`${BASE_URL}/usuarios/current`, {
+      const response = await axios.get(`${BASE_URL_API}/usuarios/current`, {
         headers: {
           Authorization: `Bearer ${token}`
         },
@@ -40,7 +40,7 @@ const authService = {
       if (axios.isAxiosError(error)) {
         if (error.response && error.response.status === 401) {
           // Token expirado, intentar renovar
-          const newTokenResponse = await axios.post(`${BASE_URL}/usuarios/renovar-token`, {}, {
+          const newTokenResponse = await axios.post(`${BASE_URL_API}/usuarios/renovar-token`, {}, {
             headers: {
               Authorization: `Bearer ${token}`
             },
@@ -50,7 +50,7 @@ const authService = {
           if (newToken) {
             localStorage.setItem('token', newToken);
             // Reintentar obtener el usuario actual con el nuevo token
-            const retryResponse = await axios.get(`${BASE_URL}/usuarios/current`, {
+            const retryResponse = await axios.get(`${BASE_URL_API}/usuarios/current`, {
               headers: {
                 Authorization: `Bearer ${newToken}`
               },

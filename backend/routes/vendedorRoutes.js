@@ -3,9 +3,10 @@ const router = express.Router();
 const vendedorController = require('../controllers/vendedorController');
 const authMiddleware = require('../middlewares/authMiddleware');
 
-router.post('/', authMiddleware, vendedorController.agregarVendedor);
+router.post('/', vendedorController.agregarVendedor);
 router.put('/:id', vendedorController.modificarVendedor);
-router.delete('/:id', vendedorController.eliminarVendedor);
+router.put('/:id/eliminar', vendedorController.eliminarVendedor);
 router.get('/', vendedorController.obtenerVendedores);
+router.get('/by-link/:link', vendedorController.obtenerVendedorPorLink);
 
 module.exports = router;

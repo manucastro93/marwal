@@ -157,8 +157,8 @@ const Productos: Component = () => {
                 )}
               </td>
               <td>
-                <button onClick={() => { setEditProducto(producto); setIsEditModalOpen(true); }}>Editar</button>
-                <button style={{ 'background-color': 'red', color: 'white', float: 'right' }} onClick={() => handleDelete(producto.id)}>Eliminar</button>
+                <button class="btn btn-warning btn-sm" onClick={() => { setEditProducto(producto); setIsEditModalOpen(true); }}>Editar</button>
+                <button class="btn btn-danger btn-sm right" onClick={() => handleDelete(producto.id)}>Eliminar</button>
               </td>
             </tr>
           ))}

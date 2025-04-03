@@ -145,6 +145,8 @@ body {
 /* Inputs */
 input[type="text"],
 input[type="number"],
+input[type="email"],
+input[type="password"],
 textarea, select{
   width: 100%;
   padding: 10px;
@@ -174,6 +176,11 @@ button {
 button:hover {
   background-color: #0056b3;
   transform: translateY(-2px);
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
 
 /* Table */
@@ -225,6 +232,7 @@ table tr:nth-child(even) {
   background-color: #ccc;
   cursor: not-allowed;
 }
+
 .notification {
   position: fixed;
   top: 20px;
@@ -311,10 +319,12 @@ table tr:nth-child(even) {
 .image-container button:hover {
   background-color: rgba(255, 0, 0, 1);
 }
+
 .right {
   text-align: right;
   float: right;
 }
+
 /* Estilos para las pestañas */
 .tabs {
   display: flex;
@@ -342,6 +352,7 @@ table tr:nth-child(even) {
   padding: 20px;
   background-color: white;
 }
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .main-content {
@@ -382,4 +393,81 @@ table tr:nth-child(even) {
   .pagination button {
     padding: 0.25rem 0.5rem;
   }
+}
+
+/* Logo Styles */
+.logo-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px;
+}
+
+.logo-container h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.logo-container .btn {
+  background-color: #777;
+}
+
+.file-input {
+  margin-bottom: 10px;
+}
+
+.logo-image {
+  margin-top: 10px;
+  max-width: 200px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #333;
+  padding: 20px;
+}
+
+/* Banners Styles */
+.banners-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px;
+}
+
+.banners-container h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.banners-container .btn {
+  background-color: #777;
+}
+
+.banners-list {
+  list-style-type: none;
+  padding: 0;
+  width: 100%;
+}
+
+.banner-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+.banner-image {
+  max-width: 200px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.btn-delete {
+  background-color: #dc3545 !important;
+}
+
+.btn-delete:hover {
+  background-color: #c82333;
 }

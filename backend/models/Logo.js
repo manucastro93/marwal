@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-const Banner = sequelize.define('banner', {
+const Logo = sequelize.define('logo', {
   id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
@@ -22,9 +22,9 @@ const Banner = sequelize.define('banner', {
     field: 'updated_at', // Mapear al nombre de columna en la base de datos
   },
 }, {
-  tableName: 'banners', // Nombre de la tabla en minúsculas
+  tableName: 'logo', // Nombre de la tabla en minúsculas
   timestamps: true,
   underscored: true, // Utilizar snake_case en lugar de camelCase
 });
 
-module.exports = Banner;
+module.exports = Logo;

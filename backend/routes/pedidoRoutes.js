@@ -3,8 +3,8 @@ const router = express.Router();
 const pedidoController = require('../controllers/pedidoController');
 const authMiddleware = require('../middlewares/authMiddleware');
 
-router.post('/', authMiddleware, pedidoController.crearPedido);
-router.put('/:id', authMiddleware, pedidoController.modificarEstadoPedido);
-router.get('/', authMiddleware, pedidoController.obtenerPedidos);
+router.post('/', pedidoController.crearPedido);
+router.put('/:id', pedidoController.modificarEstadoPedido);
+router.get('/', pedidoController.obtenerPedidos);
 
 module.exports = router;

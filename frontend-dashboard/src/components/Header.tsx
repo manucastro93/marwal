@@ -7,7 +7,7 @@ const Header: Component = () => {
   onMount(async () => {
     try {
       const user = await authService.getCurrentUser();
-      setUsername(user.usuario); // Aquí se usa 'user.usuario' según el campo correcto
+      setUsername(user.usuario);
     } catch (error) {
       console.error("Error al obtener el usuario actual:", error);
     }
@@ -23,12 +23,14 @@ const Header: Component = () => {
   };
 
   return (
-    <header class="navbar navbar-expand-lg navbar-light bg-light">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="#">Panel Administrativo</a>
+    <header class="header">
+        <div class="logo">LOGO</div>
+        <div class="panel-admin">Panel Administrativo</div>
+        <div class="user-info">
+        <span class="username">{usuario()}</span>
         <button class="btn btn-outline-danger" type="button" onClick={handleLogout}>Cerrar Sesión</button>
-      </div>
-    </header>
+        </div>
+      </header>
   );
 };
 

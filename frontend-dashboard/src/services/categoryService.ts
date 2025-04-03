@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { Categoria } from '../interfaces/Categoria';
-import { BASE_URL } from '../config';
 
 const categoryService = {
   getAll: async (): Promise<Categoria[]> => {

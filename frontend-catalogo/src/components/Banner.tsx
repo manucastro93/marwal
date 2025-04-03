@@ -3,8 +3,7 @@
 const Banner = () => {
   return (
     <div class="banner">
-      <h2>¡Bienvenido a nuestro catálogo online!</h2>
-      <p>Encuentra los mejores productos aquí.</p>
+      <img src={'http://localhost:3000/uploads/imagenes/pagina/banners/1743631439151-DESKTOP_3.474e0a0c.png'} alt="Banner" />
     </div>
   );
 };
