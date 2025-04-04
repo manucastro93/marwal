@@ -9,7 +9,10 @@ import PedidoDetalle from '../components/PedidoDetalle';
 
 const Pedidos: Component = () => {
   const [pedidos, setPedidos] = createSignal<Pedido[]>([]);
+  const [vendedores, setVendedores] = createSignal<string[]>([]);
   const [searchTerm, setSearchTerm] = createSignal('');
+  const [selectedVendedor, setSelectedVendedor] = createSignal('');
+  const [selectedEstado, setSelectedEstado] = createSignal('');
   const [filteredPedidos, setFilteredPedidos] = createSignal<Pedido[]>([]);
   const [currentPage, setCurrentPage] = createSignal(1);
   const [startDate, setStartDate] = createSignal<Date | null>(null);
@@ -23,6 +26,8 @@ const Pedidos: Component = () => {
       .then(response => {
         setPedidos(response);
         setFilteredPedidos(response);
+        const uniqueVendedores = Array.from(new Set(response.map(pedido => pedido.vendedor)));
+        setVendedores(uniqueVendedores);
       })
       .catch(error => {
         console.error('Error al obtener los pedidos:', error);
@@ -33,22 +38,36 @@ const Pedidos: Component = () => {
   const handleSearch = (e: Event) => {
     const term = (e.currentTarget as HTMLInputElement).value;
     setSearchTerm(term);
-    filterPedidos(term, startDate(), endDate());
+    filterPedidos(term, startDate(), endDate(), selectedVendedor(), selectedEstado());
   };
 
   const handleDateChange = (start: Date | null, end: Date | null) => {
     setStartDate(start);
     setEndDate(end);
-    filterPedidos(searchTerm(), start, end);
+    filterPedidos(searchTerm(), start, end, selectedVendedor(), selectedEstado());
   };
 
-  const filterPedidos = (term: string, start: Date | null, end: Date | null) => {
+  const handleVendedorChange = (e: Event) => {
+    const vendedor = (e.currentTarget as HTMLSelectElement).value;
+    setSelectedVendedor(vendedor);
+    filterPedidos(searchTerm(), startDate(), endDate(), vendedor, selectedEstado());
+  };
+
+  const handleEstadoChange = (e: Event) => {
+    const estado = (e.currentTarget as HTMLSelectElement).value;
+    setSelectedEstado(estado);
+    filterPedidos(searchTerm(), startDate(), endDate(), selectedVendedor(), estado);
+  };
+
+  const filterPedidos = (term: string, start: Date | null, end: Date | null, vendedor: string, estado: string) => {
     const filtered = pedidos().filter(pedido => {
       const matchesTerm = pedido.cliente.toLowerCase().includes(term.toLowerCase()) ||
                           pedido.vendedor.toLowerCase().includes(term.toLowerCase());
       const matchesDate = (!start || new Date(pedido.createdAt) >= start) &&
                           (!end || new Date(pedido.createdAt) <= end);
-      return matchesTerm && matchesDate;
+      const matchesVendedor = !vendedor || pedido.vendedor === vendedor;
+      const matchesEstado = !estado || pedido.estado === estado;
+      return matchesTerm && matchesDate && matchesVendedor && matchesEstado;
     });
     setFilteredPedidos(filtered);
     setCurrentPage(1);
@@ -76,7 +95,7 @@ const Pedidos: Component = () => {
     setSelectedPedidoId(null);
   };
 
-  const handleEstadoChange = (pedidoId: number, nuevoEstado: string) => {
+  const handleEstadoChangePedido = (pedidoId: number, nuevoEstado: string) => {
     apiService.updatePedidoEstado(pedidoId, nuevoEstado)
       .then(() => {
         setPedidos(pedidos().map(pedido => 
@@ -94,13 +113,35 @@ const Pedidos: Component = () => {
     <Layout>
       <div>
         <h1>Pedidos</h1>
-        <div>
-          <h2>Buscar Pedido</h2>
-          <input type="text" placeholder="Buscar..." value={searchTerm()} onInput={handleSearch} />
-        </div>
-        <div>
-          <h2>Filtrar por Fecha</h2>
-          <DatePicker startDate={startDate()} endDate={endDate()} onDateChange={handleDateChange} />
+        <div class="filters-container">
+          <div class="filter-group">
+            <label>Buscar Pedido</label>
+            <input type="text" placeholder="Buscar..." value={searchTerm()} onInput={handleSearch} />
+          </div>
+          <div class="filter-group">
+            <label>Filtrar por Fecha</label>
+            <DatePicker startDate={startDate()} endDate={endDate()} onDateChange={handleDateChange} />
+          </div>
+          <div class="filter-group">
+            <label>Filtrar por Vendedor</label>
+            <select value={selectedVendedor()} onChange={handleVendedorChange}>
+              <option value="">Todos</option>
+              {vendedores().map(vendedor => (
+                <option value={vendedor}>{vendedor}</option>
+              ))}
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>Filtrar por Estado</label>
+            <select value={selectedEstado()} onChange={handleEstadoChange}>
+              <option value="">Todos</option>
+              <option value="Pendiente">Pendiente</option>
+              <option value="En Proceso">En Proceso</option>
+              <option value="Finalizado">Finalizado</option>
+              <option value="Rechazado">Rechazado</option>
+              <option value="Cancelado">Cancelado</option>
+            </select>
+          </div>
         </div>
         <table>
           <thead>
@@ -122,7 +163,7 @@ const Pedidos: Component = () => {
                 <td>
                   <select
                     value={pedido.estado}
-                    onChange={(e) => handleEstadoChange(pedido.id, e.currentTarget.value)}
+                    onChange={(e) => handleEstadoChangePedido(pedido.id, e.currentTarget.value)}
                   >
                     <option value="Pendiente">Pendiente</option>
                     <option value="En Proceso">En Proceso</option>

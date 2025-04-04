@@ -14,9 +14,12 @@ const Productos: Component = () => {
   const [editProducto, setEditProducto] = createSignal<Producto | null>(null);
   const [newProducto] = createSignal<Producto>({ id: 0, codigo: '', nombre: '', descripcion: '', precio: 0, categoria_id: 0, stock: 0, imagenes: [] });
   const [searchTerm, setSearchTerm] = createSignal('');
+  const [selectedCategoria, setSelectedCategoria] = createSignal('');
   const [currentPage, setCurrentPage] = createSignal(1);
   const [isModalOpen, setIsModalOpen] = createSignal(false);
   const [isEditModalOpen, setIsEditModalOpen] = createSignal(false);
+  const [sortColumn, setSortColumn] = createSignal('');
+  const [sortOrder, setSortOrder] = createSignal<'asc' | 'desc'>('asc');
   const itemsPerPage = 10;
 
   onMount(() => {
@@ -24,6 +27,7 @@ const Productos: Component = () => {
       .then((productos) => {
         setProductos(productos);
         setFilteredProductos(productos);
+        sortProductos(sortColumn(), sortOrder());
       })
       .catch((error) => {
         console.error('Error al obtener los productos:', error);
@@ -89,11 +93,49 @@ const Productos: Component = () => {
   const handleSearch = (e: Event) => {
     const value = (e.target as HTMLInputElement).value;
     setSearchTerm(value);
-    const filtered = productos().filter(producto =>
-      producto.nombre.toLowerCase().includes(value.toLowerCase())
-    );
+    filterProductos(value, selectedCategoria());
+  };
+
+  const handleCategoriaChange = (e: Event) => {
+    const categoria = (e.currentTarget as HTMLSelectElement).value;
+    setSelectedCategoria(categoria);
+    filterProductos(searchTerm(), categoria);
+  };
+
+  const handleSort = (column: string) => {
+    const newSortOrder = sortOrder() === 'asc' ? 'desc' : 'asc';
+    setSortColumn(column);
+    setSortOrder(newSortOrder);
+    sortProductos(column, newSortOrder);
+  };
+
+  const sortProductos = (column: string, order: 'asc' | 'desc') => {
+    const sorted = [...filteredProductos()].sort((a, b) => {
+      const valueA = a[column as keyof Producto];
+      const valueB = b[column as keyof Producto];
+
+      if (valueA === undefined || valueB === undefined) return 0;
+
+      if (valueA < valueB) {
+        return order === 'asc' ? -1 : 1;
+      }
+      if (valueA > valueB) {
+        return order === 'asc' ? 1 : -1;
+      }
+      return 0;
+    });
+    setFilteredProductos(sorted);
+  };
+
+  const filterProductos = (term: string, categoria: string) => {
+    const filtered = productos().filter(producto => {
+      const matchesTerm = producto.nombre.toLowerCase().includes(term.toLowerCase()) ||
+                          (producto.descripcion && producto.descripcion.toLowerCase().includes(term.toLowerCase()));
+      const matchesCategoria = !categoria || producto.categoria_id.toString() === categoria;
+      return matchesTerm && matchesCategoria;
+    });
     setFilteredProductos(filtered);
-    setCurrentPage(1); // Reset to first page on search
+    setCurrentPage(1);
   };
 
   const totalPages = () => Math.ceil(filteredProductos().length / itemsPerPage);
@@ -112,7 +154,16 @@ const Productos: Component = () => {
     const categoria = categorias().find(cat => cat.id === categoria_id);
     return categoria ? categoria.nombre : 'Desconocida';
   };
+
+  const getSortIndicator = (column: string) => {
+    if (sortColumn() === column) {
+      return sortOrder() === 'asc' ? ' ▲' : ' ▼';
+    }
+    return '';
+  };
+
   const url = 'http://localhost:3000';
+
   return (
     <Layout>
       <h1>Productos</h1>
@@ -125,20 +176,31 @@ const Productos: Component = () => {
           <ProductoForm initialProducto={editProducto()!} onSave={handleSaveEdit} onClose={() => setIsEditModalOpen(false)} />
         )}
       </Modal>
-      <div>
-        <h2>Buscar Producto</h2>
-        <input type="text" placeholder="Buscar..." value={searchTerm()} onInput={handleSearch} />
+      <div class="filters-container">
+        <div class="filter-group">
+          <label>Buscar Producto</label>
+          <input type="text" placeholder="Buscar..." value={searchTerm()} onInput={handleSearch} />
+        </div>
+        <div class="filter-group">
+          <label>Filtrar por Categoría</label>
+          <select value={selectedCategoria()} onChange={handleCategoriaChange}>
+            <option value="">Todas</option>
+            {categorias().map(categoria => (
+              <option value={categoria.id.toString()}>{categoria.nombre}</option>
+            ))}
+          </select>
+        </div>
       </div>
       <table>
         <thead>
           <tr>
-            <th>Código</th>
-            <th>Nombre</th>
-            <th>Precio</th>
-            <th>Categoría</th>
-            <th>Descripción</th>
-            <th>Stock</th>
-            <th>Imagen</th> {/* Cambiado a singular */}
+            <th onClick={() => handleSort('codigo')}>Código {getSortIndicator('codigo')}</th>
+            <th onClick={() => handleSort('nombre')}>Nombre {getSortIndicator('nombre')}</th>
+            <th onClick={() => handleSort('precio')}>Precio {getSortIndicator('precio')}</th>
+            <th onClick={() => handleSort('categoria_id')}>Categoría {getSortIndicator('categoria_id')}</th>
+            <th onClick={() => handleSort('descripcion')}>Descripción {getSortIndicator('descripcion')}</th>
+            <th onClick={() => handleSort('stock')}>Stock {getSortIndicator('stock')}</th>
+            <th>Imagen</th>
             <th>Acciones</th>
           </tr>
         </thead>
