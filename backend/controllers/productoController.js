@@ -1,4 +1,4 @@
-const { Producto, ImagenProducto, Sequelize } = require('../models');
+const { Producto, ImagenProducto, DetallePedido, Sequelize } = require('../models');
 
 // Crear producto
 exports.crearProducto = async (req, res) => {
@@ -40,6 +40,30 @@ exports.crearProducto = async (req, res) => {
     } else {
       res.status(500).json({ error: `Error al crear el producto - ${error.message}` });
     }
+  }
+};
+
+// Obtener métricas de productos
+exports.obtenerMetricasProductos = async (req, res) => {
+  try {
+    const productos = await Producto.findAll({
+      attributes: [
+        'nombre',
+        [Sequelize.fn('COUNT', Sequelize.col('detalles.pedido_id')), 'ventas'],
+        [Sequelize.fn('SUM', Sequelize.col('detalles.precio')), 'ingresos']
+      ],
+      include: [{
+        model: DetallePedido,
+        as: 'detalles',
+        attributes: []
+      }],
+      group: ['producto.id']
+    });
+
+    res.status(200).json(productos);
+  } catch (error) {
+    console.error('Error al obtener métricas de productos:', error);
+    res.status(500).json({ error: `Error al obtener métricas de productos - ${error.message}` });
   }
 };
 

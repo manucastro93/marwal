@@ -20,6 +20,11 @@ const CategoryList = (props: CategoryListProps) => {
     fetchCategories();
   });
 
+  const handleCategoryClick = (event: MouseEvent, categoryId: number) => {
+    event.preventDefault(); // Evita el comportamiento predeterminado del enlace
+    props.onSelectCategory(categoryId);
+  };
+
   return (
     <aside class="sidebar">
       <ul class="sidebar-list">
@@ -27,7 +32,7 @@ const CategoryList = (props: CategoryListProps) => {
           <a 
             class={`sidebar-link ${props.activeCategoryId === 0 ? 'active' : ''}`} 
             href="#"
-            onClick={() => props.onSelectCategory(0)}
+            onClick={(event) => handleCategoryClick(event, 0)}
           >
             Ver Todos
           </a>
@@ -37,7 +42,7 @@ const CategoryList = (props: CategoryListProps) => {
             <a 
               class={`sidebar-link ${props.activeCategoryId === category.id ? 'active' : ''}`} 
               href="#"
-              onClick={() => props.onSelectCategory(category.id)}
+              onClick={(event) => handleCategoryClick(event, category.id)}
             >
               {category.nombre}
             </a>

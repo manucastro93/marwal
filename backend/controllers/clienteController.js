@@ -1,4 +1,4 @@
-const { Cliente, Usuario } = require('../models');
+const { Cliente, Usuario, Pedido, Sequelize } = require('../models');
 
 // Crear o actualizar cliente
 exports.crearOActualizarCliente = async (req, res) => {
@@ -43,6 +43,29 @@ exports.crearOActualizarCliente = async (req, res) => {
   } catch (error) {
     console.error('Error al crear o actualizar el cliente:', error);
     res.status(500).json({ error: 'Error al crear o actualizar el cliente' });
+  }
+};
+
+// Obtener métricas de clientes
+exports.obtenerMetricasClientes = async (req, res) => {
+  try {
+    const clientes = await Cliente.findAll({
+      attributes: [
+        'id', 'nombre', // Asegúrate de incluir el ID del cliente
+        [Sequelize.fn('COUNT', Sequelize.col('pedidos.id')), 'pedidos'],
+        [Sequelize.fn('SUM', Sequelize.col('pedidos.total')), 'ingresos']
+      ],
+      include: [{
+        model: Pedido,
+        attributes: []
+      }],
+      group: ['cliente.id']
+    });
+
+    res.status(200).json(clientes);
+  } catch (error) {
+    console.error('Error al obtener métricas de clientes:', error);
+    res.status(500).json({ error: `Error al obtener métricas de clientes - ${error.message}` });
   }
 };
 

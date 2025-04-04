@@ -13,8 +13,8 @@ const Login = () => {
   const handleLogin = async () => {
     try {
       const response = await authService.login(usuario(), contraseña());
-      // Manejar la respuesta de autenticación
       console.log('Login exitoso:', response);
+      localStorage.setItem('token', response.token); // Guardar el token en localStorage
       login(); // Actualiza el estado de autenticación
       navigate('/home');
       console.log('Redireccionando a /home');
@@ -26,16 +26,18 @@ const Login = () => {
 
   return (
     <div class="container">
-      <h1>Login</h1>
-      <div class="mb-3">
-        <label for="usuario" class="form-label">Usuario</label>
-        <input type="text" class="form-control" id="usuario" onInput={(e) => setUsuario(e.currentTarget.value)} />
+      <div class="login-form">
+        <h1>Login</h1>
+        <div class="mb-3">
+          <label for="usuario" class="form-label">Usuario</label>
+          <input type="text" class="form-control" id="usuario" onInput={(e) => setUsuario(e.currentTarget.value)} />
+        </div>
+        <div class="mb-3">
+          <label for="contraseña" class="form-label">Contraseña</label>
+          <input type="password" class="form-control" id="contraseña" onInput={(e) => setContraseña(e.currentTarget.value)} />
+        </div>
+        <button class="btn btn-primary" onClick={handleLogin}>Iniciar Sesión</button>
       </div>
-      <div class="mb-3">
-        <label for="contraseña" class="form-label">Contraseña</label>
-        <input type="password" class="form-control" id="contraseña" onInput={(e) => setContraseña(e.currentTarget.value)} />
-      </div>
-      <button class="btn btn-primary" onClick={handleLogin}>Iniciar Sesión</button>
     </div>
   );
 };

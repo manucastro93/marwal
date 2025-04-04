@@ -3,9 +3,8 @@ import { createSignal, onMount, Show } from "solid-js";
 import Header from "./components/Header";
 import ProductList from "./components/ProductList";
 import CategoryList from "./components/CategoryList";
-import Banner from "./components/Banner";
+import BannerComponent from "./components/Banner"; 
 import CartButton from "./components/CartButton";
-import ProductSearch from "./components/ProductSearch";
 import ProductDetails from "./components/ProductDetails";
 import { Producto } from "./interfaces/Producto";
 import vendedorService from "./services/VendedorService";
@@ -34,18 +33,13 @@ const App = () => {
   };
 
   onMount(() => {
-    // Función para extraer y guardar el ID del vendedor
     const guardarIdVendedor = async () => {
-      // Primero, verifica si ya existe un vendedorId en localStorage
       const existingVendedorId = localStorage.getItem('vendedorId');
-
       if (existingVendedorId) {
-        return; // Si ya existe, no hagas nada
+        return;
       }
-
       const pathSegments = window.location.pathname.split('/');
-      const linkCode = pathSegments[pathSegments.length - 1]; // Obtiene el último segmento de la URL
-
+      const linkCode = pathSegments[pathSegments.length - 1];
       if (linkCode) {
         try {
           const vendedorId = await vendedorService.getVendedorByLink(linkCode);
@@ -66,8 +60,7 @@ const App = () => {
   return (
     <div class="home-container">
       <Header />
-      <Banner />
-      <ProductSearch onSearch={handleSearch} />
+      <BannerComponent />
       <div class="main-content">
         <CategoryList onSelectCategory={handleSelectCategory} activeCategoryId={selectedCategoryId()} />
         <div class="content">
@@ -78,6 +71,7 @@ const App = () => {
             setMostrarCarrito={setMostrarCarrito}
             searchQuery={searchQuery()}
             onProductDblClick={handleProductClick}
+            onSearch={handleSearch}
           />
         </div>
       </div>

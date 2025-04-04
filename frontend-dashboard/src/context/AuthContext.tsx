@@ -1,4 +1,4 @@
-import { createContext, createSignal, useContext, JSX, onCleanup } from 'solid-js';
+import { createContext, createSignal, useContext, JSX } from 'solid-js';
 import authService from '../services/authService';
 
 interface AuthContextProps {
@@ -36,9 +36,7 @@ export const AuthProvider = (props: AuthProviderProps) => {
   };
 
   // Check authentication status on mount
-  onCleanup(() => {
-    checkAuth();
-  });
+  checkAuth();
 
   return (
     <AuthContext.Provider value={{ isAuthenticated: isAuthenticated(), login, logout, checkAuth }}>

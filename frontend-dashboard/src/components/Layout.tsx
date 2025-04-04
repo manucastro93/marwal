@@ -53,6 +53,7 @@ const Layout: Component<LayoutProps> = (props) => {
             <li class="sidebar-item"><a href="/pedidos" class="sidebar-link">Pedidos</a></li>
             <li class="sidebar-item"><a href="/clientes" class="sidebar-link">Clientes</a></li>
             <li class="sidebar-item"><a href="/pagina" class="sidebar-link">Página</a></li>
+            <li class="sidebar-item"><a href="/metricas" class="sidebar-link">Métricas</a></li>
           </ul>
         </aside>
         <section class="content">

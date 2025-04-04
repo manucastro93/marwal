@@ -2,6 +2,7 @@
 import { createSignal, onMount, createEffect } from "solid-js";
 import productoService from "../services/ProductoService";
 import { Producto } from "../interfaces/Producto";
+import ProductSearch from "./ProductSearch"; // Importa el componente ProductSearch
 
 interface ProductListProps {
   onProductDblClick(producto: Producto): void;
@@ -11,6 +12,7 @@ interface ProductListProps {
   setMostrarCarrito: (value: boolean) => void;
   searchQuery: string;
   onProductDblClick: (product: Producto) => void;
+  onSearch: (query: string) => void; // Agrega la función de búsqueda como prop
 }
 
 const ProductList = (props: ProductListProps) => {
@@ -80,20 +82,24 @@ const ProductList = (props: ProductListProps) => {
   });
 
   return (
-    <div class="product-container">
-      {currentProducts().length > 0 ? (
-        currentProducts().map(producto => (
-          <div class="product-item" onDblClick={() => props.onProductDblClick(producto)}>
-            {producto.imagenes[0] && <img src={BASE_URL + producto.imagenes[0].url} alt={producto.nombre} />}
-            <h2>{producto.nombre}</h2>
-            <p>{producto.descripcion}</p>
-            <div class="price">${producto.precio}</div>
-            <button onClick={() => agregarAlCarrito(producto)}>Agregar al Carrito</button>
-          </div>
-        ))
-      ) : (
-        <p>No se encontraron productos.</p>
-      )}
+    <div class="product-list-container">
+      <div class="product-search-wrapper">
+        <ProductSearch onSearch={props.onSearch} />
+      </div>
+      <div class="product-container">
+        {currentProducts().length > 0 ? (
+          currentProducts().map(producto => (
+            <div class="product-item" onDblClick={() => props.onProductDblClick(producto)}>
+              {producto.imagenes[0] && <img src={BASE_URL + producto.imagenes[0].url} alt={producto.nombre} />}
+              <h2>{producto.nombre}</h2>
+              <div class="price">${producto.precio}</div>
+              <button onClick={() => agregarAlCarrito(producto)}>Agregar al Carrito</button>
+            </div>
+          ))
+        ) : (
+          <p>No se encontraron productos.</p>
+        )}
+      </div>
       <div class="pagination">
         {Array.from({ length: Math.ceil(filteredProductos().length / productsPerPage) }).map(
           (_, index) => (

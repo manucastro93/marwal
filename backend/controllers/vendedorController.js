@@ -1,4 +1,4 @@
-const { Usuario } = require('../models');
+const { Usuario, Pedido, Sequelize } = require('../models');
 const bcrypt = require('bcrypt');
 const { generateLink } = require('../utils/generateLink');
 
@@ -27,6 +27,30 @@ exports.agregarVendedor = async (req, res) => {
   } catch (error) {
     console.error('Error al agregar el vendedor:', error);
     res.status(500).json({ error: 'Error al agregar el vendedor' });
+  }
+};
+
+// Obtener métricas de vendedores
+exports.obtenerMetricasVendedores = async (req, res) => {
+  try {
+    const vendedores = await Usuario.findAll({
+      attributes: [
+        'id','nombre',
+        [Sequelize.fn('COUNT', Sequelize.col('pedidos.id')), 'ventas'],
+        [Sequelize.fn('SUM', Sequelize.col('pedidos.total')), 'ingresos']
+      ],
+      include: [{
+        model: Pedido,
+        attributes: []
+      }],
+      where: { rol: 'vendedor', estado: 'activo' },
+      group: ['usuario.id']
+    });
+
+    res.status(200).json(vendedores);
+  } catch (error) {
+    console.error('Error al obtener métricas de vendedores:', error);
+    res.status(500).json({ error: `Error al obtener métricas de vendedores - ${error.message}` });
   }
 };
 

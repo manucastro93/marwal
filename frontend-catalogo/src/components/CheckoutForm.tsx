@@ -135,13 +135,20 @@ Total: ${detallesConPedidoId.reduce((acc, detalle) => acc + detalle.precio * det
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} class="checkout-form">
+      <label>Nombre</label>
       <input type="text" placeholder="Nombre" value={nombre()} onInput={(e) => setNombre((e.target as HTMLInputElement).value)} required />
+      <label>Email</label>
       <input type="email" placeholder="Email" value={email()} onInput={(e) => setEmail((e.target as HTMLInputElement).value)} required />
+      <label>CUIT o CUIL</label>
       <input type="text" placeholder="CUIT o CUIL" value={cuit()} onInput={(e) => setCuit((e.target as HTMLInputElement).value)} required />
+      <label>Teléfono</label>
       <input type="text" placeholder="Teléfono" value={telefono()} onInput={(e) => setTelefono((e.target as HTMLInputElement).value)} required />
+      <label>Dirección</label>
       <input type="text" placeholder="Dirección" value={direccion()} onInput={(e) => setDireccion((e.target as HTMLInputElement).value)} required />
+      <label>Localidad</label>
       <input type="text" placeholder="Localidad" value={localidad()} onInput={(e) => setLocalidad((e.target as HTMLInputElement).value)} required />
+      <label>Provincia</label>
       <input type="text" placeholder="Provincia" value={provincia()} onInput={(e) => setProvincia((e.target as HTMLInputElement).value)} required />
       <button type="submit">Finalizar Pedido</button>
     </form>

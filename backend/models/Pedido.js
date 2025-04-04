@@ -18,6 +18,8 @@ module.exports = (sequelize, DataTypes) => {
         model: 'usuarios',
         key: 'id',
       },
+    },total: {
+      type: DataTypes.FLOAT
     },
     estado: {
       type: DataTypes.ENUM('Pendiente', 'En Proceso', 'Finalizado', 'Rechazado', 'Cancelado'),

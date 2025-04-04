@@ -11,6 +11,7 @@ import Pagina from './pages/Pagina';
 import Home from './pages/Home';
 import Clientes from './pages/Clientes';
 import Notification from './components/Notification';
+import Metrics from './pages/Metricas';
 
 const App = () => {
   return (
@@ -29,6 +30,7 @@ const App = () => {
           <Route path="/pedidos/:pedidoId" component={(props) => <ProtectedRoute component={() => <PedidoDetalle pedidoId={props.params.pedidoId} />} />} /> {/* Nueva ruta para PedidoDetalle */}
           <Route path="/pagina" component={() => <ProtectedRoute component={Pagina} />} />
           <Route path="/clientes" component={() => <ProtectedRoute component={Clientes} />} />
+          <Route path="/metricas" component={() => <ProtectedRoute component={Metrics} />} />
           
           {/* Ruta por defecto dentro de dashboard */}
           <Route path="/" component={() => {

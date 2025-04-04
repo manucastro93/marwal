@@ -15,7 +15,7 @@ const ProductSearch = ({ onSearch }: ProductSearchProps) => {
   };
 
   return (
-    <div class="product-search">
+    <div class="product-search" style={{ float: 'right', width: '200px' }}>
       <input
         type="text"
         placeholder="Buscar productos..."

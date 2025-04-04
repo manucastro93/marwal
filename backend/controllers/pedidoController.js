@@ -1,5 +1,6 @@
-const { Pedido, DetallePedido } = require('../models');
+const { Pedido, DetallePedido, sequelize } = require('../models');
 const nodemailer = require('nodemailer');
+const { Op } = require('sequelize');
 
 // Crear un pedido sin los detalles
 exports.crearPedido = async (req, res) => {
@@ -105,6 +106,97 @@ exports.buscarPedidoById = async (req, res) => {
     res.status(200).json(pedido);
   } catch (error) {
     console.error("Error fetching pedido:", error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+// Obtener pedidos por estado
+exports.obtenerPedidosPorEstado = async (req, res) => {
+  const { estado } = req.params;
+
+  try {
+    const pedidos = await Pedido.findAll({ where: { estado } });
+    res.status(200).json(pedidos);
+  } catch (error) {
+    console.error("Error fetching pedidos:", error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+// Obtener total de pedidos del mes
+exports.obtenerTotalPedidosMes = async (req, res) => {
+  const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+  const endOfMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
+
+  try {
+    const total = await Pedido.count({
+      where: {
+        created_at: {
+          [Op.between]: [startOfMonth, endOfMonth]
+        }
+      }
+    });
+    res.status(200).json({ total });
+  } catch (error) {
+    console.error("Error fetching total pedidos:", error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+// Obtener métricas mensuales
+exports.obtenerMetricasMensuales = async (req, res) => {
+  try {
+    const metrics = await Pedido.findAll({
+      attributes: [
+        [sequelize.fn('DATE_FORMAT', sequelize.col('created_at'), '%Y-%m'), 'month'],
+        [sequelize.fn('COUNT', sequelize.col('id')), 'total']
+      ],
+      group: [sequelize.fn('DATE_FORMAT', sequelize.col('created_at'), '%Y-%m')]
+    });
+    res.status(200).json(metrics);
+  } catch (error) {
+    console.error("Error fetching monthly metrics:", error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+// Obtener métricas anuales
+exports.obtenerMetricasAnuales = async (req, res) => {
+  try {
+    const metrics = await Pedido.findAll({
+      attributes: [
+        [sequelize.fn('DATE_FORMAT', sequelize.col('created_at'), '%Y'), 'year'],
+        [sequelize.fn('COUNT', sequelize.col('id')), 'total']
+      ],
+      group: [sequelize.fn('DATE_FORMAT', sequelize.col('created_at'), '%Y')]
+    });
+    res.status(200).json(metrics);
+  } catch (error) {
+    console.error("Error fetching annual metrics:", error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+// Comparar pedidos dentro de un rango de fechas
+exports.compararPedidosPorRangoFechas = async (req, res) => {
+  const { startDate, endDate } = req.query;
+
+  try {
+    const metrics = await Pedido.findAll({
+      where: {
+        created_at: {
+          [Op.between]: [new Date(startDate), new Date(endDate)]
+        }
+      },
+      attributes: [
+        [sequelize.fn('DATE_FORMAT', sequelize.col('created_at'), '%Y-%m-%d'), 'day'],
+        [sequelize.fn('COUNT', sequelize.col('id')), 'total']
+      ],
+      group: [sequelize.fn('DATE_FORMAT', sequelize.col('created_at'), '%Y-%m-%d')]
+    });
+    res.status(200).json(metrics);
+  } catch (error) {
+    console.error("Error comparing orders by date range:", error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
