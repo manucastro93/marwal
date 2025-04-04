@@ -600,122 +600,54 @@ th.sort-desc::after {
   background-color: #c82333;
 }
 /* Chart Styles */
+
+.chart-header h2 {
+  font-size: 20px;
+  color: #333;
+}
+.metrics-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.charts-grid {
+  display: inline-block;
+  margin-top: 30px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  width: 100%;
+  max-width: 1200px;
+  padding: 20px;
+}
+
 .chart-container {
-  background: #ffffff;
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+  border: 1px solid #ddd;
   border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding: 10px; /* Reduce el padding */
-  margin-bottom: 20px;
-  width: 80%; /* Ajusta el ancho */
-  max-width: 600px; /* Ajusta el ancho máximo */
-  margin: 0 auto; /* Centra el contenedor */
+  padding: 20px;
+  height: 300px; /* Establecer una altura fija para hacerlos más cuadrados */
 }
 
 .chart-header {
-  text-align: center;
-  margin-bottom: 10px; /* Reduce el margen inferior */
+  margin-bottom: 10px;
 }
 
-.chart-header h2 {
-  font-size: 20px; /* Reduce el tamaño de la fuente */
-  color: #333;
+.product-ranking {
+  margin-top: 20px;
+  width: 100%;
+  max-width: 600px;
 }
 
-/* Mejorar visualmente la página de métricas */
-.metrics-page {
-  padding: 20px;
-  background-color: #f4f4f4;
+.product-ranking h2 {
+  margin-bottom: 10px;
 }
 
-.metrics-page h1 {
-  text-align: center;
-  font-size: 32px;
-  color: #333;
-  margin-bottom: 40px;
-}
-
-.metric-chart {
-  margin-bottom: 40px;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .chart-container {
-    padding: 10px;
-    width: 100%; /* Ajusta el ancho para dispositivos móviles */
-    max-width: none; /* Elimina el ancho máximo para dispositivos móviles */
-  }
-
-  .chart-header h2 {
-    font-size: 18px; /* Reduce el tamaño de la fuente para dispositivos móviles */
-  }
-}
-
-@media (max-width: 480px) {
-  .chart-header h2 {
-    font-size: 16px; /* Reduce aún más el tamaño de la fuente para dispositivos móviles */
-  }
-}
-/* Selector de Métricas */
-.metric-selector {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.metric-selector label {
-  margin-right: 10px;
-  font-weight: bold;
-  color: #333;
-}
-
-.metric-selector select {
-  padding: 5px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.metric-selector select:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-}
-
-/* Selector de Rango de Fechas */
-.date-range-selector {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.date-range-selector label {
-  margin-right: 10px;
-  font-weight: bold;
-  color: #333;
-}
-
-.date-range-selector input {
-  padding: 5px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  margin-right: 10px;
-}
-
-.date-range-selector input:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-}
-
-.date-range-selector button {
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.date-range-selector button:hover {
-  background-color: #0056b3;
-  transform: translateY(-2px);
+.product-ranking ol {
+  padding-left: 20px;
 }

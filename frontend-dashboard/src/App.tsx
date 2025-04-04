@@ -20,9 +20,10 @@ const App = () => {
         <Notification />
         <Router>
           <Route path="/login" component={Login} />
-          
           {/* Rutas protegidas con dashboard layout */}
           <Route path="/home" component={() => <ProtectedRoute component={Home} />} /> 
+          <Route path="*" component={() => <ProtectedRoute component={Home} />} />
+          <Route path="/home" component={() => <ProtectedRoute component={Home} />} />  
           <Route path="/productos" component={() => <ProtectedRoute component={Productos} />} />
           <Route path="/categorias" component={() => <ProtectedRoute component={Categorias} />} />
           <Route path="/vendedores" component={() => <ProtectedRoute component={Vendedores} />} />
@@ -31,18 +32,7 @@ const App = () => {
           <Route path="/pagina" component={() => <ProtectedRoute component={Pagina} />} />
           <Route path="/clientes" component={() => <ProtectedRoute component={Clientes} />} />
           <Route path="/metricas" component={() => <ProtectedRoute component={Metrics} />} />
-          
-          {/* Ruta por defecto dentro de dashboard */}
-          <Route path="/" component={() => {
-            window.location.href = "/login";
-            return null;
-          }} />
-
-          {/* Redirección para rutas no encontradas */}
-          <Route path="*" component={() => {
-            window.location.href = "/login";
-            return null;
-          }} />
+        
         </Router>
       </div>
     </AuthProvider>

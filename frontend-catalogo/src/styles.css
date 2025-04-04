@@ -37,7 +37,16 @@ body {
 .header h1 {
   margin: 0;
 }
+/* Estilo para el texto "CATÁLOGO ONLINE" */
+.catalogo-online {
+  text-transform: uppercase;
+  color: white;
+  padding: 10px;
+}
 
+.catalogo-online span {
+  color: green;
+}
 /* Banner */
 .banner-slider {
   position: relative;

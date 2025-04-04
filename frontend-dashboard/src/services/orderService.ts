@@ -45,6 +45,33 @@ const orderService = {
     const response = await axios.get(`${BASE_URL_API}/vendedores/metricas`);
     return response.data;
   },
+  getDailyMetrics: async (): Promise<any> => {
+    const response = await axios.get(`${BASE_URL_API}/pedidos/metrics/daily`);
+    return response.data;
+  },
+  getSalesBySellerDaily: async (): Promise<any> => {
+    const response = await axios.get(`${BASE_URL_API}/vendedores/metricas`);
+    return response.data;
+  },
+  getSalesByCustomerMonthly: async (): Promise<any> => {
+    const response = await axios.get(`${BASE_URL_API}/clientes/metricas`);
+    const data = response.data;
+    // Mapeo de datos al formato esperado
+    const mappedData = data.map((entry: any) => ({
+      customer: entry.nombre,
+      month: "2025-04", // Suponiendo que todos los datos son de abril de 2025
+      sales: entry.ingresos,
+    }));
+    return mappedData;
+  },
+  getSalesByProductMonthly: async (): Promise<any> => {
+    const response = await axios.get(`${BASE_URL_API}/productos/metricas`);
+    return response.data;
+  },
+  getProductRankings: async (): Promise<any> => {
+    const response = await axios.get(`${BASE_URL_API}/productos/rankings`);
+    return response.data;
+  }
 };
 
 export default orderService;

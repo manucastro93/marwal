@@ -8,6 +8,9 @@ router.post('/', productoController.crearProducto);
 // Obtener métricas de productos
 router.get('/metricas', productoController.obtenerMetricasProductos);
 
+// Obtener ranking de productos
+router.get('/rankings', productoController.obtenerRankingsProductos);
+
 // Modificar producto
 router.put('/:id', productoController.modificarProducto);
 

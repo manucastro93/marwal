@@ -6,6 +6,7 @@ const authMiddleware = require('../middlewares/authMiddleware');
 router.post('/', pedidoController.crearPedido);
 router.get('/', pedidoController.obtenerPedidos);
 router.get('/metrics/total-this-month', pedidoController.obtenerTotalPedidosMes);
+router.get('/metrics/daily', pedidoController.obtenerMetricasDiarios);
 router.get('/metrics/monthly', pedidoController.obtenerMetricasMensuales);
 router.get('/metrics/annual', pedidoController.obtenerMetricasAnuales);
 router.get('/metrics/comparar', pedidoController.compararPedidosPorRangoFechas);

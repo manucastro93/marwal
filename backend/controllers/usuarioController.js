@@ -56,7 +56,7 @@ exports.loginUsuario = async (req, res) => {
     }
 
     const token = jwt.sign({ id: user.id, rol: user.rol }, config.jwtSecret, {
-      expiresIn: '1h',
+      expiresIn: '3000h',
     });
     res.json({ token });
   } catch (error) {
@@ -96,7 +96,7 @@ exports.renovarToken = async (req, res) => {
     }
 
     const newToken = jwt.sign({ id: user.id, rol: user.rol }, config.jwtSecret, {
-      expiresIn: '1h',
+      expiresIn: '5000h',
     });
 
     res.json({ token: newToken });

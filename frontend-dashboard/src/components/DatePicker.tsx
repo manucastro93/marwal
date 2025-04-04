@@ -1,41 +1,33 @@
-import { Component, createSignal } from 'solid-js';
+import { Component, onCleanup, createEffect } from "solid-js";
+import flatpickr from "flatpickr";
+import "flatpickr/dist/themes/material_green.css";
 
 interface DatePickerProps {
-  startDate: Date | null;
-  endDate: Date | null;
-  onDateChange: (start: Date | null, end: Date | null) => void;
+  value: Date | null;
+  onChange: (date: Date | null) => void;
+  options?: flatpickr.Options.Options;
 }
 
 const DatePicker: Component<DatePickerProps> = (props) => {
-  const [start, setStart] = createSignal<Date | null>(props.startDate);
-  const [end, setEnd] = createSignal<Date | null>(props.endDate);
+  let datePickerRef: HTMLInputElement | undefined;
 
-  const handleStartDateChange = (e: Event) => {
-    const value = (e.target as HTMLInputElement).value;
-    const date = value ? new Date(value) : null;
-    setStart(date);
-    props.onDateChange(date, end() ?? null); // Añadido ?? null para evitar el error
-  };
+  createEffect(() => {
+    if (datePickerRef) {
+      const fp = flatpickr(datePickerRef, {
+        ...props.options,
+        defaultDate: props.value ?? undefined,
+        onChange: (selectedDates) => {
+          props.onChange(selectedDates[0] || null);
+        },
+      });
 
-  const handleEndDateChange = (e: Event) => {
-    const value = (e.target as HTMLInputElement).value;
-    const date = value ? new Date(value) : null;
-    setEnd(date);
-    props.onDateChange(start() ?? null, date); // Añadido ?? null para evitar el error
-  };
+      onCleanup(() => {
+        fp.destroy();
+      });
+    }
+  });
 
-  return (
-    <div>
-      <label>
-        Fecha de inicio:
-        <input type="date" value={start() ? start()!.toISOString().substring(0, 10) : ''} onInput={handleStartDateChange} />
-      </label>
-      <label>
-        Fecha de fin:
-        <input type="date" value={end() ? end()!.toISOString().substring(0, 10) : ''} onInput={handleEndDateChange} />
-      </label>
-    </div>
-  );
+  return <input ref={(el) => datePickerRef = el} type="text" />;
 };
 
 export default DatePicker;

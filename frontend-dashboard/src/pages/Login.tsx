@@ -9,14 +9,16 @@ const Login = () => {
   const navigate = useNavigate();
   const [usuario, setUsuario] = createSignal('');
   const [contraseña, setContraseña] = createSignal('');
-
+  
   const handleLogin = async () => {
     try {
       const response = await authService.login(usuario(), contraseña());
       console.log('Login exitoso:', response);
       localStorage.setItem('token', response.token); // Guardar el token en localStorage
       login(); // Actualiza el estado de autenticación
-      navigate('/home');
+      console.log('Antes de redireccionar a /home');
+      navigate('/home'); // Redirección al home
+      window.location.href= '/home'; // Recargar la página para aplicar el nuevo estado
       console.log('Redireccionando a /home');
     } catch (error) {
       console.error('Error en el login:', error);

@@ -143,6 +143,23 @@ exports.obtenerTotalPedidosMes = async (req, res) => {
   }
 };
 
+// Obtener métricas diarias
+exports.obtenerMetricasDiarios = async (req, res) => {
+  try {
+    const metrics = await Pedido.findAll({
+      attributes: [
+        [sequelize.fn('DATE_FORMAT', sequelize.col('created_at'), '%d'), 'day'],
+        [sequelize.fn('COUNT', sequelize.col('id')), 'total']
+      ],
+      group: [sequelize.fn('DATE_FORMAT', sequelize.col('created_at'), '%d')]
+    });
+    res.status(200).json(metrics);
+  } catch (error) {
+    console.error("Error fetching daily metrics:", error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
 // Obtener métricas mensuales
 exports.obtenerMetricasMensuales = async (req, res) => {
   try {

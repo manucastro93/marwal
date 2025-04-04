@@ -74,7 +74,6 @@ const apiService = {
   getVendedores: async (): Promise<Vendedor[]> => {
     try {
       const response = await axios.get(`${BASE_URL_API}/vendedores`);
-      console.log('Respuesta de la API:', response.data);
       return response.data;
     } catch (error) {
       console.error('Error en getVendedores:', error);

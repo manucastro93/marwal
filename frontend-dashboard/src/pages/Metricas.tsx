@@ -1,88 +1,106 @@
 import { Component, createSignal, onMount } from "solid-js";
 import Layout from "../components/Layout";
 import Chart from "../components/Charts";
+import ProductSelector from "../components/ProductSelector";
+import ProductRanking from "../components/ProductRanking";
+import CustomerSelector from "../components/CustomerSelector";
+import SellerSelector from "../components/SellerSelector";
+import DatePicker from "../components/DatePicker";
 import orderService from "../services/orderService";
 
-interface MonthlyMetric {
-  month: string;
-  total: number;
-}
-
-interface AnnualMetric {
-  year: string;
-  total: number;
-}
-
-interface ComparisonMetric {
+interface DailyMetric {
   day: string;
   total: number;
 }
 
-interface ProductMetric {
-  product: string;
-  sales: number;
-  revenue: number;
-}
-
-interface CustomerMetric {
+interface CustomerMonthlyMetric {
   customer: string;
-  orders: number;
-  revenue: number;
+  month: string;
+  sales: number;
 }
 
-interface SellerMetric {
-  seller: string;
+interface ProductMonthlyMetric {
+  product: string;
+  month: string;
   sales: number;
-  revenue: number;
 }
 
 const Metrics: Component = () => {
-  const [selectedMetric, setSelectedMetric] = createSignal("monthly");
   const [monthlyMetrics, setMonthlyMetrics] = createSignal<any>(null);
-  const [annualMetrics, setAnnualMetrics] = createSignal<any>(null);
+  const [dailyMetrics, setDailyMetrics] = createSignal<any>(null);
   const [comparisonMetrics, setComparisonMetrics] = createSignal<any>(null);
-  const [productMetrics, setProductMetrics] = createSignal<any>(null);
-  const [customerMetrics, setCustomerMetrics] = createSignal<any>(null);
-  const [sellerMetrics, setSellerMetrics] = createSignal<any>(null);
-  const [startDate, setStartDate] = createSignal("");
-  const [endDate, setEndDate] = createSignal("");
+  const [sellerDailyMetrics, setSellerDailyMetrics] = createSignal<any>(null);
+  const [customerMonthlyMetrics, setCustomerMonthlyMetrics] = createSignal<any>(null);
+  const [productMonthlyMetrics, setProductMonthlyMetrics] = createSignal<any>(null);
+  const [selectedProduct, setSelectedProduct] = createSignal<string | null>(null);
+  const [selectedCustomer, setSelectedCustomer] = createSignal<string | null>(null);
+  const [selectedSeller, setSelectedSeller] = createSignal<string | null>(null);
+  const [productRankings, setProductRankings] = createSignal<any>(null);
+  const [startDate, setStartDate] = createSignal<Date | null>(new Date('2023-01-01'));
+  const [endDate, setEndDate] = createSignal<Date | null>(new Date('2023-12-31'));
 
   onMount(async () => {
+    fetchMetrics();
+  });
+
+  const fetchMetrics = async () => {
     try {
       const monthly = await orderService.getMonthlyMetrics();
-      const annual = await orderService.getAnnualMetrics();
-      const products = await orderService.getProductMetrics();
-      const customers = await orderService.getCustomerMetrics();
-      const sellers = await orderService.getSellerMetrics();
-      console.log("Monthly Metrics:", monthly);
-      console.log("Annual Metrics:", annual);
-      console.log("Product Metrics:", products);
-      console.log("Customer Metrics:", customers);
-      console.log("Seller Metrics:", sellers);
+      const daily = await orderService.getDailyMetrics();
+      const comparison = await orderService.compareOrdersByDateRange(formatDate(startDate()), formatDate(endDate()));
+      const sellerDaily = await orderService.getSalesBySellerDaily();
+      const customerMonthly = await orderService.getSalesByCustomerMonthly();
+      const productMonthly = await orderService.getSalesByProductMonthly();
+      const productRankings = await orderService.getProductRankings();
       setMonthlyMetrics(processMonthlyMetrics(monthly));
-      setAnnualMetrics(processAnnualMetrics(annual));
-      setProductMetrics(processProductMetrics(products));
-      setCustomerMetrics(processCustomerMetrics(customers));
-      setSellerMetrics(processSellerMetrics(sellers));
+      setDailyMetrics(processDailyMetrics(daily));
+      setComparisonMetrics(processComparisonMetrics(comparison));
+      setSellerDailyMetrics(processSellerDailyMetrics(sellerDaily));
+      setCustomerMonthlyMetrics(processCustomerMonthlyMetrics(customerMonthly));
+      setProductMonthlyMetrics(processProductMonthlyMetrics(productMonthly));
+      setProductRankings(processProductRankings(productRankings));
     } catch (error) {
       console.error("Error fetching metrics:", error);
     }
-  });
-
-  const handleDateChange = async () => {
-    try {
-      const comparison = await orderService.compareOrdersByDateRange(startDate(), endDate());
-      console.log("Comparison Metrics:", comparison);
-      setComparisonMetrics(processComparisonMetrics(comparison));
-    } catch (error) {
-      console.error("Error fetching comparison metrics:", error);
-    }
   };
 
-  const processMonthlyMetrics = (data: MonthlyMetric[]) => {
-    const labels = data.map((entry: MonthlyMetric) => entry.month);
-    const dataset = data.map((entry: MonthlyMetric) => entry.total);
-    console.log("Processed Monthly Metrics:", { labels, datasets: [{ label: "Pedidos Mensuales", data: dataset }] });
+  const formatDate = (date: Date | null) => {
+    if (!date) return "";
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const handleDateChange = async (start: Date | null, end: Date | null) => {
+    setStartDate(start);
+    setEndDate(end);
+    const comparison = await orderService.compareOrdersByDateRange(formatDate(start), formatDate(end));
+    setComparisonMetrics(processComparisonMetrics(comparison));
+  };
+
+  const handleCustomerChange = async (customer: string | null) => {
+    setSelectedCustomer(customer);
+    const customerMonthly = await orderService.getSalesByCustomerMonthly();
+    setCustomerMonthlyMetrics(processCustomerMonthlyMetrics(customerMonthly));
+  };
+
+  const handleSellerChange = async (seller: string | null) => {
+    setSelectedSeller(seller);
+    const sellerDaily = await orderService.getSalesBySellerDaily();
+    setSellerDailyMetrics(processSellerDailyMetrics(sellerDaily));
+  };
+
+  const processMonthlyMetrics = (data: any) => {
+    const months = [
+      "2025-01", "2025-02", "2025-03", "2025-04", "2025-05", "2025-06",
+      "2025-07", "2025-08", "2025-09", "2025-10", "2025-11", "2025-12"
+    ];
+    // Crear un mapa de los datos obtenidos del servicio
+    const dataMap = new Map(data.map((entry: any) => [entry.month, entry.total]));
+    // Crear labels con todos los meses del año
+    const labels = months;
+    const dataset = months.map(month => dataMap.get(month) ?? 0);
     return {
       labels,
       datasets: [
@@ -94,25 +112,35 @@ const Metrics: Component = () => {
     };
   };
 
-  const processAnnualMetrics = (data: AnnualMetric[]) => {
-    const labels = data.map((entry: AnnualMetric) => entry.year);
-    const dataset = data.map((entry: AnnualMetric) => entry.total);
-    console.log("Processed Annual Metrics:", { labels, datasets: [{ label: "Pedidos Anuales", data: dataset }] });
+  const processDailyMetrics = (data: DailyMetric[]) => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = (today.getMonth() + 1).toString().padStart(2, '0');
+    const daysInMonth = new Date(year, today.getMonth() + 1, 0).getDate();
+    const allDays = Array.from({ length: daysInMonth }, (_, i) => `${year}-${month}-${(i + 1).toString().padStart(2, '0')}`);
+    // Formatear correctamente las fechas en los datos de servicio
+    const formattedData = data.map(entry => {
+      const day = entry.day.padStart(2, '0');
+      const formattedDay = `${year}-${month}-${day}`;
+      return { day: formattedDay, total: entry.total };
+    });
+    const dataMap = new Map(formattedData.map(entry => [entry.day, entry.total]));
+    const labels = allDays;
+    const dataset = allDays.map(day => dataMap.get(day) ?? 0);
     return {
       labels,
       datasets: [
         {
-          label: "Pedidos Anuales",
+          label: "Ventas Diarias",
           data: dataset,
         },
       ],
     };
   };
 
-  const processComparisonMetrics = (data: ComparisonMetric[]) => {
-    const labels = data.map((entry: ComparisonMetric) => entry.day);
-    const dataset = data.map((entry: ComparisonMetric) => entry.total);
-    console.log("Processed Comparison Metrics:", { labels, datasets: [{ label: "Comparar Pedidos", data: dataset }] });
+  const processComparisonMetrics = (data: any) => {
+    const labels = data.map((entry: any) => entry.day);
+    const dataset = data.map((entry: any) => entry.total);
     return {
       labels,
       datasets: [
@@ -124,159 +152,166 @@ const Metrics: Component = () => {
     };
   };
 
-  const processProductMetrics = (data: ProductMetric[]) => {
-    const labels = data.map((entry: ProductMetric) => entry.product);
-    const salesDataset = data.map((entry: ProductMetric) => entry.sales);
-    const revenueDataset = data.map((entry: ProductMetric) => entry.revenue);
-    console.log("Processed Product Metrics:", { labels, datasets: [{ label: "Ventas por Producto", data: salesDataset }, { label: "Ingresos por Producto", data: revenueDataset }] });
+  const processSellerDailyMetrics = (data: { id: number; nombre: string; ventas: number; ingresos: number | null; }[]) => {
+    console.log("Seller Daily Metrics Raw Data:", data);
+    console.log("Selected Seller:", selectedSeller());
+  
+    // Obtener la fecha actual
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = (today.getMonth() + 1).toString().padStart(2, '0');
+    const daysInMonth = new Date(year, today.getMonth() + 1, 0).getDate();
+    const allDays = Array.from({ length: daysInMonth }, (_, i) => `${year}-${month}-${(i + 1).toString().padStart(2, '0')}`);
+  
+    const selectedSellerName = selectedSeller();
+  
+    // Filtrar los datos del vendedor seleccionado si hay uno seleccionado
+    const filteredData = selectedSellerName ? data.filter(entry => entry.nombre === selectedSellerName) : data;
+  
+    // Crear un mapa de los datos obtenidos del servicio, sumando las ventas por día
+    const salesByDay = new Map<string, number>();
+    allDays.forEach(day => salesByDay.set(day, 0)); // Inicializar con 0 ventas para todos los días del mes
+  
+    filteredData.forEach((entry) => {
+      const day = `${year}-${month}-${(entry.id).toString().padStart(2, '0')}`; // Asumiendo que `id` representa el día del mes
+      if (salesByDay.has(day)) {
+        salesByDay.set(day, salesByDay.get(day)! + entry.ventas);
+      }
+    });
+  
+    // Usar valores predeterminados si los datos están indefinidos
+    const labels = allDays;
+    const dataset = allDays.map(day => salesByDay.get(day) ?? 0);
+  
+    console.log("Processed Seller Daily Metrics:", { labels, datasets: [{ label: "Ventas Diarias por Vendedor", data: dataset }] });
+  
     return {
       labels,
       datasets: [
         {
-          label: "Ventas por Producto",
-          data: salesDataset,
+          label: "Ventas Diarias por Vendedor",
+          data: dataset,
         },
+      ],
+    };
+  };
+  
+
+const processCustomerMonthlyMetrics = (data: CustomerMonthlyMetric[]) => {
+  // Crear un array con todos los meses del año
+  const months = [
+    "2025-01", "2025-02", "2025-03", "2025-04", "2025-05", "2025-06",
+    "2025-07", "2025-08", "2025-09", "2025-10", "2025-11", "2025-12"
+  ];
+  // Filtrar los datos del cliente seleccionado si hay uno seleccionado
+  const filteredData = selectedCustomer() ? data.filter(entry => entry.customer === selectedCustomer()) : data;
+  // Crear un mapa de los datos obtenidos del servicio, sumando las ventas por mes
+  const salesByMonth = new Map<string, number>();
+  filteredData.forEach((entry) => {
+    const month = entry.month; // Formato de mes esperado: YYYY-MM
+    if (!salesByMonth.has(month)) {
+      salesByMonth.set(month, 0);
+    }
+    salesByMonth.set(month, salesByMonth.get(month)! + entry.sales);
+  });
+  // Usar valores predeterminados si los datos están indefinidos
+  const labels = months;
+  const dataset = months.map(month => salesByMonth.get(month) ?? 0);
+  return {
+    labels,
+    datasets: [
+      {
+        label: "Ventas Mensuales por Cliente",
+        data: dataset,
+      },
+    ],
+  };
+};
+
+  const processProductMonthlyMetrics = (data: ProductMonthlyMetric[]) => {
+    if (selectedProduct() !== null) {
+      data = data.filter((entry) => entry.product === selectedProduct());
+    }
+    const labels = data.map((entry: ProductMonthlyMetric) => `${entry.product} - ${entry.month}`);
+    const dataset = data.map((entry: ProductMonthlyMetric) => entry.sales);
+    return {
+      labels,
+      datasets: [
         {
-          label: "Ingresos por Producto",
-          data: revenueDataset,
+          label: "Ventas Mensuales por Producto",
+          data: dataset,
         },
       ],
     };
   };
 
-  const processCustomerMetrics = (data: CustomerMetric[]) => {
-    const labels = data.map((entry: CustomerMetric) => entry.customer);
-    const ordersDataset = data.map((entry: CustomerMetric) => entry.orders);
-    const revenueDataset = data.map((entry: CustomerMetric) => entry.revenue);
-    console.log("Processed Customer Metrics:", { labels, datasets: [{ label: "Pedidos por Cliente", data: ordersDataset }, { label: "Ingresos por Cliente", data: revenueDataset }] });
-    return {
-      labels,
-      datasets: [
-        {
-          label: "Pedidos por Cliente",
-          data: ordersDataset,
-        },
-        {
-          label: "Ingresos por Cliente",
-          data: revenueDataset,
-        },
-      ],
-    };
-  };
-
-  const processSellerMetrics = (data: SellerMetric[]) => {
-    const labels = data.map((entry: SellerMetric) => entry.seller);
-    const salesDataset = data.map((entry: SellerMetric) => entry.sales);
-    const revenueDataset = data.map((entry: SellerMetric) => entry.revenue);
-    console.log("Processed Seller Metrics:", { labels, datasets: [{ label: "Ventas por Vendedor", data: salesDataset }, { label: "Ingresos por Vendedor", data: revenueDataset }] });
-    return {
-      labels,
-      datasets: [
-        {
-          label: "Ventas por Vendedor",
-          data: salesDataset,
-        },
-        {
-          label: "Ingresos por Vendedor",
-          data: revenueDataset,
-        },
-      ],
-    };
+  const processProductRankings = (data: any) => {
+    const rankedData = data.sort((a: any, b: any) => b.sales - a.sales);
+    return rankedData;
   };
 
   return (
     <Layout>
       <div class="metrics-page">
         <h1>Métricas de Ventas</h1>
-        <div class="metric-selector">
-          <label for="metric-select">Seleccionar Métrica:</label>
-          <select
-            id="metric-select"
-            value={selectedMetric()}
-            onChange={(e) => setSelectedMetric(e.currentTarget.value)}
-          >
-            <option value="monthly">Mensual</option>
-            <option value="annual">Anual</option>
-            <option value="dateRange">Entre Fechas</option>
-            <option value="product">Productos</option>
-            <option value="customer">Clientes</option>
-            <option value="seller">Vendedores</option>
-          </select>
-        </div>
-
-        {selectedMetric() === "dateRange" && (
-          <div class="date-range-selector">
-            <label for="startDate">Fecha de Inicio:</label>
-            <input
-              type="date"
-              id="startDate"
-              value={startDate()}
-              onChange={(e) => setStartDate(e.currentTarget.value)}
-            />
-            <label for="endDate">Fecha de Fin:</label>
-            <input
-              type="date"
-              id="endDate"
-              value={endDate()}
-              onChange={(e) => setEndDate(e.currentTarget.value)}
-            />
-            <button onClick={handleDateChange}>Actualizar</button>
-          </div>
-        )}
-
-        {selectedMetric() === "monthly" && monthlyMetrics() && (
+        <div class="charts-grid">
           <div class="chart-container metric-chart">
             <div class="chart-header">
-              <h2>Pedidos Mensuales</h2>
+              <h2>Ventas por Mes</h2>
             </div>
             <Chart type="bar" data={monthlyMetrics()} />
           </div>
-        )}
-
-        {selectedMetric() === "annual" && annualMetrics() && (
           <div class="chart-container metric-chart">
             <div class="chart-header">
-              <h2>Pedidos Anuales</h2>
+              <h2>Ventas por Día</h2>
             </div>
-            <Chart type="line" data={annualMetrics()} />
+            <Chart type="bar" data={dailyMetrics()} />
           </div>
-        )}
-
-        {selectedMetric() === "dateRange" && comparisonMetrics() && (
           <div class="chart-container metric-chart">
             <div class="chart-header">
-              <h2>Comparar Pedidos dentro de Rango de Fechas</h2>
+              <h2>Ventas por Rango de Fechas</h2>
+              <div class="date-picker-container">
+                <DatePicker
+                  value={startDate()}
+                  onChange={(date) => handleDateChange(date, endDate())}
+                  options={{ dateFormat: "Y-m-d" }}
+                />
+                <DatePicker
+                  value={endDate()}
+                  onChange={(date) => handleDateChange(startDate(), date)}
+                  options={{ dateFormat: "Y-m-d" }}
+                />
+              </div>
             </div>
             <Chart type="line" data={comparisonMetrics()} />
           </div>
-        )}
-
-        {selectedMetric() === "product" && productMetrics() && (
           <div class="chart-container metric-chart">
             <div class="chart-header">
-              <h2>Ventas de Productos</h2>
+              <h2>Ventas Diarias por Vendedor</h2>
+              <div class="seller-selector-container">
+                <SellerSelector onSellerChange={handleSellerChange} />
+              </div>
             </div>
-            <Chart type="bar" data={productMetrics()} />
+            <Chart type="bar" data={sellerDailyMetrics()} />
           </div>
-        )}
-
-        {selectedMetric() === "customer" && customerMetrics() && (
           <div class="chart-container metric-chart">
             <div class="chart-header">
-              <h2>Métricas de Clientes</h2>
+              <h2>Ventas Mensuales por Cliente</h2>
+              <div class="customer-selector-container">
+                <CustomerSelector onCustomerChange={handleCustomerChange} />
+              </div>
             </div>
-            <Chart type="bar" data={customerMetrics()} />
+            <Chart type="bar" data={customerMonthlyMetrics()} />
           </div>
-        )}
-
-        {selectedMetric() === "seller" && sellerMetrics() && (
           <div class="chart-container metric-chart">
             <div class="chart-header">
-              <h2>Métricas de Vendedores</h2>
+              <h2>Ventas Mensuales por Producto</h2>
+              <ProductSelector onProductChange={(product: string | null) => setSelectedProduct(product)} />
             </div>
-            <Chart type="bar" data={sellerMetrics()} />
+            <Chart type="bar" data={productMonthlyMetrics()} />
           </div>
-        )}
+        </div>
+        <ProductRanking data={productRankings()} />
       </div>
     </Layout>
   );

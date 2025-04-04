@@ -67,6 +67,30 @@ exports.obtenerMetricasProductos = async (req, res) => {
   }
 };
 
+// Obtener ranking de productos
+exports.obtenerRankingsProductos = async (req, res) => {
+  try {
+    const productos = await Producto.findAll({
+      attributes: [
+        'nombre',
+        [Sequelize.fn('COUNT', Sequelize.col('detalles.pedido_id')), 'ventas']
+      ],
+      include: [{
+        model: DetallePedido,
+        as: 'detalles',
+        attributes: []
+      }],
+      group: ['producto.id'],
+      order: [[Sequelize.fn('COUNT', Sequelize.col('detalles.pedido_id')), 'DESC']]
+    });
+
+    res.status(200).json(productos);
+  } catch (error) {
+    console.error('Error al obtener el ranking de productos:', error);
+    res.status(500).json({ error: `Error al obtener el ranking de productos - ${error.message}` });
+  }
+};
+
 // Modificar producto
 exports.modificarProducto = async (req, res) => {
   const { id } = req.params;
