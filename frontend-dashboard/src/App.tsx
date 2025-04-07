@@ -20,6 +20,7 @@ const App = () => {
         <Notification />
         <Router>
           <Route path="/login" component={Login} />
+          <Route path="/" component={Login} />
           <Route path="/home" component={() => <ProtectedRoute component={Home} />} /> 
           <Route path="*" component={() => <ProtectedRoute component={Home} />} />
           <Route path="/home" component={() => <ProtectedRoute component={Home} />} />  

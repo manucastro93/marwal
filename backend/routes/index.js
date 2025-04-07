@@ -1,12 +1,16 @@
 const express = require('express');
+const multer = require('multer');
 const router = express.Router();
+const paginaController = require('../controllers/paginaController');
+
+const upload = multer();
+
 const { validarToken, validarRol, limitarSolicitudes } = require('../middlewares/authMiddleware');
 const { manejarErrores } = require('../middlewares/errorHandler');
 const usuarioController = require('../controllers/usuarioController');
 const categoriaController = require('../controllers/categoriaController');
 const clienteController = require('../controllers/clienteController');
 const imagenController = require('../controllers/imagenController');
-const paginaController = require('../controllers/paginaController');
 const pedidoController = require('../controllers/pedidoController');
 const productoController = require('../controllers/productoController');
 const vendedorController = require('../controllers/vendedorController');
@@ -34,7 +38,7 @@ router.delete('/usuarios/:id', validarToken, validarRol(['administrador', 'supre
 router.get('/usuarios', validarToken, validarRol(['administrador', 'supremo']), usuarioController.buscarUsuarios);
 router.get('/usuarios/:id', validarToken, validarRol(['administrador', 'supremo']), usuarioController.buscarUsuarioPorId);
 router.post('/login', authController.loginUsuario);
-router.post('/logout', validarToken, authController.logoutUsuario);
+router.post('/logout', authController.logoutUsuario);
 
 // Rutas para el categoriaController
 router.post('/categorias', validarToken, validarRol(['administrador', 'supremo']), validarCategoria, categoriaController.crearCategoria);
@@ -54,10 +58,11 @@ router.post('/imagenes', validarToken, validarRol(['administrador', 'supremo']),
 router.delete('/imagenes/:id', validarToken, validarRol(['administrador', 'supremo']), imagenController.eliminarImagen);
 
 // Rutas para el paginaController
-router.get('/banners', validarToken, validarRol(['administrador', 'supremo']), paginaController.buscarBanners);
-router.post('/banners', validarToken, validarRol(['administrador', 'supremo']), paginaController.crearBanner);
-router.delete('/banners/:id', validarToken, validarRol(['administrador', 'supremo']), paginaController.eliminarBanner);
-router.get('/logo', validarToken, paginaController.buscarLogo);
+router.get('/banners', paginaController.buscarBannersActivos);
+router.post('/banners', upload.single('banner'), (req, res, next) => {paginaController.crearBanner(req, res, next);});
+router.delete('/banners/:id', paginaController.eliminarBanner);
+router.post('/logo', upload.single('logo'), (req, res, next) => {paginaController.subirLogo(req, res, next);});
+router.get('/logo', paginaController.buscarLogo); 
 
 // Rutas para el pedidoController
 router.put('/pedidos/:id/estado', validarToken, validarRol(['administrador', 'supremo']), pedidoController.modificarEstadoPedido);

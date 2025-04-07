@@ -1,12 +1,13 @@
 import { Component, createSignal, onMount } from "solid-js";
-import authService from '../services/authService';
+import { authService } from '../../services/authService';
+import { usuarioService } from '../../services/usuarioService';
 
 const Header: Component = () => {
   const [usuario, setUsername] = createSignal("");
 
   onMount(async () => {
     try {
-      const user = await authService.getCurrentUser();
+      const user = await usuarioService.obtenerUsuarioConectado();
       setUsername(user.usuario);
     } catch (error) {
       console.error("Error al obtener el usuario actual:", error);
@@ -16,7 +17,7 @@ const Header: Component = () => {
   const handleLogout = async () => {
     try {
       await authService.logout();
-      window.location.href = '/';
+      window.location.href = '/login';
     } catch (error) {
       console.error('Error al cerrar sesión:', error);
     }

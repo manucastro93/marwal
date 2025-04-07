@@ -15,8 +15,7 @@ const Layout: Component<LayoutProps> = (props) => {
     try {
       const user = await usuarioService.obtenerUsuarioConectado();
       setUsername(user.usuario);
-
-      const logo = await paginaService.getLogo();
+      const logo = await paginaService.obtenerLogo();
       setLogoUrl(logo.url);
     } catch (error) {
       console.error("Error al obtener el usuario actual o logo:", error);

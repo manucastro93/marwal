@@ -1,43 +1,56 @@
-import { Banner } from '../interfaces/Pagina';
-import { Logo } from '../interfaces/Pagina';
 import axios from 'axios';
-import { api, API_URL_API } from './api';
+import { Banner, Logo } from '../interfaces/Pagina';
+
+const API_URL_API = 'http://localhost:3000/api';
+
+const getAuthToken = () => {
+  return localStorage.getItem('authToken');
+};
 
 export const paginaService = {
-    obtenerBanners: async (): Promise<Banner[]> => {
-        const response = await axios.get(`${API_URL_API}/pagina/banners`);
-        return response.data;
-    },
-  createBanner: async (banner: FormData): Promise<Banner> => {
-    const response = await axios.post(`${API_URL_API}/pagina/banners`, banner, {
+  obtenerBannersActivos: async (): Promise<Banner[]> => {
+    const response = await axios.get(`${API_URL_API}/banners`, {
       headers: {
-        'Content-Type': 'multipart/form-data'
-      }
+        'Authorization': `Bearer ${getAuthToken()}`,
+      },
     });
     return response.data;
   },
-  updateBanner: async (id: number, banner: FormData): Promise<Banner> => {
-    const response = await axios.put(`${API_URL_API}/pagina/banners/${id}`, banner, {
+  crearBanner: async (banner: FormData): Promise<Banner> => {
+    console.log('=> Enviando solicitud para crear banner');
+    const response = await axios.post(`${API_URL_API}/banners`, banner, {
       headers: {
-        'Content-Type': 'multipart/form-data'
-      }
+        'Content-Type': 'multipart/form-data',
+        'Authorization': `Bearer ${getAuthToken()}`,
+      },
+    });
+    console.log('=> Respuesta recibida:', response.data);
+    return response.data;
+  },
+  eliminarBanner: async (id: number): Promise<void> => {
+    await axios.delete(`${API_URL_API}/banners/${id}`, {
+      headers: {
+        'Authorization': `Bearer ${getAuthToken()}`,
+      },
+    });
+  },
+  obtenerLogo: async (): Promise<Logo> => {
+    const response = await axios.get(`${API_URL_API}/logo`, {
+      headers: {
+        'Authorization': `Bearer ${getAuthToken()}`,
+      },
     });
     return response.data;
   },
-  deleteBanner: async (id: number): Promise<void> => {
-    await axios.delete(`${API_URL_API}/pagina/banners/${id}`);
-  },
-  getLogo: async (): Promise<Logo> => {
-    const response = await axios.get(`${API_URL_API}/pagina/logo`);
-    return response.data;
-  },
-  createOrUpdateLogo: async (logo: FormData): Promise<Logo> => {
-    const response = await axios.post(`${API_URL_API}/pagina/logo`, logo, {
+  subirLogo: async (logo: FormData): Promise<Logo> => {
+    const response = await axios.post(`${API_URL_API}/logo`, logo, {
       headers: {
-        'Content-Type': 'multipart/form-data'
-      }
+        'Content-Type': 'multipart/form-data',
+        'Authorization': `Bearer ${getAuthToken()}`,
+      },
     });
     return response.data;
-  }
+  },
 };
+
 export default paginaService;

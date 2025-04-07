@@ -18,6 +18,7 @@ export const authService = {
       },
       withCredentials: true
     });
+    localStorage.removeItem('token');
     return response.data;
   } catch (error) {
     console.error('Error al obtener logout:', error);

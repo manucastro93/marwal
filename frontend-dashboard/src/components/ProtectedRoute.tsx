@@ -10,14 +10,6 @@
         navigate('/login');
         return;
       }
-
-      /*const userRole = auth.user()?.rol;
-
-      if (props.roles && userRole && !props.roles.includes(userRole)) {
-        navigate('/unauthorized');
-        return;
-      }
-        */
     });
 
     const Component = props.component;

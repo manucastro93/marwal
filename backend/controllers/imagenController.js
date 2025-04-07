@@ -8,7 +8,6 @@ const { Upload } = require('@aws-sdk/lib-storage');
 const multer = require('multer');
 const multerS3 = require('multer-s3');
 const uuid = require('uuid').v4;
-
 const s3Client = new S3Client({
   region: process.env.AWS_REGION,
   credentials: {

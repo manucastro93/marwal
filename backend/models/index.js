@@ -23,6 +23,8 @@ const Notificacion = require('./Notificacion')(sequelize, Sequelize.DataTypes);
 const Pedido = require('./Pedido')(sequelize, Sequelize.DataTypes);
 const Producto = require('./Producto')(sequelize, Sequelize.DataTypes);
 const Usuario = require('./Usuario')(sequelize, Sequelize.DataTypes);
+const Banner = require('./Banner')(sequelize, Sequelize.DataTypes);
+const Logo = require('./Logo')(sequelize, Sequelize.DataTypes);
 
 // Definir asociaciones
 Cliente.hasMany(Pedido, { foreignKey: 'cliente_id' });
@@ -47,4 +49,6 @@ module.exports = {
   Pedido,
   Producto,
   Usuario,
+  Banner,
+  Logo
 };

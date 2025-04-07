@@ -1,5 +1,18 @@
 const { Pedido, Cliente, Usuario, Producto, DetallePedido, Categoria } = require('../models');
 const { validationResult } = require('express-validator');
+const nodemailer = require('nodemailer');
+
+// Crear un pedido sin los detalles
+exports.crearPedido = async (req, res) => {
+};
+
+// Agregar detalles a un pedido existente
+exports.agregarDetallesPedido = async (req, res) => {
+};
+
+// Enviar pedido por correo electrónico
+exports.sendOrderEmail = async (req, res) => {
+};
 
 // Función para modificar el estado de un pedido
 exports.modificarEstadoPedido = async (req, res) => {
