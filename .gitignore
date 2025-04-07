@@ -1,0 +1,7 @@
+# Ficheros y directorios a ignorar
+node_modules/
+.env
+.DS_Store
+dist/
+*.log
+backend/.env

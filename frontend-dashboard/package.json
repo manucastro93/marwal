@@ -1,0 +1,31 @@
+{
+  "name": "vite-template-solid",
+  "version": "0.0.0",
+  "description": "Those templates dependencies are maintained via [pnpm](https://pnpm.io) via `pnpm up -Lri`.",
+  "type": "module",
+  "scripts": {
+    "start": "vite",
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@types/chart.js": "^2.9.41",
+    "typescript": "^5.8.2",
+    "vite": "^6.2.4",
+    "vite-plugin-solid": "^2.11.6"
+  },
+  "dependencies": {
+    "@solidjs/router": "^0.15.3",
+    "axios": "^1.8.4",
+    "bootstrap": "^5.3.3",
+    "chart.js": "^4.4.8",
+    "flatpickr": "^4.6.13",
+    "solid-datepicker": "^0.0.1",
+    "solid-js": "^1.9.5"
+  },
+  "main": "index.js",
+  "keywords": [],
+  "author": ""
+}
