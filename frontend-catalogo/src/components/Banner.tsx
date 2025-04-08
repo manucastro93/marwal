@@ -1,7 +1,7 @@
 /* @jsxImportSource solid-js */
 import { createSignal, onCleanup, onMount, For } from "solid-js";
 import paginaService from "../services/paginaService"; 
-import { Banner } from "../interfaces/Banner";
+import { Banner } from "../interfaces/Pagina";
 
 const BannerComponent = () => {
   const [banners, setBanners] = createSignal<Banner[]>([]);
