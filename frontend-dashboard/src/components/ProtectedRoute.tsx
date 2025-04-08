@@ -1,4 +1,4 @@
-import { Component, createSignal, onCleanup } from 'solid-js';
+import { Component, createEffect, createSignal } from 'solid-js';
 import { useNavigate } from '@solidjs/router';
 import { useAuth } from '../context/AuthContext';
 
@@ -7,27 +7,33 @@ const ProtectedRoute: Component<{ component: Component, roles?: string[] }> = (p
   const navigate = useNavigate();
   const [authChecked, setAuthChecked] = createSignal(false);
 
-  const verifyAuth = async () => {
-    console.log('Verifying authentication status...');
-    await checkAuth();
-    setAuthChecked(true);
-  };
+  createEffect(() => {
+    const verifyAuth = async () => {
+      console.log('Verifying authentication status...');
+      await checkAuth();
+      setAuthChecked(true);
+    };
+    verifyAuth();
+  }, []);
 
-  verifyAuth();
+  createEffect(() => {
+    console.log('Authentication checked:', authChecked());
+    console.log('Is authenticated:', isAuthenticated);
+    if (authChecked() && !isAuthenticated) {
+      console.log('Not authenticated, redirecting to login...');
+      navigate('/login');
+    }
+  }, [authChecked, isAuthenticated]);
 
-  onCleanup(() => {
-    setAuthChecked(false);
-  });
-
+  const Component = props.component;
   return (
     <>
       {authChecked() ? (
         isAuthenticated ? (
-          <props.component />
+          <Component />
         ) : (
           <div>
             <p>Not authenticated, redirecting to login...</p>
-            {navigate('/login')}
           </div>
         )
       ) : (
