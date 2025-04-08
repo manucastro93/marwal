@@ -20,7 +20,7 @@ const s3Client = new S3Client({
 exports.subirImagen = [
   upload.single('imagen'), // Usar el middleware multer
   async (req, res) => {
-    console.log(req);
+    console.log("req:" ,req);
     const { file } = req;
     if (!file) {
       console.error('=> No se ha subido ningún archivo');
