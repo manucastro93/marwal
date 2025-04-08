@@ -28,14 +28,17 @@ const ProtectedRoute: Component<{ component: Component, roles?: string[] }> = (p
   const Component = props.component;
   return (
     <>
-      {authChecked() && isAuthenticated ? (
-        <Component />
+      {authChecked() ? (
+        isAuthenticated ? (
+          <Component />
+        ) : (
+          <div>
+            <p>Not authenticated, redirecting to login...</p>
+          </div>
+        )
       ) : (
         <div>
           <p>Checking authentication status...</p>
-          {authChecked() && !isAuthenticated && (
-            <p>Not authenticated, redirecting to login...</p>
-          )}
         </div>
       )}
     </>
