@@ -6,6 +6,7 @@
     const auth = useAuth();
     const navigate = useNavigate();
     createEffect(() => {
+      console.log(auth.isAuthenticated)
       if (!auth.isAuthenticated) {
         navigate('/login');
         return;
