@@ -17,7 +17,7 @@ const Header = () => {
   });
   return (
     <header class="header">
-      <img src={'logo().url'} alt="Logo" class="logo-image" />
+      <img src={logo().url} alt="Logo" class="logo-image" />
       <h1 class="catalogo-online">Catálogo <span>Online</span></h1>
     </header>
   );
