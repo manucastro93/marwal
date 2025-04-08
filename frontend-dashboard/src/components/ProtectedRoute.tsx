@@ -6,12 +6,14 @@ const ProtectedRoute: Component<{ component: Component, roles?: string[] }> = (p
   const { isAuthenticated, checkAuth } = useAuth();
   const navigate = useNavigate();
   const [authChecked, setAuthChecked] = createSignal(false);
+  const [loading, setLoading] = createSignal(true);
 
   createEffect(() => {
     const verifyAuth = async () => {
       console.log('Verifying authentication status...');
       await checkAuth();
       setAuthChecked(true);
+      setLoading(false);
       console.log('Auth checked');
     };
     verifyAuth();
@@ -29,18 +31,19 @@ const ProtectedRoute: Component<{ component: Component, roles?: string[] }> = (p
   const Component = props.component;
   return (
     <>
-      {authChecked() ? (
-        isAuthenticated() ? (
+      {loading() ? (
+        <div>
+          <img src="https://marwal.s3.sa-east-1.amazonaws.com/imagenes_pagina/cargando.gif" alt="Loading..." />
+          <p>Checking authentication status...</p>
+        </div>
+      ) : (
+        authChecked() && isAuthenticated() ? (
           <Component />
         ) : (
           <div>
             <p>Not authenticated, redirecting to login...</p>
           </div>
         )
-      ) : (
-        <div>
-          <p>Checking authentication status...</p>
-        </div>
       )}
     </>
   );
