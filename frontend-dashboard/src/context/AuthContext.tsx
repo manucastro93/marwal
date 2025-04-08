@@ -1,4 +1,4 @@
-import { createContext, useContext, createSignal, Component, JSX, onCleanup, onMount } from 'solid-js';
+import { createContext, useContext, createSignal, Component, JSX, onMount } from 'solid-js';
 import { authService } from '../services/authService';
 
 interface AuthContextProps {
@@ -15,11 +15,10 @@ export const AuthProvider: Component<{ children: JSX.Element }> = (props) => {
 
   const login = async (usuario: string, contrasena: string) => {
     try {
-      await authService.login(usuario, contrasena).then(response => {
-        localStorage.setItem('token',response.token);
-        localStorage.setItem('isAuthenticated','true');
-        setIsAuthenticated(true);
-      })
+      const response = await authService.login(usuario, contrasena);
+      localStorage.setItem('token', response.token);
+      localStorage.setItem('isAuthenticated', 'true');
+      setIsAuthenticated(true);
     } catch (error) {
       console.error('AuthContext: login failed', error);
       setIsAuthenticated(false);
@@ -40,15 +39,20 @@ export const AuthProvider: Component<{ children: JSX.Element }> = (props) => {
 
   const checkAuth = async () => {
     try {
-      setIsAuthenticated(true);
+      const isAuth = localStorage.getItem('isAuthenticated') === 'true';
+      setIsAuthenticated(isAuth);
     } catch (error) {
       setIsAuthenticated(false);
     }
   };
+
   // Check authentication status on mount
+  onMount(() => {
     checkAuth();
+  });
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated: isAuthenticated(), login, logout, checkAuth  }}>
+    <AuthContext.Provider value={{ isAuthenticated: isAuthenticated(), login, logout, checkAuth }}>
       {props.children}
     </AuthContext.Provider>
   );
