@@ -1,19 +1,17 @@
 /* @jsxImportSource solid-js */
 import { createSignal, onCleanup, onMount, For } from "solid-js";
-import bannerService from "../services/BannerService"; 
+import paginaService from "../services/paginaService"; 
 import { Banner } from "../interfaces/Banner";
 
 const BannerComponent = () => {
   const [banners, setBanners] = createSignal<Banner[]>([]);
   const [currentBanner, setCurrentBanner] = createSignal(0);
-  const BASE_URL = 'https://catalogo-online-marwal.onrender.com';
   const fetchBanners = async () => {
     try {
-      const data = await bannerService.getBanners();
-      console.log("Banners fetched:", data); // Log de los banners obtenidos
-      setBanners(data);
+      const response = await paginaService.obtenerBannersActivos();
+      setBanners(response);
     } catch (error) {
-      console.error("Error fetching banners:", error);
+      console.error('=> Error al obtener banners activos:', error);
     }
   };
 
@@ -33,7 +31,7 @@ const BannerComponent = () => {
     <div class="banner-slider">
       <For each={banners()}>
         {(banner, index) => (
-          <img src={BASE_URL+banner.url} alt={`Banner ${index() + 1}`} style={{ display: currentBanner() === index() ? 'block' : 'none' }} />
+          <img src={banner.url} alt={`Banner ${index() + 1}`} style={{ display: currentBanner() === index() ? 'block' : 'none' }} />
         )}
       </For>
     </div>

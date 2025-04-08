@@ -8,7 +8,6 @@ interface ProductDetailsProps {
 }
 
 const ProductDetails = ({ product, onClose }: ProductDetailsProps) => {
-  const BASE_URL = 'https://catalogo-online-marwal.onrender.com';
   const [currentImageIndex, setCurrentImageIndex] = createSignal(0);
 
   const nextImage = () => {
@@ -29,7 +28,7 @@ const ProductDetails = ({ product, onClose }: ProductDetailsProps) => {
         <span class="close" onClick={onClose}>&times;</span>
         <div class="product-details">
           <div class="product-images">
-            <img class="main-image" src={BASE_URL + product.imagenes[currentImageIndex()].url} alt={product.nombre} />
+            <img class="main-image" src={product.imagenes[currentImageIndex()].url} alt={product.nombre} />
             <Show when={product.imagenes.length > 1}>
               <div class="slider-controls">
                 <button onClick={prevImage}>&#10094;</button>
@@ -40,7 +39,7 @@ const ProductDetails = ({ product, onClose }: ProductDetailsProps) => {
                   {(imagen, index) => (
                     <img 
                       class={`thumbnail ${currentImageIndex() === index() ? 'active' : ''}`} 
-                      src={BASE_URL + imagen.url} 
+                      src={imagen.url} 
                       alt={`${product.nombre} thumbnail`} 
                       onClick={() => selectImage(index())} 
                     />
