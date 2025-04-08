@@ -1,7 +1,6 @@
 import { createSignal } from 'solid-js';
 import { useNavigate } from '@solidjs/router';
 import { useAuth } from '../context/AuthContext';
-import { authService } from '../services/authService';
 import { showNotification } from '../components/Layout/Notification';
 
 const Login = () => {
@@ -9,14 +8,11 @@ const Login = () => {
   const navigate = useNavigate();
   const [usuario, setUsuario] = createSignal('');
   const [contraseña, setContraseña] = createSignal('');
+
   const handleLogin = async () => {
     try {
-      const response = await authService.login(usuario(), contraseña());
-      localStorage.setItem('isAuthenticated', 'true');
-      localStorage.setItem('token', response.token); 
-      login();
-      navigate('/home'); 
-      window.location.href= '/home'; 
+      await login(usuario(), contraseña());
+      navigate('/home');
     } catch (error) {
       console.error('Error en el login:', error);
       showNotification('Error en el login', 'error');
