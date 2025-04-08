@@ -44,12 +44,12 @@ router.post('/logout', authController.logoutUsuario);
 router.post('/categorias', validarToken, validarRol(['administrador', 'supremo']), validarCategoria, categoriaController.crearCategoria);
 router.put('/categorias/:id', validarToken, validarRol(['administrador', 'supremo']), validarCategoria, categoriaController.editarCategoria);
 router.delete('/categorias/:id', validarToken, validarRol(['administrador', 'supremo']), categoriaController.eliminarCategoria);
-router.get('/categorias', validarToken, categoriaController.buscarCategorias);
+router.get('/categorias', categoriaController.buscarCategorias);
 
 // Rutas para el clienteController
 router.put('/clientes/:id', validarToken, validarRol(['vendedor', 'administrador', 'supremo']), validarCliente, clienteController.editarCliente);
 router.get('/clientes', validarToken, validarRol(['vendedor', 'administrador', 'supremo']), clienteController.buscarClientes);
-router.get('/clientes/ip/:ip', validarToken, validarRol(['vendedor', 'administrador', 'supremo']), clienteController.buscarClientePorIp);
+router.get('/clientes/ip/:ip', validarRol(['vendedor', 'administrador', 'supremo']), clienteController.buscarClientePorIp);
 router.get('/clientes/:id', validarToken, validarRol(['vendedor', 'administrador', 'supremo']), clienteController.buscarClientePorId);
 router.get('/metricas/clientes', validarToken, validarRol(['administrador', 'supremo']), clienteController.buscarMetricasClientes);
 
@@ -81,10 +81,10 @@ router.get('/pedidos/categoria/:categoria_id', validarToken, validarRol(['admini
 router.post('/productos', validarToken, validarRol(['administrador', 'supremo']), validarProducto, productoController.crearProducto);
 router.put('/productos/:id', validarToken, validarRol(['administrador', 'supremo']), validarProducto, productoController.editarProducto);
 router.delete('/productos/:id', validarToken, validarRol(['administrador', 'supremo']), productoController.eliminarProducto);
-router.get('/productos', validarToken, productoController.buscarProductos);
-router.get('/productos/:id', validarToken, productoController.buscarProductoPorId);
-router.get('/productos/nombre/:nombre', validarToken, productoController.buscarProductoPorNombre);
-router.get('/productos/categoria/:categoria_id', validarToken, productoController.buscarProductoPorCategoria);
+router.get('/productos', productoController.buscarProductos);
+router.get('/productos/:id', productoController.buscarProductoPorId);
+router.get('/productos/nombre/:nombre', productoController.buscarProductoPorNombre);
+router.get('/productos/categoria/:categoria_id', productoController.buscarProductoPorCategoria);
 
 // Rutas para el vendedorController
 router.post('/vendedores', validarToken, validarRol(['administrador', 'supremo']), validarUsuario, vendedorController.crearVendedor);

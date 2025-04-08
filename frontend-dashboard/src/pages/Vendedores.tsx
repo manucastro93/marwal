@@ -105,7 +105,7 @@ const Vendedores: Component = () => {
                 <td>{vendedor.nombre}</td>
                 <td>{vendedor.email}</td>
                 <td>{vendedor.telefono}</td>
-                <td>{'http://localhost:8000/'+vendedor.link}</td>
+                <td>{'https://marwal.onrender.com/'+vendedor.link}</td>
                 <td>
                   <button class="btn btn-warning btn-sm" onClick={() => { setEditVendedor(vendedor); setIsEditModalOpen(true); }}>Editar</button>
                   <button class="btn btn-danger btn-sm right" onClick={() => vendedor.id && handleDelete(vendedor.id)}>Eliminar</button>
