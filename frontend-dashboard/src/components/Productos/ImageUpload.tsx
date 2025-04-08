@@ -18,7 +18,7 @@ const ImageUpload: Component<ImageUploadProps> = (props) => {
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         const formData = new FormData();
-        formData.append('file', file);
+        formData.append('imagen', file); // Asegúrate de que el nombre del campo sea 'imagen'
 
         try {
           const response = await imagenProductoService.subirImagen(formData);
@@ -50,7 +50,7 @@ const ImageUpload: Component<ImageUploadProps> = (props) => {
       <input type="file" multiple onChange={handleImageUpload} />
       <div class="image-preview">
         {images().map((image, index) => (
-          <div class="image-container">
+          <div class="image-container" key={index}>
             <img src={image.url} alt={`Imagen ${index + 1}`} />
             <button onClick={() => handleRemoveImage(image.id)}>Eliminar</button>
           </div>
