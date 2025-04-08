@@ -1,20 +1,27 @@
-import { Component, createEffect } from 'solid-js';
+import { Component, createEffect, createSignal } from 'solid-js';
 import { useNavigate } from '@solidjs/router';
 import { useAuth } from '../context/AuthContext';
 
 const ProtectedRoute: Component<{ component: Component, roles?: string[] }> = (props) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, checkAuth } = useAuth();
   const navigate = useNavigate();
+  const [authChecked, setAuthChecked] = createSignal(false);
 
   createEffect(() => {
-    console.log("create efect: ", isAuthenticated)
-    if (!isAuthenticated) {
+    (async () => {
+      await checkAuth();
+      setAuthChecked(true);
+    })();
+  });
+
+  createEffect(() => {
+    if (authChecked() && !isAuthenticated) {
       navigate('/login');
     }
   });
-  console.log("fuera: ", isAuthenticated)
+
   const Component = props.component;
-  return isAuthenticated ? <Component /> : null;
+  return authChecked() && isAuthenticated ? <Component /> : null;
 };
 
 export default ProtectedRoute;
