@@ -5,7 +5,7 @@ const { ImagenProducto } = require('../models');
 const { validationResult } = require('express-validator');
 const { S3Client, PutObjectCommand, DeleteObjectCommand } = require('@aws-sdk/client-s3');
 const uuid = require('uuid').v4;
-const upload = require('../middleware/multer'); // Importar el middleware
+const upload = require('../middlewares/multer'); // Importar el middleware
 
 // Configuración de AWS S3
 const s3Client = new S3Client({
