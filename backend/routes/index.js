@@ -54,12 +54,12 @@ router.get('/clientes/:id', validarToken, validarRol(['vendedor', 'administrador
 router.get('/metricas/clientes', validarToken, validarRol(['administrador', 'supremo']), clienteController.buscarMetricasClientes);
 
 // Rutas para el imagenController
-router.post('/imagenes', upload.single('imagen'), imagenController.subirImagen);
+router.post('/imagenes', upload.single('imagen'), (req, res, next) => {imagenController.subirImagen(req, res, next)});
 router.delete('/imagenes/:id', validarToken, validarRol(['administrador', 'supremo']), imagenController.eliminarImagen);
 
 // Rutas para el paginaController
 router.get('/banners', paginaController.buscarBannersActivos);
-router.post('/banners', upload.single('banner'), (req, res, next) => {paginaController.crearBanner(req, res, next);});
+router.post('/banners', upload.single('banner'), (req, res, next) => {paginaController.crearBanner(req, res, next)});
 router.delete('/banners/:id', paginaController.eliminarBanner);
 router.post('/logo', upload.single('logo'), (req, res, next) => {paginaController.subirLogo(req, res, next);});
 router.get('/logo', paginaController.buscarLogo); 
