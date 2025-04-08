@@ -27,7 +27,7 @@ exports.subirImagen =   async (req, res) => {
     }
     const fileName = `${uuid()}-${file.originalname}`;
     const params = {
-      Bucket: process.env.AWS_BUCKET_NAME,
+      Bucket: process.env.S3_BUCKET_NAME,
       Key: `productos/${fileName}`,
       Body: file.buffer,
       ContentType: file.mimetype,
@@ -35,7 +35,7 @@ exports.subirImagen =   async (req, res) => {
     try {
       const command = new PutObjectCommand(params);
       await s3Client.send(command);
-      const url = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/productos/${fileName}`;
+      const url = `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/productos/${fileName}`;
       const nuevaImagen = { url }; // Definir nuevaImagen
       res.status(201).json(nuevaImagen); // Enviar nuevaImagen en la respuesta
     } catch (error) {
@@ -55,7 +55,7 @@ exports.eliminarImagen = async (req, res) => {
     }
 
     const params = {
-      Bucket: process.env.AWS_BUCKET_NAME,
+      Bucket: process.env.S3_BUCKET_NAME,
       Key: imagen.url.split('.com/')[1], // Extraer la clave del objeto desde la URL
     };
 
