@@ -1,5 +1,20 @@
-/* @jsxImportSource solid-js */
+import { createSignal, createEffect } from 'solid-js';
+import paginaService from '../services/paginaService';
+
 const Header = () => {
+  const [logo, setLogo] = createSignal<any[]>([]);
+  const fetchLogo = async () => {
+    try {
+      const response = await paginaService.obtenerLogo();
+      setLogo(response);
+      console.log(response)
+    } catch (error) {
+      console.error('=> Error al obtener logo activos:', error);
+    }
+  };
+  createEffect(() => {
+    fetchLogo();
+  });
   return (
     <header class="header">
       <img src={''} alt="Logo" class="logo-image" />
