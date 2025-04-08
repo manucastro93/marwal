@@ -5,7 +5,7 @@ const Header = () => {
   const [logoUrl, setLogoUrl] = createSignal("");
   onMount(async () => {
     try {
-      const response = await paginaService.obtenerLogo();
+      const logo = await paginaService.obtenerLogo();
       setLogoUrl(logo.url);
     } catch (error) {
       console.error('=> Error al obtener logo activos:', error);
