@@ -27,8 +27,8 @@ const ProtectedRoute: Component<{ component: Component, roles?: string[] }> = (p
   return (
     <>
       {loading() ? (
-        <div>
-          <img src="https://marwal.s3.sa-east-1.amazonaws.com/imagenes_pagina/cargando.gif" alt="Loading..." />
+        <div style={{ textAlign: 'center', marginTop: '50px' }}>
+          <img src="https://marwal.s3.sa-east-1.amazonaws.com/imagenes_pagina/cargando.gif" class="loading-image" alt="Loading..." />
           <p>Checking authentication status...</p>
         </div>
       ) : (
