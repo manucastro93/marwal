@@ -10,6 +10,7 @@ exports.crearProducto = async (req, res) => {
   }
 
   const { codigo, nombre, descripcion, precio, categoria_id, stock, estado } = req.body;
+  
   try {
     const nuevoProducto = await Producto.create({
       codigo,
@@ -19,9 +20,9 @@ exports.crearProducto = async (req, res) => {
       categoria_id,
       stock,
       estado,
-      usuario_id: req.usuario,
+      usuario_id: req.usuario.id,
     });
-    console.log("producto a agregar: ",nuevoProducto)
+    console.log("prod agrega: ",nuevoProducto)
     res.status(201).json(nuevoProducto);
   } catch (error) {
     res.status(500).json({ msg: 'Error al crear producto', error });
