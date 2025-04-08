@@ -104,3 +104,19 @@ exports.buscarVendedorPorId = async (req, res) => {
     res.status(500).json({ msg: 'Error al buscar vendedor por ID', error });
   }
 };
+
+// Función para buscar un vendedor por su Link
+exports.buscarVendedorPorLink = async (req, res) => {
+  const { link } = req.params;
+
+  try {
+    const vendedor = await Usuario.findOne({ where: { link, rol: 'vendedor' } });
+    if (!vendedor) {
+      return res.status(404).json({ msg: 'Vendedor no encontrado' });
+    }
+
+    res.status(200).json(vendedor);
+  } catch (error) {
+    res.status(500).json({ msg: 'Error al buscar vendedor por ID', error });
+  }
+};

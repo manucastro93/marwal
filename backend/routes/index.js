@@ -92,6 +92,7 @@ router.put('/vendedores/:id', validarToken, validarRol(['administrador', 'suprem
 router.delete('/vendedores/:id', validarToken, validarRol(['administrador', 'supremo']), vendedorController.eliminarVendedor);
 router.get('/vendedores', validarToken, validarRol(['administrador', 'supremo']), vendedorController.buscarVendedores);
 router.get('/vendedores/:id', validarToken, validarRol(['administrador', 'supremo']), vendedorController.buscarVendedorPorId);
+router.get('/vendedores/by-link/:link', validarRol(['administrador', 'supremo']), vendedorController.buscarVendedorPorLink);
 
 // Rutas para el administradorController
 router.post('/administradores', validarToken, validarRol(['supremo']), validarUsuario, administradorController.crearAdministrador);
