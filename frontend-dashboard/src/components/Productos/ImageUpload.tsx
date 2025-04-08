@@ -6,7 +6,6 @@ import { imagenProductoService } from '../../services/imagenProductoService';
 interface ImageUploadProps {
   onImagesChange: (images: Imagen[]) => void;
   initialImages: Imagen[];
-  productoId: number;
 }
 
 const ImageUpload: Component<ImageUploadProps> = (props) => {
@@ -20,7 +19,6 @@ const ImageUpload: Component<ImageUploadProps> = (props) => {
         const file = files[i];
         const formData = new FormData();
         formData.append('file', file);
-        formData.append('producto_id', props.productoId);
 
         try {
           const response = await imagenProductoService.subirImagen(formData);

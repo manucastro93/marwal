@@ -10,7 +10,7 @@ exports.crearProducto = async (req, res) => {
   }
 
   const { codigo, nombre, descripcion, precio, categoria_id, stock, estado, imagenes } = req.body;
-  console.log("usuario logueado: ",req.usuario)
+  console.log("usuario logueado: ",req.usuario.id)
   try {
     const nuevoProducto = await Producto.create({
       codigo,
@@ -20,7 +20,7 @@ exports.crearProducto = async (req, res) => {
       categoria_id,
       stock,
       estado,
-      usuario_id: req.usuario,
+      usuario_id: req.usuario.id,
     });
     if (imagenes && imagenes.length > 0) {
       const imagenesData = imagenes.map(image => ({
