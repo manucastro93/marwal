@@ -7,6 +7,7 @@ export default defineConfig({
     port: 5000,
   },
   build: {
-    target: 'esnext',
+    outDir: 'dist', // Esto es crucial
+    emptyOutDir: true // Limpia el directorio en cada build
   },
 });
