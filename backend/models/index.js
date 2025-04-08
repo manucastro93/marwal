@@ -39,6 +39,7 @@ Producto.belongsToMany(Pedido, { through: 'PedidoProducto', foreignKey: 'product
 Cliente.belongsTo(Usuario, { foreignKey: 'vendedor_id' });
 Usuario.hasMany(Cliente, { foreignKey: 'vendedor_id' });
 
+
 module.exports = {
   sequelize,
   Categoria,

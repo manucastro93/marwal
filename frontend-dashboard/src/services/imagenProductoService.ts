@@ -1,8 +1,8 @@
 import { api } from './api';
 
 export const imagenProductoService = {
-  subirImagen: async (formData: FormData) => {
-    const response = await api.post('/imagenes', formData);
+  subirImagen: async (imagen: FormData) => {
+    const response = await api.post('/imagenes', imagen);
     return response.data;
   },
   eliminarImagen: async (id: number) => {

@@ -38,6 +38,7 @@ exports.subirImagen = async (req, res) => {
       producto_id,
       url,
     });
+    console.log("llego aca....")
     res.status(201).json(nuevaImagen);
   } catch (error) {
     console.error('=> Error al subir imagen:', error);
