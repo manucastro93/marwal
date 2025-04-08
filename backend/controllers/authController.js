@@ -5,7 +5,6 @@ const { validationResult } = require('express-validator');
 
 // Función para autenticar a un usuario y generar un token JWT
 exports.loginUsuario = async (req, res) => {
-  console.log('Iniciando sesión...');
   const { usuario, contraseña } = req.body;
   try {
     const esUsuarioValido = await Usuario.findOne({ where: { usuario } });
