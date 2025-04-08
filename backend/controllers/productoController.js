@@ -8,9 +8,7 @@ exports.crearProducto = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errores: errors.array() });
   }
-
   const { codigo, nombre, descripcion, precio, categoria_id, stock, estado, imagenes } = req.body;
-  console.log("usuario logueado: ",req.usuario.id)
   try {
     const nuevoProducto = await Producto.create({
       codigo,
@@ -22,6 +20,7 @@ exports.crearProducto = async (req, res) => {
       estado,
       usuario_id: req.usuario.id,
     });
+    console.log(req.body)
     if (imagenes && imagenes.length > 0) {
       const imagenesData = imagenes.map(image => ({
         producto_id: nuevoProducto.id,
