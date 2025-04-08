@@ -6,3 +6,4 @@ dist/
 *.log
 backend/.env
 backend/.env.save
+.env.save
