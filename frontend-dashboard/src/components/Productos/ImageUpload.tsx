@@ -14,23 +14,19 @@ const ImageUpload: Component<ImageUploadProps> = (props) => {
   const handleImageUpload = async (event: Event) => {
     const files = (event.target as HTMLInputElement).files;
     if (files) {
-      const newImages: Imagen[] = [];
+      const formData = new FormData();
       for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const formData = new FormData();
-        formData.append('imagen', file); // Asegúrate de que el nombre del campo sea 'imagen'
-
-        try {
-          const response = await imagenProductoService.subirImagen(formData);
-          const nuevaImagen: Imagen = response.data;
-          newImages.push(nuevaImagen);
-        } catch (error) {
-          showNotification('Error al subir la imagen', 'error');
-        }
+        formData.append('imagenes', files[i]);
       }
-      const updatedImages = [...images(), ...newImages];
-      setImages(updatedImages);
-      props.onImagesChange(updatedImages);
+  
+      try {
+        const response = await imagenProductoService.subirImagen(formData);
+        const nuevasImagenes = response;
+        setImages([...images(), ...nuevasImagenes]);
+        props.onImagesChange([...images(), ...nuevasImagenes]);
+      } catch (error) {
+        showNotification('Error al subir las imágenes', 'error');
+      }
     }
   };
 

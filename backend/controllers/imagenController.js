@@ -43,6 +43,38 @@ exports.subirImagen =   async (req, res) => {
   }
 ;
 
+// Función para subir múltiples imágenes de un producto
+exports.subirMultiplesImagenes = async (req, res) => {
+  const { files } = req; // 'files' contiene todas las imágenes
+  if (!files || files.length === 0) {
+    return res.status(400).json({ msg: 'No se han subido archivos' });
+  }
+
+  try {
+    const uploadedImages = [];
+    for (const file of files) {
+      const fileName = `${uuid()}-${file.originalname}`;
+      const params = {
+        Bucket: process.env.S3_BUCKET_NAME,
+        Key: `productos/${fileName}`,
+        Body: file.buffer,
+        ContentType: file.mimetype,
+      };
+
+      const command = new PutObjectCommand(params);
+      await s3Client.send(command);
+
+      const url = `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/productos/${fileName}`;
+      uploadedImages.push({ url });
+    }
+
+    res.status(201).json(uploadedImages);
+  } catch (error) {
+    console.error('Error al subir imágenes:', error);
+    res.status(500).json({ msg: 'Error al subir imágenes', error });
+  }
+};
+
 // Función para eliminar una imagen de producto
 exports.eliminarImagen = async (req, res) => {
   const { id } = req.params;

@@ -14,7 +14,7 @@ const ProductoForm: Component<ProductoFormProps> = (props) => {
   const [producto, setProducto] = createSignal(props.initialProducto);
   const [categorias, setCategorias] = createSignal<Categoria[]>([]);
   const [error, setError] = createSignal<string | null>(null);
-  const [activeTab, setActiveTab] = createSignal<string>('details'); // Nueva señal para la pestaña activa
+  const [activeTab, setActiveTab] = createSignal<string>('details');
 
   onMount(() => {
     categoriaService.obtenerCategorias()
@@ -71,22 +71,21 @@ const ProductoForm: Component<ProductoFormProps> = (props) => {
           <input type="number" placeholder="Precio" value={producto().precio} onInput={(e) => handleInputChange('precio', isNaN(parseFloat(e.currentTarget.value)) ? 0 : parseFloat(e.currentTarget.value))} />
           <select value={producto().categoria_id} onChange={(e) => handleInputChange('categoria_id', parseInt(e.currentTarget.value))}>
             <option value="">Seleccionar Categoría</option>
-            {categorias().map(categoria => (
+            {categorias().map((categoria) => (
               <option value={categoria.id}>{categoria.nombre}</option>
             ))}
           </select>
-          <input type="number" placeholder="Stock" value={producto().stock} onInput={(e) => handleInputChange('stock', isNaN(parseInt(e.currentTarget.value)) ? 0 : parseInt(e.currentTarget.value))} />
         </div>
       )}
 
       {activeTab() === 'images' && (
-        <div class="tab-content">
-          <ImageUpload onImagesChange={handleImageChange} initialImages={producto().imagenes || []} />
-        </div>
+        <ImageUpload onImagesChange={handleImageChange} initialImages={producto().imagenes || []} />
       )}
 
-      <button style={{ 'background-color': 'green', color: 'white' }} onClick={handleSave}>Guardar</button>
-      <button style={{ float: 'right' }} onClick={props.onClose}>Cancelar</button>
+      <div class="actions">
+        <button onClick={handleSave}>Guardar</button>
+        <button onClick={props.onClose}>Cancelar</button>
+      </div>
     </div>
   );
 };
