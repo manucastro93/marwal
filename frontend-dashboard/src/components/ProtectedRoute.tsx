@@ -12,6 +12,7 @@ const ProtectedRoute: Component<{ component: Component, roles?: string[] }> = (p
       console.log('Verifying authentication status...');
       await checkAuth();
       setAuthChecked(true);
+      console.log('Auth checked');
     };
     verifyAuth();
   }, []);
