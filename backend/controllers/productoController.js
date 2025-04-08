@@ -10,7 +10,7 @@ exports.crearProducto = async (req, res) => {
   }
 
   const { codigo, nombre, descripcion, precio, categoria_id, stock, estado, usuario_id } = req.body;
-
+  console.log("el producto a subir: ",req.body)
   try {
     const nuevoProducto = await Producto.create({
       codigo,
