@@ -10,7 +10,7 @@ exports.crearProducto = async (req, res) => {
   }
 
   const { codigo, nombre, descripcion, precio, categoria_id, stock, estado, usuario_id } = req.body;
-  console.log("el producto a subir: ",req.body)
+  console.log("usuario logueado: ",req.usuario)
   try {
     const nuevoProducto = await Producto.create({
       codigo,
@@ -20,7 +20,7 @@ exports.crearProducto = async (req, res) => {
       categoria_id,
       stock,
       estado,
-      usuario_id,
+      usuario_id: req.usuario,
     });
 
     res.status(201).json(nuevoProducto);
