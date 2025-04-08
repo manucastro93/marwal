@@ -17,7 +17,6 @@ export const AuthProvider: Component<{ children: JSX.Element }> = (props) => {
     try {
       const response = await authService.login(usuario, contrasena);
       localStorage.setItem('isAuthenticated', 'true');
-      console.log("is auth")
       localStorage.setItem('token', response.token);
       setIsAuthenticated(true);
     } catch (error) {
