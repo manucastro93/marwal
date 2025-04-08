@@ -13,6 +13,7 @@ const Login = () => {
     try {
       await login(usuario(), contraseña());
       navigate('/home');
+      window.location.href ="/home";
     } catch (error) {
       console.error('Error en el login:', error);
       showNotification('Error en el login', 'error');
