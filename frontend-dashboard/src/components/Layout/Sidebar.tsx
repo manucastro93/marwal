@@ -1,6 +1,6 @@
 import { Component } from 'solid-js';
 import { A } from '@solidjs/router';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 
 const Sidebar: Component = () => {
   const auth = useAuth();

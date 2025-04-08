@@ -2,7 +2,6 @@ import { Component, createSignal } from 'solid-js';
 import { showNotification } from '../Layout/Notification';
 import { Imagen } from '../../interfaces/Producto';
 import { imagenProductoService } from '../../services/imagenProductoService';
-import { BASE_URL } from '../../config';
 
 interface ImageUploadProps {
   onImagesChange: (images: Imagen[]) => void;
@@ -12,7 +11,6 @@ interface ImageUploadProps {
 
 const ImageUpload: Component<ImageUploadProps> = (props) => {
   const [images, setImages] = createSignal<Imagen[]>(props.initialImages || []);
-  //const BASE_URL = 'http://localhost:3000';
 
   const handleImageUpload = async (event: Event) => {
     const files = (event.target as HTMLInputElement).files;
@@ -50,7 +48,7 @@ const ImageUpload: Component<ImageUploadProps> = (props) => {
       <div class="image-preview">
         {images().map((image, index) => (
           <div class="image-container">
-            <img src={`${BASE_URL}${image.url}`} alt={`Imagen ${index + 1}`} />
+            <img src={`${image.url}`} alt={`Imagen ${index + 1}`} />
             <button onClick={() => handleRemoveImage(image.url)}>Eliminar</button>
           </div>
         ))}

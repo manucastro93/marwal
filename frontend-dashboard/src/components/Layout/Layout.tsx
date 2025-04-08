@@ -2,7 +2,6 @@ import { Component, createSignal, onMount, JSX } from "solid-js";
 import { usuarioService } from '../../services/usuarioService';
 import { authService } from '../../services/authService';
 import paginaService from '../../services/paginaService';
-import { BASE_URL } from '../../config';
 
 interface LayoutProps {
   children: JSX.Element;
@@ -36,7 +35,7 @@ const Layout: Component<LayoutProps> = (props) => {
     <div class="home-container">
       <header class="header">
         <div class="logo">
-          {logoUrl() ? <img src={BASE_URL+logoUrl()} alt="Logo" width="300" /> : "LOGO"}
+          {logoUrl() ? <img src={logoUrl()} alt="Logo" width="300" /> : "LOGO"}
         </div>
         <div class="panel-admin">Panel Administrativo</div>
         <div class="user-info">

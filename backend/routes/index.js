@@ -54,7 +54,7 @@ router.get('/clientes/:id', validarToken, validarRol(['vendedor', 'administrador
 router.get('/metricas/clientes', validarToken, validarRol(['administrador', 'supremo']), clienteController.buscarMetricasClientes);
 
 // Rutas para el imagenController
-router.post('/imagenes', validarToken, validarRol(['administrador', 'supremo']), imagenController.subirImagen);
+router.post('/imagenes', upload.single('imagen'), imagenController.subirImagen);
 router.delete('/imagenes/:id', validarToken, validarRol(['administrador', 'supremo']), imagenController.eliminarImagen);
 
 // Rutas para el paginaController
