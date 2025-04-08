@@ -35,7 +35,7 @@ const ProductoForm: Component<ProductoFormProps> = (props) => {
     setProducto({ ...producto(), [field]: value });
   };
 
-  const handleImageChange = (images: string[]) => {
+  const handleImageChange = (images: Imagen[]) => {
     setProducto({ ...producto(), imagenes: images });
   };
 

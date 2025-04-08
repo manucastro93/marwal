@@ -24,7 +24,7 @@ exports.crearProducto = async (req, res) => {
     });
     if (imagenes && imagenes.length > 0) {
       const imagenesData = imagenes.map(image => ({
-        producto_id: newProducto.id,
+        producto_id: nuevoProducto.id,
         url: image.url,
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -33,13 +33,13 @@ exports.crearProducto = async (req, res) => {
     }
 
     // Incluir imágenes en la respuesta
-    const productoConImagenes = await Producto.findByPk(newProducto.id, {
+    const productoConImagenes = await Producto.findByPk(nuevoProducto.id, {
       include: {
         model: ImagenProducto,
         as: 'imagenes',
       },
     });
-    res.status(201).json(nuevoProducto);
+    res.status(201).json(productoConImagenes);
   } catch (error) {
     res.status(500).json({ msg: 'Error al crear producto', error });
   }
