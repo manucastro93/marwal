@@ -10,20 +10,15 @@ const ProtectedRoute: Component<{ component: Component, roles?: string[] }> = (p
 
   createEffect(() => {
     const verifyAuth = async () => {
-      console.log('Verifying authentication status...');
       await checkAuth();
       setAuthChecked(true);
       setLoading(false);
-      console.log('Auth checked');
     };
     verifyAuth();
   }, []);
 
   createEffect(() => {
-    console.log('Authentication checked:', authChecked());
-    console.log('Is authenticated:', isAuthenticated());
     if (authChecked() && !isAuthenticated()) {
-      console.log('Not authenticated, redirecting to login...');
       navigate('/login');
     }
   }, [authChecked, isAuthenticated]);

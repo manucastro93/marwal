@@ -19,7 +19,6 @@ export const AuthProvider: Component<{ children: JSX.Element }> = (props) => {
       localStorage.setItem('token', response.token);
       localStorage.setItem('isAuthenticated', 'true');
       setIsAuthenticated(true);
-      console.log('login: isAuthenticated set to true');
     } catch (error) {
       console.error('AuthContext: login failed', error);
       setIsAuthenticated(false);
@@ -33,7 +32,6 @@ export const AuthProvider: Component<{ children: JSX.Element }> = (props) => {
       await authService.logout();
       setIsAuthenticated(false);
       localStorage.removeItem('isAuthenticated');
-      console.log('logout: isAuthenticated set to false');
     } catch (error) {
       console.error('AuthContext: logout failed', error);
     }
@@ -43,7 +41,6 @@ export const AuthProvider: Component<{ children: JSX.Element }> = (props) => {
     try {
       const isAuth = localStorage.getItem('isAuthenticated') === 'true';
       setIsAuthenticated(isAuth);
-      console.log('checkAuth: isAuthenticated set to', isAuth);
     } catch (error) {
       setIsAuthenticated(false);
       console.error('checkAuth: failed', error);
