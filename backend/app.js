@@ -34,7 +34,10 @@ sequelize.sync({ force: false })
   .catch((error) => {
     console.error('Error al sincronizar la base de datos:', error);
   });
-
+  console.log('Variables S3:', {
+    bucket: process.env.S3_BUCKET_NAME,
+    region: process.env.AWS_REGION
+  });
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Servidor escuchando en el puerto ${PORT}`);

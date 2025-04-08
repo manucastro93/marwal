@@ -1,12 +1,11 @@
 import { api } from './api';
-import { ImagenProducto } from '../interfaces/ImagenProducto';
 
 export const imagenProductoService = {
-  subirImagen: async (imagen: ImagenProducto) => {
-    const response = await api.post('/imagenes', imagen);
+  subirImagen: async (formData: FormData) => {
+    const response = await api.post('/imagenes', formData);
     return response.data;
   },
-  eliminarImagen: async (id: string) => {
+  eliminarImagen: async (id: number) => {
     const response = await api.delete(`/imagenes/${id}`);
     return response.data;
   },

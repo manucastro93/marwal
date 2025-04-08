@@ -6,7 +6,7 @@ import { imagenProductoService } from '../../services/imagenProductoService';
 interface ImageUploadProps {
   onImagesChange: (images: Imagen[]) => void;
   initialImages: Imagen[];
-  productoId: number; // Agregar propiedad productoId
+  productoId: number;
 }
 
 const ImageUpload: Component<ImageUploadProps> = (props) => {
@@ -17,15 +17,15 @@ const ImageUpload: Component<ImageUploadProps> = (props) => {
     if (files) {
       const newImages: Imagen[] = [];
       for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('producto_id', props.productoId.toString()); // Convertir productoId a cadena
+
         try {
-          const url = await imagenProductoService.subirImagen(files[i]);
-          newImages.push({
-            id: 0, // Asegúrate de manejar correctamente el ID en el backend
-            producto_id: props.productoId,
-            url,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
-          });
+          const response = await imagenProductoService.subirImagen(formData);
+          const nuevaImagen: Imagen = response.data;
+          newImages.push(nuevaImagen);
         } catch (error) {
           showNotification('Error al subir la imagen', 'error');
         }
@@ -36,10 +36,15 @@ const ImageUpload: Component<ImageUploadProps> = (props) => {
     }
   };
 
-  const handleRemoveImage = (url: string) => {
-    const updatedImages = images().filter(image => image.url !== url);
-    setImages(updatedImages);
-    props.onImagesChange(updatedImages);
+  const handleRemoveImage = async (id: number) => {
+    try {
+      await imagenProductoService.eliminarImagen(id);
+      const updatedImages = images().filter(image => image.id !== id);
+      setImages(updatedImages);
+      props.onImagesChange(updatedImages);
+    } catch (error) {
+      showNotification('Error al eliminar la imagen', 'error');
+    }
   };
 
   return (
@@ -48,8 +53,8 @@ const ImageUpload: Component<ImageUploadProps> = (props) => {
       <div class="image-preview">
         {images().map((image, index) => (
           <div class="image-container">
-            <img src={`${image.url}`} alt={`Imagen ${index + 1}`} />
-            <button onClick={() => handleRemoveImage(image.url)}>Eliminar</button>
+            <img src={image.url} alt={`Imagen ${index + 1}`} />
+            <button onClick={() => handleRemoveImage(image.id)}>Eliminar</button>
           </div>
         ))}
       </div>
