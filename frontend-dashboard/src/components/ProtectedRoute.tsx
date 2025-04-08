@@ -1,20 +1,19 @@
-  import { Component, createEffect } from 'solid-js';
-  import { useNavigate } from '@solidjs/router';
-  import { useAuth } from '../context/AuthContext';
+import { Component, createEffect } from 'solid-js';
+import { useNavigate } from '@solidjs/router';
+import { useAuth } from '../context/AuthContext';
 
-  const ProtectedRoute: Component<{ component: Component, roles?: string[] }> = (props) => {
-    const auth = useAuth();
-    const navigate = useNavigate();
-    createEffect(() => {
-      console.log(auth.isAuthenticated)
-      if (!auth.isAuthenticated) {
-        navigate('/login');
-        return;
-      }
-    });
+const ProtectedRoute: Component<{ component: Component, roles?: string[] }> = (props) => {
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
-    const Component = props.component;
-    return <Component />;
-  };
+  createEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/login');
+    }
+  });
 
-  export default ProtectedRoute;
+  const Component = props.component;
+  return isAuthenticated ? <Component /> : null;
+};
+
+export default ProtectedRoute;
