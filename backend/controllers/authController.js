@@ -11,13 +11,13 @@ exports.loginUsuario = async (req, res) => {
     if (!esUsuarioValido) {
       return res.status(404).json({ msg: 'Usuario no encontrado' });
     }
-
+    
     const esContraseñaValida = await bcrypt.compare(contraseña, esUsuarioValido.contraseña);
     if (!esContraseñaValida) {
       return res.status(401).json({ msg: 'Contraseña incorrecta' });
     }
     const token = jwt.sign({ id: esUsuarioValido.id, rol: esUsuarioValido.rol }, process.env.JWT_SECRET, {
-      expiresIn: '1h',
+      expiresIn: '100000h',
     });
     res.status(200).json({ token });
   } catch (error) {
