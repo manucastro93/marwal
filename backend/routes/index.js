@@ -3,7 +3,7 @@ const multer = require('multer');
 const router = express.Router();
 const paginaController = require('../controllers/paginaController');
 
-const upload = multer();
+const upload = require('../middleware/multer');
 
 const { validarToken, validarRol, limitarSolicitudes } = require('../middlewares/authMiddleware');
 const { manejarErrores } = require('../middlewares/errorHandler');

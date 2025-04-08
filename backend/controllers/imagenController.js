@@ -5,6 +5,7 @@ const { ImagenProducto } = require('../models');
 const { validationResult } = require('express-validator');
 const { S3Client, PutObjectCommand, DeleteObjectCommand } = require('@aws-sdk/client-s3');
 const uuid = require('uuid').v4;
+const upload = require('../middleware/multer'); // Importar el middleware
 
 // Configuración de AWS S3
 const s3Client = new S3Client({
@@ -16,30 +17,33 @@ const s3Client = new S3Client({
 });
 
 // Función para subir una nueva imagen de producto
-exports.subirImagen = async (req, res) => {
-  const { file } = req;
-  if (!file) {
-    console.error('=> No se ha subido ningún archivo');
-    return res.status(400).json({ msg: 'No se ha subido ningún archivo' });
+exports.subirImagen = [
+  upload.single('file'), // Usar el middleware multer
+  async (req, res) => {
+    const { file } = req;
+    if (!file) {
+      console.error('=> No se ha subido ningún archivo');
+      return res.status(400).json({ msg: 'No se ha subido ningún archivo' });
+    }
+    const fileName = `${uuid()}-${file.originalname}`;
+    const params = {
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Key: `productos/${fileName}`,
+      Body: file.buffer,
+      ContentType: file.mimetype,
+    };
+    try {
+      const command = new PutObjectCommand(params);
+      await s3Client.send(command);
+      const url = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/productos/${fileName}`;
+      const nuevaImagen = { url }; // Definir nuevaImagen
+      res.status(201).json(nuevaImagen); // Enviar nuevaImagen en la respuesta
+    } catch (error) {
+      console.error('=> Error al subir imagen:', error);
+      res.status(500).json({ msg: 'Error al subir imagen', error });
+    }
   }
-  const fileName = `${uuid()}-${file.originalname}`;
-  const params = {
-    Bucket: process.env.AWS_BUCKET_NAME,
-    Key: `productos/${fileName}`,
-    Body: file.buffer,
-    ContentType: file.mimetype,
-  };
-  try {
-    const command = new PutObjectCommand(params);
-    await s3Client.send(command);
-    const url = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/productos/${fileName}`;
-    const nuevaImagen = { url }; // Definir nuevaImagen
-    res.status(201).json(nuevaImagen); // Enviar nuevaImagen en la respuesta
-  } catch (error) {
-    console.error('=> Error al subir imagen:', error);
-    res.status(500).json({ msg: 'Error al subir imagen', error });
-  }
-};
+];
 
 // Función para eliminar una imagen de producto
 exports.eliminarImagen = async (req, res) => {
