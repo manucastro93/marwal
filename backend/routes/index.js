@@ -3,7 +3,7 @@ const multer = require('multer');
 const router = express.Router();
 const paginaController = require('../controllers/paginaController');
 
-const upload = require('../middlewares/multer');
+const { singleUpload, multipleUpload } = require('../middlewares/multer');
 
 const { validarToken, validarRol, limitarSolicitudes } = require('../middlewares/authMiddleware');
 const { manejarErrores } = require('../middlewares/errorHandler');
@@ -54,15 +54,15 @@ router.get('/clientes/:id', validarToken, validarRol(['vendedor', 'administrador
 router.get('/metricas/clientes', validarToken, validarRol(['administrador', 'supremo']), clienteController.buscarMetricasClientes);
 
 // Rutas para el imagenController
-router.post('/imagenes', upload.single('imagen'), (req, res, next) => {imagenController.subirImagen(req, res, next)});
+router.post('/imagenes', singleUpload('imagen'), (req, res, next) => {imagenController.subirImagen(req, res, next)});
 router.post('/imagenes/multiples', multipleUpload, (req, res, next) => {imagenController.subirMultiplesImagenes(req, res, next);});
 router.delete('/imagenes/:id', validarToken, validarRol(['administrador', 'supremo']), imagenController.eliminarImagen);
 
 // Rutas para el paginaController
 router.get('/banners', paginaController.buscarBannersActivos);
-router.post('/banners', upload.single('banner'), (req, res, next) => {paginaController.crearBanner(req, res, next)});
+router.post('/banners', singleUpload('banner'), (req, res, next) => {paginaController.crearBanner(req, res, next)});
 router.delete('/banners/:id', paginaController.eliminarBanner);
-router.post('/logo', upload.single('logo'), (req, res, next) => {paginaController.subirLogo(req, res, next);});
+router.post('/logo', singleUpload('logo'), (req, res, next) => {paginaController.subirLogo(req, res, next);});
 router.get('/logo', paginaController.buscarLogo); 
 
 // Rutas para el pedidoController
