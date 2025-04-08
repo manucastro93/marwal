@@ -18,7 +18,6 @@ const s3Client = new S3Client({
 
 // Función para subir una nueva imagen de producto
 exports.subirImagen = [
-  upload.single('imagen'), // Usar el middleware multer
   async (req, res) => {
     console.log("req:" ,req);
     const { file } = req;

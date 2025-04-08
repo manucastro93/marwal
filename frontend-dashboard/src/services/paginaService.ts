@@ -11,7 +11,7 @@ export const paginaService = {
   obtenerBannersActivos: async (): Promise<Banner[]> => {
     const response = await axios.get(`${API_URL_API}/banners`, {
       headers: {
-         
+         'Content-Type': 'multipart/form-data',
         'Authorization': `Bearer ${getAuthToken()}`,
       },
     });
