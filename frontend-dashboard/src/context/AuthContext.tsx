@@ -2,7 +2,7 @@ import { createContext, useContext, createSignal, Component, JSX, onMount } from
 import { authService } from '../services/authService';
 
 interface AuthContextProps {
-  isAuthenticated: boolean;
+  isAuthenticated: () => boolean;
   login: (usuario: string, contrasena: string) => Promise<void>;
   logout: () => Promise<void>;
   checkAuth: () => Promise<void>;
@@ -56,7 +56,7 @@ export const AuthProvider: Component<{ children: JSX.Element }> = (props) => {
   });
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated: isAuthenticated(), login, logout, checkAuth }}>
+    <AuthContext.Provider value={{ isAuthenticated, login, logout, checkAuth }}>
       {props.children}
     </AuthContext.Provider>
   );
