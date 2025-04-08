@@ -1,8 +1,8 @@
 import { api } from './api';
 
 export const imagenProductoService = {
-  subirImagen: async (imagen: FormData) => {
-    const response = await api.post('/imagenes', imagen, {
+  subirImagen: async (imagenes: FormData) => {
+    const response = await api.post('/imagenes/multiples', imagenes, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
