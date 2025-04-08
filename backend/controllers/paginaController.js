@@ -65,7 +65,7 @@ exports.crearBanner = async (req, res) => {
     return res.status(400).json({ msg: 'No se ha subido ningún archivo' });
   }
   const params = {
-    Bucket: process.env.AWS_BUCKET_NAME,
+    Bucket: process.env.S3_BUCKET_NAME,
     Key: `banners/${file.originalname}`,
     Body: file.buffer,
     ContentType: file.mimetype,
@@ -73,7 +73,7 @@ exports.crearBanner = async (req, res) => {
   try {
     const command = new PutObjectCommand(params);
     await s3Client.send(command);
-    const url = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/banners/${file.originalname}`;
+    const url = `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/banners/${file.originalname}`;
     const nuevoBanner = await Banner.create({
       nombre,
       url,
@@ -110,7 +110,7 @@ exports.eliminarBanner = async (req, res) => {
     }
     // Eliminar el archivo del banner en S3
     const deleteParams = {
-      Bucket: process.env.AWS_BUCKET_NAME,
+      Bucket: process.env.S3_BUCKET_NAME,
       Key: banner.url.split('.com/')[1], // Extraer la clave del objeto desde la URL
     };
     await s3Client.send(new DeleteObjectCommand(deleteParams));
