@@ -6,7 +6,7 @@ import { Banner } from "../interfaces/Banner";
 const BannerComponent = () => {
   const [banners, setBanners] = createSignal<Banner[]>([]);
   const [currentBanner, setCurrentBanner] = createSignal(0);
-  const BASE_URL = 'http://localhost:3000';
+  const BASE_URL = 'https://catalogo-online-marwal.onrender.com';
   const fetchBanners = async () => {
     try {
       const data = await bannerService.getBanners();

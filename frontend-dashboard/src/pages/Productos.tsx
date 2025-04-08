@@ -163,8 +163,6 @@ const Productos: Component = () => {
     return '';
   };
 
-  const url = 'http://localhost:3000';
-
   return (
     <Layout>
       <h1>Productos</h1>
@@ -216,7 +214,7 @@ const Productos: Component = () => {
               <td>{producto.stock}</td>
               <td>
                 {producto.imagenes && producto.imagenes.length > 0 && (
-                  <img src={url + producto.imagenes[0].url} alt={`Imagen principal`} width="80" />
+                  <img src={producto.imagenes[0].url} alt={`Imagen principal`} width="80" />
                 )}
               </td>
               <td>

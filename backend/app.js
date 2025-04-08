@@ -9,7 +9,9 @@ const app = express();
 
 const allowedOrigins = [
   'https://catalogo-online-marwal.onrender.com',
-  'https://catalogo-online-marwal-cjiq.onrender.com'
+  'https://catalogo-online-marwal-cjiq.onrender.com',
+  'http://localhost:3000',
+  'http://localhost:5173',
 ];
 app.use(cors({
   origin: function (origin, callback) {

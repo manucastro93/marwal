@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Banner, Logo } from '../interfaces/Pagina';
 
-const API_URL_API = 'http://localhost:3000/api';
+const API_URL_API = 'https://catalogo-online-marwal.onrender.com/api';
 
 const getAuthToken = () => {
   return localStorage.getItem('authToken');

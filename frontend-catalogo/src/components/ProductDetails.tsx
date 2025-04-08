@@ -8,7 +8,7 @@ interface ProductDetailsProps {
 }
 
 const ProductDetails = ({ product, onClose }: ProductDetailsProps) => {
-  const BASE_URL = 'http://localhost:3000';
+  const BASE_URL = 'https://catalogo-online-marwal.onrender.com';
   const [currentImageIndex, setCurrentImageIndex] = createSignal(0);
 
   const nextImage = () => {

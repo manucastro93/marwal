@@ -20,7 +20,6 @@ const ProductList = (props: ProductListProps) => {
   const [filteredProductos, setFilteredProductos] = createSignal<Producto[]>([]);
   const [currentPage, setCurrentPage] = createSignal(1);
   const productsPerPage = 10;
-  const BASE_URL = 'http://localhost:3000';
 
   const fetchProductos = async () => {
     try {
@@ -90,7 +89,7 @@ const ProductList = (props: ProductListProps) => {
         {currentProducts().length > 0 ? (
           currentProducts().map(producto => (
             <div class="product-item" onDblClick={() => props.onProductDblClick(producto)}>
-              {producto.imagenes[0] && <img src={BASE_URL + producto.imagenes[0].url} alt={producto.nombre} />}
+              {producto.imagenes[0] && <img src={producto.imagenes[0].url} alt={producto.nombre} />}
               <h2>{producto.nombre}</h2>
               <div class="price">${producto.precio}</div>
               <button onClick={() => agregarAlCarrito(producto)}>Agregar al Carrito</button>
