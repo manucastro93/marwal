@@ -9,7 +9,7 @@ exports.crearProducto = async (req, res) => {
     return res.status(400).json({ errores: errors.array() });
   }
 
-  const { codigo, nombre, descripcion, precio, categoria_id, stock, estado, imagenes } = req.body;
+  const { codigo, nombre, descripcion, precio, categoria_id, stock, estado } = req.body;
   console.log("usuario logueado: ",req.usuario)
   try {
     const nuevoProducto = await Producto.create({
@@ -22,23 +22,7 @@ exports.crearProducto = async (req, res) => {
       estado,
       usuario_id: req.usuario,
     });
-    if (imagenes && imagenes.length > 0) {
-      const imagenesData = imagenes.map(image => ({
-        producto_id: newProducto.id,
-        url: image.url,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      }));
-      await ImagenProducto.bulkCreate(imagenesData);
-    }
 
-    // Incluir imágenes en la respuesta
-    const productoConImagenes = await Producto.findByPk(newProducto.id, {
-      include: {
-        model: ImagenProducto,
-        as: 'imagenes',
-      },
-    });
     res.status(201).json(nuevoProducto);
   } catch (error) {
     res.status(500).json({ msg: 'Error al crear producto', error });

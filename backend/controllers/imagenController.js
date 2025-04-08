@@ -19,6 +19,7 @@ const s3Client = new S3Client({
 exports.subirImagen = async (req, res) => {
   const { producto_id } = req.body;
   const { file } = req;
+  console.log(req.body)
   if (!file) {
     console.error('=> No se ha subido ningún archivo');
     return res.status(400).json({ msg: 'No se ha subido ningún archivo' });
