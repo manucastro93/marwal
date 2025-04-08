@@ -82,7 +82,7 @@ const ImageUpload: Component<ImageUploadProps> = (props) => {
 
   return (
     <div class="image-upload">
-      <input type="file" multiple onChange={handleFileSelection} />
+      <input type="file" name="imagenes" multiple onChange={handleFileSelection} />
       <div class="preview-container">
         {previewImages().map((preview, index) => (
           <div class="preview-item" key={index}>
