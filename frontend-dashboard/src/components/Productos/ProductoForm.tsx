@@ -69,6 +69,7 @@ const ProductoForm: Component<ProductoFormProps> = (props) => {
           <input type="text" placeholder="Nombre" value={producto().nombre} onInput={(e) => handleInputChange('nombre', e.currentTarget.value)} />
           <textarea placeholder="Descripción" value={producto().descripcion} onInput={(e) => handleInputChange('descripcion', e.currentTarget.value)}></textarea>
           <input type="number" placeholder="Precio" value={producto().precio} onInput={(e) => handleInputChange('precio', isNaN(parseFloat(e.currentTarget.value)) ? 0 : parseFloat(e.currentTarget.value))} />
+          <input type="number" placeholder="Stock" value={producto().stock} onInput={(e) => handleInputChange('stock', isNaN(parseInt(e.currentTarget.value)) ? 0 : parseInt(e.currentTarget.value))} />
           <select value={producto().categoria_id} onChange={(e) => handleInputChange('categoria_id', parseInt(e.currentTarget.value))}>
             <option value="">Seleccionar Categoría</option>
             {categorias().map((categoria) => (
