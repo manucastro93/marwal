@@ -17,9 +17,8 @@ const s3Client = new S3Client({
 });
 
 // Función para subir una nueva imagen de producto
-exports.subirImagen = 
-  console.log("subiendo imagen...");
-  async (req, res) => {
+exports.subirImagen =   async (req, res) => {
+    console.log("subiendo imagen...");
     console.log("req:" ,req);
     const { file } = req;
     if (!file) {
