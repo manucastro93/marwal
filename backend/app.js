@@ -16,7 +16,7 @@ app.set('trust proxy', 1); // Nivel 1 de proxy (solo Render)
 const allowedOrigins = [
   'https://catalogo-online-marwal.onrender.com',
   'https://catalogo-online-marwal-cjiq.onrender.com',
-  'https://marwal.onrender.com/',
+  'https://marwal.onrender.com',
 ];
 
 app.use(cors({
@@ -24,7 +24,7 @@ app.use(cors({
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS', allowedOrigins));
+      callback(new Error('Not allowed by CORS'));
     }
   },
   credentials: true,
