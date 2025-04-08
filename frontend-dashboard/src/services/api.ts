@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3000/api';
+const API_URL = 'https://catalogo-online-marwal.onrender.com/api';
 const token = localStorage.getItem('token');
 
 export const api = axios.create({
@@ -13,4 +13,4 @@ export const api = axios.create({
 });
 
 
-export const API_URL_API = 'http://localhost:3000/api';
+export const API_URL_API = 'https://catalogo-online-marwal.onrender.com/api';

@@ -8,8 +8,8 @@ const { sequelize } = require('./models');
 const app = express();
 
 const allowedOrigins = [
-  'http://localhost:8000',
-  'http://localhost:5000'
+  'https://catalogo-online-marwal.onrender.com',
+  'https://catalogo-online-marwal-cjiq.onrender.com'
 ];
 app.use(cors({
   origin: function (origin, callback) {
