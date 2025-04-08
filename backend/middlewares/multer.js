@@ -8,5 +8,7 @@ const upload = multer({
 
 module.exports = {
   singleUpload: upload.single('imagen'),
+  singleUploadBanner: upload.single('banner'),
+  singleUploadLogo: upload.single('logo'),
   multipleUpload: upload.array('imagenes', 10), // Hasta 10 imágenes
 };
