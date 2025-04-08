@@ -17,7 +17,8 @@ const s3Client = new S3Client({
 });
 
 // Función para subir una nueva imagen de producto
-exports.subirImagen = [
+exports.subirImagen = 
+  console.log("subiendo imagen...");
   async (req, res) => {
     console.log("req:" ,req);
     const { file } = req;
@@ -43,7 +44,7 @@ exports.subirImagen = [
       res.status(500).json({ msg: 'Error al subir imagen', error });
     }
   }
-];
+;
 
 // Función para eliminar una imagen de producto
 exports.eliminarImagen = async (req, res) => {
