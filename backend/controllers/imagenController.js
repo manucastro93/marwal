@@ -17,7 +17,6 @@ const s3Client = new S3Client({
 
 // Función para subir una nueva imagen de producto
 exports.subirImagen = async (req, res) => {
-  const { producto_id } = req.body;
   const { file } = req;
   console.log(req.body)
   if (!file) {
@@ -35,11 +34,6 @@ exports.subirImagen = async (req, res) => {
     const command = new PutObjectCommand(params);
     await s3Client.send(command);
     const url = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/productos/${fileName}`;
-    const nuevaImagen = await ImagenProducto.create({
-      producto_id,
-      url,
-    });
-    console.log("llego aca....")
     res.status(201).json(nuevaImagen);
   } catch (error) {
     console.error('=> Error al subir imagen:', error);
