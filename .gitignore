@@ -7,3 +7,6 @@ dist/
 backend/.env
 backend/.env.save
 .env.save
+# Secret files
+.env*
+*.save
