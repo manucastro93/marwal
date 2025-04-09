@@ -22,6 +22,8 @@ const Productos: Component = () => {
   const [isEditModalOpen, setIsEditModalOpen] = createSignal(false);
   const [isImportModalOpen, setIsImportModalOpen] = createSignal(false);
   const [importedProductos, setImportedProductos] = createSignal<Producto[]>([]);
+  const [selectedProducto, setSelectedProducto] = createSignal<Producto | null>(null);
+  const [isDetalleModalOpen, setIsDetalleModalOpen] = createSignal(false);
   const [sortColumn, setSortColumn] = createSignal('');
   const [sortOrder, setSortOrder] = createSignal<'asc' | 'desc'>('asc');
   const itemsPerPage = 10;
@@ -223,6 +225,11 @@ const Productos: Component = () => {
           <ProductoForm initialProducto={editProducto()!} onSave={handleSaveEdit} onClose={() => setIsEditModalOpen(false)} />
         )}
       </Modal>
+      <Modal isOpen={isDetalleModalOpen()} onClose={() => setIsDetalleModalOpen(false)}>
+      {selectedProducto() && (
+        <ProductoDetalle producto={selectedProducto()!} categorias={categorias()} onClose={() => setIsDetalleModalOpen(false)} />
+      )}
+    </Modal>
       <Modal isOpen={isImportModalOpen()} onClose={() => setIsImportModalOpen(false)}>
         <h3>Vista previa de productos importados</h3>
         <table>
@@ -296,6 +303,7 @@ const Productos: Component = () => {
               <td>{producto.descripcion}</td>
               <td>{producto.stock}</td>
               <td>
+              <button class="btn btn-info btn-sm" onClick={() => { setSelectedProducto(producto); setIsDetalleModalOpen(true); }}>Ver detalles</button>
                 <button class="btn btn-warning btn-sm" onClick={() => { setEditProducto(producto); setIsEditModalOpen(true); }}>Editar</button>
                 <button class="btn btn-danger btn-sm right" onClick={() => handleDelete(producto.id)}>Eliminar</button>
               </td>
