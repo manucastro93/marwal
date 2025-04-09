@@ -71,6 +71,7 @@ router.post('/logo', singleUploadLogo, (req, res, next) => {paginaController.sub
 router.get('/logo', paginaController.buscarLogo); 
 
 // Rutas para el pedidoController
+router.post('/pedidos/crear', pedidoController.crearPedido);
 router.put('/pedidos/:id/estado', validarToken, validarRol(['administrador', 'supremo']), pedidoController.modificarEstadoPedido);
 router.get('/pedidos', validarToken, validarRol(['vendedor', 'administrador', 'supremo']), pedidoController.buscarPedidos);
 router.get('/pedidos/:id', validarToken, validarRol(['vendedor', 'administrador', 'supremo']), pedidoController.buscarPedidoPorId);

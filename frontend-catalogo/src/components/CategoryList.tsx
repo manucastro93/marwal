@@ -12,7 +12,7 @@ const CategoryList = (props: CategoryListProps) => {
   const [categories, setCategories] = createSignal<Categoria[]>([]);
 
   const fetchCategories = async () => {
-    const fetchedCategories = await categoriaService.getProductos();
+    const fetchedCategories = await categoriaService.getCategorias();
     setCategories(fetchedCategories);
   };
 

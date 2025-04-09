@@ -1,65 +1,64 @@
 const { Pedido, Cliente, Usuario, Producto, DetallePedido, Categoria } = require('../models');
-const { validationResult } = require('express-validator');
-const nodemailer = require('nodemailer');
+const ipService = require('../services/ipService');
+const logClienteService = require('../services/logClienteService');
+const emailService = require('../services/emailService');
 
-// Crear un pedido sin los detalles
 exports.crearPedido = async (req, res) => {
-  const { cliente_id, vendedor_id } = req.body;
+  const { cliente, detalles, ip } = req.body;
 
   try {
-    if (!cliente_id || !vendedor_id) {
-      return res.status(400).json({ error: 'Cliente ID y Vendedor ID son requeridos' });
+    // 1. Guardar o actualizar cliente
+    let clienteDB = await Cliente.findOne({ where: { cuit_cuil: cliente.cuit_cuil } });
+    if (clienteDB) {
+      await clienteDB.update(cliente);
+    } else {
+      clienteDB = await Cliente.create(cliente);
     }
 
-    // Crear el pedido
-    const newPedido = await Pedido.create({
-      cliente_id,
-      vendedor_id,
+    // 2. Crear pedido
+    const pedido = await Pedido.create({
+      cliente_id: clienteDB.id,
+      vendedor_id: cliente.vendedor_id ?? null,
+      estado: 'pendiente'
     });
 
-    res.status(201).json(newPedido);
+    // 3. Crear detalles de pedido
+    const detallesDB = await DetallePedido.bulkCreate(
+      detalles.map(d => ({
+        pedido_id: pedido.id,
+        producto_id: d.producto_id,
+        cantidad: d.cantidad,
+        precio: d.precio
+      }))
+    );
+
+    // 4. Registrar IP
+    await ipService.registrarIP(clienteDB.id, ip);
+
+    // 5. Registrar log
+    await logClienteService.crearLog({
+      cliente_id: clienteDB.id,
+      accion: 'checkout',
+      entidad_id: pedido.id,
+      tipo_entidad: 'pedido',
+      detalles: JSON.stringify(detalles),
+      ip,
+      user_agent: req.headers['user-agent']
+    });
+
+    // 6. Enviar email
+    await emailService.enviarConfirmacionPedido({
+      pedido,
+      cliente: clienteDB,
+      detalles: detallesDB
+    });
+
+    res.status(201).json({ pedido, detalles: detallesDB });
+
   } catch (error) {
-    console.error("Error creating pedido:", error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error('Error al crear pedido:', error);
+    res.status(500).json({ msg: 'Error al crear pedido', error });
   }
-};
-
-// Agregar detalles a un pedido existente
-exports.agregarDetallesPedido = async (req, res) => {
-  const { pedidoId } = req.params;
-  const detalles = req.body;
-
-  try {
-    // Verificar si el pedido existe
-    const pedido = await Pedido.findByPk(pedidoId);
-    if (!pedido) {
-      return res.status(404).json({ error: 'Pedido no encontrado' });
-    }
-
-    // Verificar que detalles esté definido y sea un array
-    if (!Array.isArray(detalles)) {
-      return res.status(400).json({ error: 'Detalles debe ser un array' });
-    }
-
-    // Agregar pedido_id a cada detalle
-    const detallesConPedidoId = detalles.map(detalle => ({
-      ...detalle,
-      pedido_id: pedidoId
-    }));
-
-    // Crear los detalles del pedido
-    await DetallePedido.bulkCreate(detallesConPedidoId);
-
-    res.status(201).json({ message: 'Detalles agregados correctamente' });
-  } catch (error) {
-    console.error("Error adding detalles del pedido:", error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-};
-
-
-// Enviar pedido por correo electrónico
-exports.sendOrderEmail = async (req, res) => {
 };
 
 // Función para modificar el estado de un pedido
