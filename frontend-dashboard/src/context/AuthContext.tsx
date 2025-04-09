@@ -1,5 +1,6 @@
 import { createContext, useContext, createSignal, Component, JSX, onMount } from 'solid-js';
 import { authService } from '../services/authService';
+import { usuarioService } from '../services/usuarioService';
 
 interface AuthContextProps {
   isAuthenticated: () => boolean;
@@ -18,10 +19,11 @@ export const AuthProvider: Component<{ children: JSX.Element }> = (props) => {
   const login = async (usuario: string, contrasena: string) => {
     try {
       const response = await authService.login(usuario, contrasena);
+      const user = await authService.obtenerUsuarioConectado();
       localStorage.setItem('token', response.token);
       localStorage.setItem('isAuthenticated', 'true');
-      localStorage.setItem('userRole', response.rol);
-      setUserRole(response.rol);
+      localStorage.setItem('userRole', user.rol);
+      setUserRole(user.rol);
       setIsAuthenticated(true);
     } catch (error) {
       console.error('AuthContext: login failed', error);

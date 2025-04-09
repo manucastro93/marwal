@@ -3,8 +3,7 @@ import { A } from '@solidjs/router';
 import { useAuth } from '../../context/AuthContext';
 
 const Sidebar: Component = () => {
-  const auth = useAuth();
-  const userRole = auth.user()?.rol;
+  const userRole = useAuth();
   console.log("rol:", userRole);
   return (
     <nav class="d-flex flex-column flex-shrink-0 p-3 bg-light" style="width: 280px;">
