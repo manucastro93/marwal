@@ -3,8 +3,7 @@ import { A } from '@solidjs/router';
 import { useAuth } from '../../context/AuthContext';
 
 const Sidebar: Component = () => {
-  const user = useAuth();
-  console.log("rol: ",user.userRole)
+  const userRole = localStorage.getItem('userRole');
   const menuItems = [
     { label: 'Dashboard', href: '/' },
     { label: 'Usuarios', href: '/usuarios', roles: ['administrador','supremo'] },
