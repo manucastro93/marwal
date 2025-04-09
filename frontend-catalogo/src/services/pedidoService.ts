@@ -14,7 +14,7 @@ export const pedidoService = {
 
   getPedidosCliente: async (): Promise<Pedido[]> => {
     try {
-      const { data } = await api.get('/pedidos/cliente');
+      const { data } = await api.get('/pedidos/catalogo/cliente');
       return data;
     } catch (error: any) {
       console.error('Error al obtener los pedidos del cliente:', error.message);
