@@ -1,4 +1,4 @@
-import { api } from './api';
+import { api } from './apiService';
 import { Cliente } from '../interfaces/Cliente';
 
 export const clienteService = {

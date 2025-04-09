@@ -1,4 +1,4 @@
-import { api } from './api';
+import { api } from './apiService';
 import { Vendedor } from '../interfaces/Vendedor';
 
 export const vendedorService = {

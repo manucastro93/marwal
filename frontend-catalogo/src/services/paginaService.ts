@@ -1,4 +1,4 @@
-import { api } from './api';
+import { api } from './apiService';
 import { Banner, Logo } from '../interfaces/Pagina';
 
 export const paginaService = {

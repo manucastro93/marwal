@@ -1,4 +1,4 @@
-import { api } from './api';
+import { api } from './apiService';
 import { Categoria } from '../interfaces/Categoria';
 
 export const categoriaService = {
