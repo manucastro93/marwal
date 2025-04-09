@@ -1,53 +1,35 @@
-
-import { createSignal, onMount, For, Show } from 'solid-js';
+import { createResource } from 'solid-js';
 import { pedidoService } from '../services/pedidoService';
-import { Pedido } from '../interfaces/Pedido';
+import type { Pedido } from '../interfaces/Pedido';
 
-export default function MisPedidos() {
-  const [pedidos, setPedidos] = createSignal<Pedido[]>([]);
-  const [loading, setLoading] = createSignal(true);
-  const [error, setError] = createSignal<string | null>(null);
-
-  onMount(async () => {
-    try {
-      const data = await pedidoService.getPedidosCliente();
-      setPedidos(data);
-    } catch (e: any) {
-      setError(e.message);
-    } finally {
-      setLoading(false);
-    }
-  });
+const MisPedidos = () => {
+  const [pedidos] = createResource<Pedido[]>(pedidoService.getPedidosCliente);
 
   return (
-    <div class="p-4">
-      <h1 class="text-2xl font-bold mb-4">Mis Pedidos</h1>
-      <Show when={loading()} fallback={<PedidosList pedidos={pedidos()} />}>Cargando...</Show>
-      <Show when={error()}>{error()}</Show>
-    </div>
-  );
-}
-
-function PedidosList(props: { pedidos: Pedido[] }) {
-  return (
-    <div class="space-y-4">
-      <For each={props.pedidos}>{(pedido) => (
-        <div class="border rounded-xl p-4 shadow">
-          <h2 class="font-semibold text-lg">Pedido #{pedido.id}</h2>
-          <p>Estado: <strong>{pedido.estado}</strong></p>
-          <p>Fecha: {new Date(pedido.created_at).toLocaleDateString()}</p>
-          <h3 class="mt-2 font-medium">Productos:</h3>
-          <ul class="ml-4 list-disc">
-            <For each={pedido.detalles}>
-              {(detalle) => (
+    <div>
+      <h2>Mis Pedidos</h2>
+      {pedidos.loading && <p>Cargando pedidos...</p>}
+      {pedidos.error && <p>Error al cargar pedidos</p>}
+      <ul>
+        {pedidos()?.map((pedido) => (
+          <li>
+            <p><strong>Pedido #{pedido.id}</strong></p>
+            <p>Fecha: {new Date(pedido.createdAt).toLocaleDateString()}</p>
+            <p>Estado: {pedido.estado}</p>
+            <ul>
+              {pedido.detalles.map((detalle) => (
                 <li>
-                  {detalle.producto?.nombre} x{detalle.cantidad} - ${detalle.precio}
+                  Producto: {detalle.producto?.nombre ?? 'Producto'}
+                  — Cantidad: {detalle.cantidad}
+                  — Precio: ${detalle.precio}
                 </li>
-              )}
-            </For>
-          </ul>
-        </div>
-      )}</For>
+              ))}
+            </ul>
+          </li>
+        ))}
+      </ul>
     </div>
   );
-}
+};
+
+export default MisPedidos;

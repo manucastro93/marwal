@@ -1,5 +1,5 @@
 import { api } from './apiService';
-import { Pedido, DetallePedido, CrearPedidoPayload } from '../interfaces/Pedido';
+import { Pedido, CrearPedidoPayload } from '../interfaces/Pedido';
 
 export const pedidoService = {
   crearPedido: async (payload: CrearPedidoPayload): Promise<Pedido> => {
@@ -11,13 +11,14 @@ export const pedidoService = {
       throw new Error('No se pudo crear el pedido completo');
     }
   },
+
   getPedidosCliente: async (): Promise<Pedido[]> => {
     try {
-      const { data } = await api.get('/pedidos/catalogo/cliente');
+      const { data } = await api.get('/pedidos/cliente');
       return data;
     } catch (error: any) {
-      console.error('Error obteniendo pedidos del cliente:', error.message);
-      throw new Error('No se pudieron obtener los pedidos');
+      console.error('Error al obtener los pedidos del cliente:', error.message);
+      throw new Error('No se pudieron cargar los pedidos del cliente');
     }
   }
 };

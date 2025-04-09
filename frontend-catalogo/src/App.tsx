@@ -6,8 +6,9 @@ import CategoryList from "./components/CategoryList";
 import BannerComponent from "./components/Banner"; 
 import CartButton from "./components/CartButton";
 import ProductDetails from "./components/ProductDetails";
+import MisPedidos from "./pages/MisPedidos";
 import { Producto } from "./interfaces/Producto";
-import {vendedorService} from "./services/vendedorService";
+import { vendedorService } from "./services/vendedorService";
 
 const App = () => {
   const [selectedCategoryId, setSelectedCategoryId] = createSignal<number>(0);
@@ -15,6 +16,7 @@ const App = () => {
   const [carrito, setCarrito] = createSignal<{ [id: string]: { producto: Producto, cantidad: number } }>(JSON.parse(localStorage.getItem('carrito') || '{}'));
   const [searchQuery, setSearchQuery] = createSignal<string>("");
   const [selectedProduct, setSelectedProduct] = createSignal<null | Producto>(null);
+  const [vista, setVista] = createSignal<'home' | 'misPedidos'>('home'); // 👈 Controla la vista
 
   const handleSelectCategory = (categoryId: number) => {
     setSelectedCategoryId(categoryId);
@@ -32,12 +34,19 @@ const App = () => {
     setSelectedProduct(null);
   };
 
+  const irAMisPedidos = () => {
+    setVista('misPedidos');
+  };
+
+  const volverAlInicio = () => {
+    setVista('home');
+  };
+
   onMount(() => {
     const guardarIdVendedor = async () => {
       const existingVendedorId = localStorage.getItem('vendedorId');
-      if (existingVendedorId) {
-        return;
-      }
+      if (existingVendedorId) return;
+
       const pathSegments = window.location.pathname.split('/');
       const linkCode = pathSegments[pathSegments.length - 1];
       if (linkCode) {
@@ -59,28 +68,40 @@ const App = () => {
 
   return (
     <div class="home-container">
-      <Header />
-      <BannerComponent />
-      <div class="main-content">
-        <CategoryList onSelectCategory={handleSelectCategory} activeCategoryId={selectedCategoryId()} />
-        <div class="content">
-          <ProductList
-            selectedCategoryId={selectedCategoryId()}
-            carrito={carrito()}
-            setCarrito={setCarrito}
-            setMostrarCarrito={setMostrarCarrito}
-            searchQuery={searchQuery()}
-            onProductDblClick={handleProductClick}
-            onSearch={handleSearch}
-          />
-        </div>
-      </div>
-      <CartButton
-        mostrarCarrito={mostrarCarrito}
-        setMostrarCarrito={setMostrarCarrito}
-        carrito={carrito}
-        setCarrito={setCarrito}
+      <Header 
+        onIrAMisPedidos={irAMisPedidos} 
+        onVolverInicio={volverAlInicio} 
       />
+      <Show when={vista() === 'home'}>
+        <>
+          <BannerComponent />
+          <div class="main-content">
+            <CategoryList onSelectCategory={handleSelectCategory} activeCategoryId={selectedCategoryId()} />
+            <div class="content">
+              <ProductList
+                selectedCategoryId={selectedCategoryId()}
+                carrito={carrito()}
+                setCarrito={setCarrito}
+                setMostrarCarrito={setMostrarCarrito}
+                searchQuery={searchQuery()}
+                onProductDblClick={handleProductClick}
+                onSearch={handleSearch}
+              />
+            </div>
+          </div>
+          <CartButton
+            mostrarCarrito={mostrarCarrito}
+            setMostrarCarrito={setMostrarCarrito}
+            carrito={carrito}
+            setCarrito={setCarrito}
+          />
+        </>
+      </Show>
+
+      <Show when={vista() === 'misPedidos'}>
+        <MisPedidos />
+      </Show>
+
       <Show when={selectedProduct()} fallback={<></>}>
         <ProductDetails product={selectedProduct() as Producto} onClose={handleCloseModal} />
       </Show>
