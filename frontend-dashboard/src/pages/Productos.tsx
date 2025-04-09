@@ -212,7 +212,63 @@ const Productos: Component = () => {
         </ul>
         <button onClick={handleConfirmImport}>Confirmar</button>
       </Modal>
-      {/* Tabla de productos y filtros */}
+      <div class="filters-container">
+        <div class="filter-group">
+          <label>Buscar Producto</label>
+          <input type="text" placeholder="Buscar..." value={searchTerm()} onInput={handleSearch} />
+        </div>
+        <div class="filter-group">
+          <label>Filtrar por Categoría</label>
+          <select value={selectedCategoria()} onChange={handleCategoriaChange}>
+            <option value="">Todas</option>
+            {categorias().map(categoria => (
+              <option value={categoria.id.toString()}>{categoria.nombre}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Imagen</th>
+            <th onClick={() => handleSort('codigo')}>Código {getSortIndicator('codigo')}</th>
+            <th onClick={() => handleSort('nombre')}>Nombre {getSortIndicator('nombre')}</th>
+            <th onClick={() => handleSort('precio')}>Precio {getSortIndicator('precio')}</th>
+            <th onClick={() => handleSort('categoria_id')}>Categoría {getSortIndicator('categoria_id')}</th>
+            <th onClick={() => handleSort('descripcion')}>Descripción {getSortIndicator('descripcion')}</th>
+            <th onClick={() => handleSort('stock')}>Stock {getSortIndicator('stock')}</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {paginatedProductos().map(producto => (
+            <tr>
+              <td>
+                {producto.imagenes && producto.imagenes.length > 0 && (
+                  <img src={producto.imagenes[0].url} alt={`Imagen principal`} width="80" />
+                )}
+              </td>
+              <td>{producto.codigo}</td>
+              <td>{producto.nombre}</td>
+              <td>{producto.precio}</td>
+              <td>{getCategoriaNombre(producto.categoria_id)}</td>
+              <td>{producto.descripcion}</td>
+              <td>{producto.stock}</td>
+              <td>
+                <button class="btn btn-warning btn-sm" onClick={() => { setEditProducto(producto); setIsEditModalOpen(true); }}>Editar</button>
+                <button class="btn btn-danger btn-sm right" onClick={() => handleDelete(producto.id)}>Eliminar</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <div class="pagination">
+        {Array.from({ length: totalPages() }, (_, index) => (
+          <button onClick={() => handlePageChange(index + 1)} disabled={currentPage() === index + 1}>
+            {index + 1}
+          </button>
+        ))}
+      </div>
     </Layout>
   );
 };
