@@ -1,12 +1,17 @@
+/* @jsxImportSource solid-js */
 import { createSignal } from 'solid-js';
-import { Cliente } from '../interfaces/Cliente';
-import { crearPedido } from '../services/pedidoService';
-import { useCarrito } from '../context/CarritoContext';
+import type { Component } from 'solid-js';
+import { pedidoService } from '../services/pedidoService';
+import { Producto } from '../interfaces/Producto';
 
-const CheckoutForm = () => {
-  const { carrito, limpiarCarrito } = useCarrito();
+interface CheckoutFormProps {
+  carrito: { [id: string]: { producto: Producto; cantidad: number } };
+  setCarrito: (carrito: { [id: string]: { producto: Producto; cantidad: number } }) => void;
+  setMostrarCarrito: (visible: boolean) => void;
+}
 
-  const [cliente, setCliente] = createSignal<Cliente>({
+const CheckoutForm: Component<CheckoutFormProps> = (props) => {
+  const [cliente, setCliente] = createSignal({
     nombre: '',
     email: '',
     telefono: '',
@@ -16,76 +21,51 @@ const CheckoutForm = () => {
     provincia: '',
   });
 
-  const handleInput = (e: Event) => {
-    const { name, value } = e.currentTarget as HTMLInputElement;
-    setCliente((prev) => ({ ...prev, [name]: value }));
+  const handleChange = (e: Event) => {
+    const target = e.target as HTMLInputElement;
+    setCliente({ ...cliente(), [target.name]: target.value });
   };
 
   const handleSubmit = async (e: Event) => {
     e.preventDefault();
+
+    const detalles = Object.values(props.carrito).map(({ producto, cantidad }) => ({
+      producto_id: producto.id,
+      cantidad,
+      precio: producto.precio,
+    }));
+
     try {
-      const payload = {
+      await pedidoService.crearPedido({
         cliente: {
           nombre: cliente().nombre,
           email: cliente().email,
           telefono: cliente().telefono,
         },
-        detalles: carrito().map(({ producto, cantidad }) => ({
-          producto_id: producto.id,
-          cantidad,
-          precio: producto.precio,
-        })),
-      };
+        detalles,
+      });
 
-      await crearPedido(payload);
       alert('¡Pedido enviado con éxito!');
-      limpiarCarrito();
-    } catch (error) {
-      console.error('Error al crear el pedido:', error);
-      alert('Ocurrió un error al crear el pedido.');
+      props.setCarrito({});
+      localStorage.removeItem('carrito');
+      props.setMostrarCarrito(false);
+    } catch (err) {
+      alert('Error al enviar pedido');
+      console.error(err);
     }
   };
 
   return (
     <form class="checkout-form" onSubmit={handleSubmit}>
-      <h2>Datos del Cliente</h2>
-
-      <div class="form-group">
-        <label>Nombre</label>
-        <input type="text" name="nombre" value={cliente().nombre} onInput={handleInput} required />
-      </div>
-
-      <div class="form-group">
-        <label>Email</label>
-        <input type="email" name="email" value={cliente().email} onInput={handleInput} />
-      </div>
-
-      <div class="form-group">
-        <label>Teléfono</label>
-        <input type="tel" name="telefono" value={cliente().telefono} onInput={handleInput} />
-      </div>
-
-      <div class="form-group">
-        <label>CUIT / CUIL</label>
-        <input type="text" name="cuit_cuil" value={cliente().cuit_cuil} onInput={handleInput} />
-      </div>
-
-      <div class="form-group">
-        <label>Dirección</label>
-        <input type="text" name="direccion" value={cliente().direccion} onInput={handleInput} />
-      </div>
-
-      <div class="form-group">
-        <label>Localidad</label>
-        <input type="text" name="localidad" value={cliente().localidad} onInput={handleInput} />
-      </div>
-
-      <div class="form-group">
-        <label>Provincia</label>
-        <input type="text" name="provincia" value={cliente().provincia} onInput={handleInput} />
-      </div>
-
-      <button type="submit" class="btn-submit">Finalizar pedido</button>
+      <h3>Datos del Cliente</h3>
+      <input type="text" name="nombre" placeholder="Nombre" value={cliente().nombre} onInput={handleChange} required />
+      <input type="email" name="email" placeholder="Email" value={cliente().email} onInput={handleChange} required />
+      <input type="tel" name="telefono" placeholder="Teléfono" value={cliente().telefono} onInput={handleChange} required />
+      <input type="text" name="cuit_cuil" placeholder="CUIT/CUIL" value={cliente().cuit_cuil} onInput={handleChange} />
+      <input type="text" name="direccion" placeholder="Dirección" value={cliente().direccion} onInput={handleChange} />
+      <input type="text" name="localidad" placeholder="Localidad" value={cliente().localidad} onInput={handleChange} />
+      <input type="text" name="provincia" placeholder="Provincia" value={cliente().provincia} onInput={handleChange} />
+      <button type="submit" class="submit-button">Confirmar pedido</button>
     </form>
   );
 };
