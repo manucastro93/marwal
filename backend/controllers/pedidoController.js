@@ -245,3 +245,27 @@ exports.buscarPedidosPorCategoria = async (req, res) => {
     res.status(500).json({ msg: 'Error al buscar pedidos por categoría', error });
   }
 };
+
+exports.obtenerPedidosPorClienteIp = async (req, res) => {
+  const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+
+  try {
+    const ipRegistro = await Ip.findOne({ where: { ip }, include: Cliente });
+    if (!ipRegistro || !ipRegistro.Cliente) {
+      return res.status(404).json({ msg: 'Cliente no encontrado para esta IP' });
+    }
+
+    const pedidos = await Pedido.findAll({
+      where: { cliente_id: ipRegistro.Cliente.id },
+      include: [
+        { model: DetallePedido, include: [Producto] },
+        { model: Cliente }
+      ],
+      order: [['created_at', 'DESC']]
+    });
+
+    res.json(pedidos);
+  } catch (error) {
+    res.status(500).json({ msg: 'Error obteniendo pedidos del cliente', error });
+  }
+};

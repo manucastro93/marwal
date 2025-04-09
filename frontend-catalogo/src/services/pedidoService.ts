@@ -10,5 +10,14 @@ export const pedidoService = {
       console.error('Error al crear el pedido completo:', error.message);
       throw new Error('No se pudo crear el pedido completo');
     }
+  },
+  getPedidosCliente: async (): Promise<Pedido[]> => {
+    try {
+      const { data } = await api.get('/pedidos/catalogo/cliente');
+      return data;
+    } catch (error: any) {
+      console.error('Error obteniendo pedidos del cliente:', error.message);
+      throw new Error('No se pudieron obtener los pedidos');
+    }
   }
 };

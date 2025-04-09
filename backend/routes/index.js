@@ -72,6 +72,7 @@ router.get('/logo', paginaController.buscarLogo);
 
 // Rutas para el pedidoController
 router.post('/pedidos/crear', pedidoController.crearPedido);
+router.get('/pedidos/catalogo/cliente', pedidoController.obtenerPedidosPorClienteIp);
 router.put('/pedidos/:id/estado', validarToken, validarRol(['administrador', 'supremo']), pedidoController.modificarEstadoPedido);
 router.get('/pedidos', validarToken, validarRol(['vendedor', 'administrador', 'supremo']), pedidoController.buscarPedidos);
 router.get('/pedidos/:id', validarToken, validarRol(['vendedor', 'administrador', 'supremo']), pedidoController.buscarPedidoPorId);
