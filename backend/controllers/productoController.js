@@ -9,6 +9,7 @@ exports.crearProducto = async (req, res) => {
     return res.status(400).json({ errores: errors.array() });
   }
   const { codigo, nombre, descripcion, precio, categoria_id, stock, estado, imagenes } = req.body;
+  console.log(imagenes);
   try {
     const nuevoProducto = await Producto.create({
       codigo,
@@ -27,6 +28,7 @@ exports.crearProducto = async (req, res) => {
         createdAt: new Date(),
         updatedAt: new Date(),
       }));
+      console.log(imagenesData);
       await ImagenProducto.bulkCreate(imagenesData);
     }
     /*const productoConImagenes = await Producto.findByPk(nuevoProducto.id, {
@@ -35,7 +37,7 @@ exports.crearProducto = async (req, res) => {
         as: 'imagenes',
       },
     });*/
-    console.log(imagenes)
+    
     res.status(201).json(nuevoProducto);
   } catch (error) {
     res.status(500).json({ msg: 'Error al crear producto', error });
