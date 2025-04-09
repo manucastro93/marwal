@@ -19,14 +19,9 @@ export const AuthProvider: Component<{ children: JSX.Element }> = (props) => {
   const login = async (usuario: string, contrasena: string) => {
     try {
       const response = await authService.login(usuario, contrasena);
-  
-      // Guardar el token inmediatamente
       localStorage.setItem('token', response.token);
       localStorage.setItem('isAuthenticated', 'true');
-      
-      // Ahora sí, con el token guardado, pedir el usuario conectado
       const user = await usuarioService.obtenerUsuarioConectado();
-  
       localStorage.setItem('userRole', user.rol);
       setUserRole(user.rol);
       setIsAuthenticated(true);
