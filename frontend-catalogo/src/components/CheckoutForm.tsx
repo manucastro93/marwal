@@ -2,6 +2,8 @@
 import { createSignal, onMount } from "solid-js";
 import { clienteService } from "../services/clienteService";
 import { pedidoService } from "../services/pedidoService";
+import { ipService } from "../services/ipService";
+import { logClienteService } from "../services/logClienteService";
 import { Cliente } from "../interfaces/Cliente";
 import { Pedido } from "../interfaces/Pedido";
 import { DetallePedido } from "../interfaces/Pedido";
@@ -110,7 +112,16 @@ const CheckoutForm = () => {
       alert("Ocurrió un error al finalizar el pedido.");
     }
   };
-
+  await ipService.registrarIP(savedCliente.id!, ip);
+  await logClienteService.crearLog({
+    cliente_id: savedCliente.id!,
+    accion: 'checkout',
+    entidad_id: savedPedido.id!,
+    tipo_entidad: 'pedido',
+    detalles: JSON.stringify(detallesConPedidoId),
+    ip,
+    user_agent: navigator.userAgent
+  });
   return (
     <form onSubmit={handleSubmit} class="checkout-form">
       <label>Nombre</label>

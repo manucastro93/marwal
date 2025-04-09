@@ -18,6 +18,7 @@ const administradorController = require('../controllers/administradorController'
 const authController = require('../controllers/authController');
 const logController = require('../controllers/logController');
 const notificacionController = require('../controllers/notificacionController');
+const ipController = require('../controllers/ipController');
 
 const {
   validarUsuario,
@@ -29,6 +30,9 @@ const {
 
 // Aplicar limitación de solicitudes a todas las rutas
 router.use(limitarSolicitudes);
+
+// Rutas para registrar IPs
+router.post('/ips', ipController.registrarIp);
 
 // Rutas para el usuarioController
 router.post('/usuarios', validarToken, validarRol(['administrador', 'supremo']), validarUsuario, usuarioController.crearUsuario);
