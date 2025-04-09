@@ -1,27 +1,74 @@
 import { Component, createSignal, onMount } from 'solid-js';
-import Modal from '../components/Layout/Modal';
-import Layout from '../components/Layout/Layout';
-import { productoService } from '../services/productoService';
+import * as XLSX from 'xlsx';
+import { showNotification } from '../components/Layout/Notification';
 import { Producto } from '../interfaces/Producto';
+import { Categoria } from '../interfaces/Categoria';
+import { productoService } from '../services/productoService';
+import { categoriaService } from '../services/categoriaService';
+import Layout from '../components/Layout/Layout';
+import Modal from '../components/Layout/Modal';
+import ProductoForm from '../components/Productos/ProductoForm';
 
 const Productos: Component = () => {
   const [productos, setProductos] = createSignal<Producto[]>([]);
+  const [categorias, setCategorias] = createSignal<Categoria[]>([]);
   const [filteredProductos, setFilteredProductos] = createSignal<Producto[]>([]);
-  const [currentPage, setCurrentPage] = createSignal(1);
+  const [productosAImportar, setProductosAImportar] = createSignal<Producto[]>([]);
+  const [isImportModalOpen, setIsImportModalOpen] = createSignal(false);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = createSignal(false);
   const [selectedProduct, setSelectedProduct] = createSignal<Producto | null>(null);
-  const [activeTab, setActiveTab] = createSignal('info'); // Default tab: "info"
+  const [activeTab, setActiveTab] = createSignal('details'); // Default tab: "details"
+  const [searchTerm, setSearchTerm] = createSignal('');
+  const [selectedCategoria, setSelectedCategoria] = createSignal('');
   const itemsPerPage = 10;
 
   onMount(() => {
     productoService.obtenerProductos()
-      .then(setProductos)
-      .catch((error) => console.error('Error al cargar los productos:', error));
+      .then((productos) => {
+        setProductos(productos);
+        setFilteredProductos(productos);
+      })
+      .catch((error) => {
+        console.error('Error al obtener los productos:', error);
+        showNotification('Error al obtener los productos', 'error');
+      });
+
+    categoriaService.obtenerCategorias()
+      .then((categorias) => {
+        setCategorias(categorias);
+      })
+      .catch((error) => {
+        console.error('Error al obtener las categorías:', error);
+        showNotification('Error al obtener las categorías', 'error');
+      });
   });
 
-  const paginatedProductos = () => {
-    const start = (currentPage() - 1) * itemsPerPage;
-    return filteredProductos().slice(start, start + itemsPerPage);
+  const handleFileUpload = (event: Event) => {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const data = e.target?.result;
+      const workbook = XLSX.read(data, { type: 'binary' });
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      const productos: Producto[] = XLSX.utils.sheet_to_json(sheet);
+      setProductosAImportar(productos);
+      setIsImportModalOpen(true);
+    };
+    reader.readAsBinaryString(file);
+  };
+
+  const handleConfirmImport = async () => {
+    try {
+      await productoService.importarProductos(productosAImportar());
+      showNotification('Productos importados con éxito', 'success');
+      setIsImportModalOpen(false);
+    } catch (error) {
+      console.error('Error al importar productos:', error);
+      showNotification('Error al importar productos', 'error');
+    }
   };
 
   const openDetailsModal = (producto: Producto) => {
@@ -32,6 +79,76 @@ const Productos: Component = () => {
   return (
     <Layout>
       <h1>Productos</h1>
+      <div class="actions">
+        <label class="btn btn-primary">
+          <span>📂 Importar Excel</span>
+          <input type="file" accept=".xlsx" onChange={handleFileUpload} style={{ display: 'none' }} />
+        </label>
+      </div>
+      <Modal isOpen={isImportModalOpen()} onClose={() => setIsImportModalOpen(false)}>
+        <h2>Confirmar Importación</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Descripción</th>
+              <th>Precio</th>
+            </tr>
+          </thead>
+          <tbody>
+            {productosAImportar().map((producto, index) => (
+              <tr key={index}>
+                <td>{producto.nombre}</td>
+                <td>{producto.descripcion}</td>
+                <td>{producto.precio}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <button class="btn btn-success" onClick={handleConfirmImport}>Confirmar</button>
+      </Modal>
+      <Modal isOpen={isDetailsModalOpen()} onClose={() => setIsDetailsModalOpen(false)}>
+        {selectedProduct() && (
+          <div>
+            <h2>Detalles del Producto</h2>
+            <div class="tabs">
+              <button
+                class={`tab-button ${activeTab() === 'details' ? 'active' : ''}`}
+                onClick={() => setActiveTab('details')}
+              >
+                Detalles
+              </button>
+              <button
+                class={`tab-button ${activeTab() === 'ventas' ? 'active' : ''}`}
+                onClick={() => setActiveTab('ventas')}
+              >
+                Ventas Relacionadas
+              </button>
+            </div>
+            <div class="tab-content">
+              {activeTab() === 'details' && (
+                <div>
+                  <p><strong>Nombre:</strong> {selectedProduct().nombre}</p>
+                  <p><strong>Descripción:</strong> {selectedProduct().descripcion}</p>
+                  <p><strong>Precio:</strong> {selectedProduct().precio}</p>
+                  <p><strong>Categoría:</strong> {selectedProduct().categoria_id}</p>
+                  <p><strong>Stock:</strong> {selectedProduct().stock}</p>
+                </div>
+              )}
+              {activeTab() === 'ventas' && (
+                <div>
+                  <p>Ventas relacionadas al producto:</p>
+                  <ul>
+                    <li>Venta 1: Detalles</li>
+                    <li>Venta 2: Detalles</li>
+                    {/* Aquí puedes mapear las ventas reales */}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </Modal>
       <table>
         <thead>
           <tr>
@@ -44,11 +161,11 @@ const Productos: Component = () => {
           </tr>
         </thead>
         <tbody>
-          {paginatedProductos().map((producto) => (
-            <tr key={producto.id}>
+          {productos().map((producto) => (
+            <tr>
               <td>
                 {producto.imagenes?.[0]?.url && (
-                  <img src={producto.imagenes[0].url} alt={producto.nombre} style={{ width: '50px', height: '50px' }} />
+                  <img src={producto.imagenes[0].url} alt={producto.nombre} width="50" />
                 )}
               </td>
               <td>{producto.codigo}</td>
@@ -56,70 +173,12 @@ const Productos: Component = () => {
               <td>{producto.precio}</td>
               <td>{producto.categoria_id}</td>
               <td>
-                <button onClick={() => openDetailsModal(producto)}>Ver Detalles</button>
+                <button class="btn btn-info btn-sm" onClick={() => openDetailsModal(producto)}>Ver Detalles</button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-      <Modal isOpen={isDetailsModalOpen()} onClose={() => setIsDetailsModalOpen(false)}>
-        {selectedProduct() && (
-          <div>
-            <h2>Detalles del Producto</h2>
-            <div class="tabs">
-              <button
-                class={`tab-button ${activeTab() === 'info' ? 'active' : ''}`}
-                onClick={() => setActiveTab('info')}
-              >
-                Información
-              </button>
-              <button
-                class={`tab-button ${activeTab() === 'ingresos' ? 'active' : ''}`}
-                onClick={() => setActiveTab('ingresos')}
-              >
-                Ingresos
-              </button>
-              <button
-                class={`tab-button ${activeTab() === 'pedidos' ? 'active' : ''}`}
-                onClick={() => setActiveTab('pedidos')}
-              >
-                Pedidos
-              </button>
-            </div>
-            <div class="tab-content">
-              {activeTab() === 'info' && (
-                <div>
-                  <p><strong>Nombre:</strong> {selectedProduct().nombre}</p>
-                  <p><strong>Descripción:</strong> {selectedProduct().descripcion}</p>
-                  <p><strong>Precio:</strong> {selectedProduct().precio}</p>
-                  <p><strong>Categoría:</strong> {selectedProduct().categoria_id}</p>
-                  <p><strong>Stock:</strong> {selectedProduct().stock}</p>
-                </div>
-              )}
-              {activeTab() === 'ingresos' && (
-                <div>
-                  <p>Ingresos del cliente a la web:</p>
-                  <ul>
-                    <li>Visita 1: Fecha y hora</li>
-                    <li>Visita 2: Fecha y hora</li>
-                    {/* Aquí puedes mapear los ingresos reales */}
-                  </ul>
-                </div>
-              )}
-              {activeTab() === 'pedidos' && (
-                <div>
-                  <p>Pedidos relacionados:</p>
-                  <ul>
-                    <li>Pedido 1: Detalles</li>
-                    <li>Pedido 2: Detalles</li>
-                    {/* Aquí puedes mapear los pedidos reales */}
-                  </ul>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-      </Modal>
     </Layout>
   );
 };
