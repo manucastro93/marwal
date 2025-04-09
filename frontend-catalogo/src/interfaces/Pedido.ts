@@ -27,6 +27,10 @@ export interface CrearPedidoPayload {
     nombre: string;
     email?: string;
     telefono?: string;
+    cuit_cuil: string;
+    direccion: string;
+    localidad: string;
+    provincia: string;
   };
   detalles: {
     producto_id: number;
