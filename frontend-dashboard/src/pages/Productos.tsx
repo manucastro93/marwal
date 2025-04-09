@@ -18,8 +18,7 @@ const Productos: Component = () => {
   const [isDetailsModalOpen, setIsDetailsModalOpen] = createSignal(false);
   const [selectedProduct, setSelectedProduct] = createSignal<Producto | null>(null);
   const [activeTab, setActiveTab] = createSignal('details'); // Default tab: "details"
-  const [searchTerm, setSearchTerm] = createSignal('');
-  const [selectedCategoria, setSelectedCategoria] = createSignal('');
+  const [isModalOpen, setIsModalOpen] = createSignal(false);
   const itemsPerPage = 10;
 
   onMount(() => {
@@ -80,27 +79,30 @@ const Productos: Component = () => {
     <Layout>
       <h1>Productos</h1>
       <div class="actions">
-        <label class="btn btn-primary">
+        <button class="btn btn-primary" onClick={() => setIsModalOpen(true)}>Nuevo Producto</button>
+        <label class="btn btn-secondary">
           <span>📂 Importar Excel</span>
           <input type="file" accept=".xlsx" onChange={handleFileUpload} style={{ display: 'none' }} />
         </label>
       </div>
       <Modal isOpen={isImportModalOpen()} onClose={() => setIsImportModalOpen(false)}>
         <h2>Confirmar Importación</h2>
-        <table>
+        <table class="table">
           <thead>
             <tr>
               <th>Nombre</th>
               <th>Descripción</th>
               <th>Precio</th>
+              <th>Categoría</th>
             </tr>
           </thead>
           <tbody>
             {productosAImportar().map((producto, index) => (
               <tr key={index}>
-                <td>{producto.nombre}</td>
-                <td>{producto.descripcion}</td>
-                <td>{producto.precio}</td>
+                <td><input type="text" value={producto.nombre} /></td>
+                <td><input type="text" value={producto.descripcion} /></td>
+                <td><input type="number" value={producto.precio} /></td>
+                <td><input type="text" value={producto.categoria_id} /></td>
               </tr>
             ))}
           </tbody>
@@ -119,6 +121,12 @@ const Productos: Component = () => {
                 Detalles
               </button>
               <button
+                class={`tab-button ${activeTab() === 'imagenes' ? 'active' : ''}`}
+                onClick={() => setActiveTab('imagenes')}
+              >
+                Imágenes
+              </button>
+              <button
                 class={`tab-button ${activeTab() === 'ventas' ? 'active' : ''}`}
                 onClick={() => setActiveTab('ventas')}
               >
@@ -135,9 +143,17 @@ const Productos: Component = () => {
                   <p><strong>Stock:</strong> {selectedProduct().stock}</p>
                 </div>
               )}
+              {activeTab() === 'imagenes' && (
+                <div>
+                  <h3>Imágenes del Producto</h3>
+                  {selectedProduct().imagenes?.map((imagen, index) => (
+                    <img key={index} src={imagen.url} alt={`Imagen ${index + 1}`} width="100" />
+                  ))}
+                </div>
+              )}
               {activeTab() === 'ventas' && (
                 <div>
-                  <p>Ventas relacionadas al producto:</p>
+                  <h3>Ventas Relacionadas</h3>
                   <ul>
                     <li>Venta 1: Detalles</li>
                     <li>Venta 2: Detalles</li>
@@ -149,7 +165,7 @@ const Productos: Component = () => {
           </div>
         )}
       </Modal>
-      <table>
+      <table class="table">
         <thead>
           <tr>
             <th>Imagen</th>
@@ -162,7 +178,7 @@ const Productos: Component = () => {
         </thead>
         <tbody>
           {productos().map((producto) => (
-            <tr>
+            <tr key={producto.id}>
               <td>
                 {producto.imagenes?.[0]?.url && (
                   <img src={producto.imagenes[0].url} alt={producto.nombre} width="50" />
