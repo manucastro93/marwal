@@ -1,6 +1,6 @@
 /* @jsxImportSource solid-js */
 import { createSignal, onMount, createEffect } from "solid-js";
-import productoService from "../services/ProductoService";
+import productoService from "../services/productoService";
 import { Producto } from "../interfaces/Producto";
 import ProductSearch from "./ProductSearch"; // Importa el componente ProductSearch
 

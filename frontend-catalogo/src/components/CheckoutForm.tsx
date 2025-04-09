@@ -1,5 +1,5 @@
 import { createSignal } from "solid-js";
-import { createCheckout } from "../services/pedidoService";
+import { pedidoService } from "../services/pedidoService";
 
 const CheckoutForm = () => {
   const [name, setName] = createSignal("");
