@@ -1,4 +1,5 @@
 import { Component, createSignal, onMount } from 'solid-js';
+import * as XLSX from 'xlsx';
 import { showNotification } from '../components/Layout/Notification';
 import { Producto } from '../interfaces/Producto';
 import { Categoria } from '../interfaces/Categoria';
@@ -12,6 +13,8 @@ const Productos: Component = () => {
   const [productos, setProductos] = createSignal<Producto[]>([]);
   const [categorias, setCategorias] = createSignal<Categoria[]>([]);
   const [filteredProductos, setFilteredProductos] = createSignal<Producto[]>([]);
+  const [productosAImportar, setProductosAImportar] = createSignal<Producto[]>([]);
+  const [isImportModalOpen, setIsImportModalOpen] = createSignal(false);
   const [editProducto, setEditProducto] = createSignal<Producto | null>(null);
   const [newProducto] = createSignal<Producto>({ id: 0, codigo: '', nombre: '', descripcion: '', precio: 0, categoria_id: 0, stock: 0, imagenes: [] });
   const [searchTerm, setSearchTerm] = createSignal('');
@@ -44,6 +47,34 @@ const Productos: Component = () => {
         showNotification('Error al obtener las categorías', 'error');
       });
   });
+
+  const handleFileUpload = (event: Event) => {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const data = e.target?.result;
+      const workbook = XLSX.read(data, { type: 'binary' });
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      const productos: Producto[] = XLSX.utils.sheet_to_json(sheet);
+      setProductosAImportar(productos);
+      setIsImportModalOpen(true);
+    };
+    reader.readAsBinaryString(file);
+  };
+
+  const handleConfirmImport = async () => {
+    try {
+      await productoService.importarProductos(productosAImportar());
+      showNotification('Productos importados con éxito', 'success');
+      setIsImportModalOpen(false);
+    } catch (error) {
+      console.error('Error al importar productos:', error);
+      showNotification('Error al importar productos', 'error');
+    }
+  };
 
   const handleSaveNew = (producto: Producto) => {
     productoService.crearProducto(producto)
@@ -162,76 +193,26 @@ const Productos: Component = () => {
     }
     return '';
   };
-
   return (
     <Layout>
       <h1>Productos</h1>
-      <button onClick={() => setIsModalOpen(true)}>Nuevo Producto</button>
+      <div class="actions">
+        <button onClick={() => setIsModalOpen(true)}>Nuevo Producto</button>
+        <input type="file" accept=".xlsx" onChange={handleFileUpload} />
+      </div>
       <Modal isOpen={isModalOpen()} onClose={() => setIsModalOpen(false)}>
         <ProductoForm initialProducto={newProducto()} onSave={handleSaveNew} onClose={() => setIsModalOpen(false)} />
       </Modal>
-      <Modal isOpen={isEditModalOpen()} onClose={() => setIsEditModalOpen(false)}>
-        {editProducto() && (
-          <ProductoForm initialProducto={editProducto()!} onSave={handleSaveEdit} onClose={() => setIsEditModalOpen(false)} />
-        )}
-      </Modal>
-      <div class="filters-container">
-        <div class="filter-group">
-          <label>Buscar Producto</label>
-          <input type="text" placeholder="Buscar..." value={searchTerm()} onInput={handleSearch} />
-        </div>
-        <div class="filter-group">
-          <label>Filtrar por Categoría</label>
-          <select value={selectedCategoria()} onChange={handleCategoriaChange}>
-            <option value="">Todas</option>
-            {categorias().map(categoria => (
-              <option value={categoria.id.toString()}>{categoria.nombre}</option>
-            ))}
-          </select>
-        </div>
-      </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Imagen</th>
-            <th onClick={() => handleSort('codigo')}>Código {getSortIndicator('codigo')}</th>
-            <th onClick={() => handleSort('nombre')}>Nombre {getSortIndicator('nombre')}</th>
-            <th onClick={() => handleSort('precio')}>Precio {getSortIndicator('precio')}</th>
-            <th onClick={() => handleSort('categoria_id')}>Categoría {getSortIndicator('categoria_id')}</th>
-            <th onClick={() => handleSort('descripcion')}>Descripción {getSortIndicator('descripcion')}</th>
-            <th onClick={() => handleSort('stock')}>Stock {getSortIndicator('stock')}</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {paginatedProductos().map(producto => (
-            <tr>
-              <td>
-                {producto.imagenes && producto.imagenes.length > 0 && (
-                  <img src={producto.imagenes[0].url} alt={`Imagen principal`} width="80" />
-                )}
-              </td>
-              <td>{producto.codigo}</td>
-              <td>{producto.nombre}</td>
-              <td>{producto.precio}</td>
-              <td>{getCategoriaNombre(producto.categoria_id)}</td>
-              <td>{producto.descripcion}</td>
-              <td>{producto.stock}</td>
-              <td>
-                <button class="btn btn-warning btn-sm" onClick={() => { setEditProducto(producto); setIsEditModalOpen(true); }}>Editar</button>
-                <button class="btn btn-danger btn-sm right" onClick={() => handleDelete(producto.id)}>Eliminar</button>
-              </td>
-            </tr>
+      <Modal isOpen={isImportModalOpen()} onClose={() => setIsImportModalOpen(false)}>
+        <h2>Confirmar Importación</h2>
+        <ul>
+          {productosAImportar().map((producto, index) => (
+            <li key={index}>{producto.nombre} - {producto.descripcion}</li>
           ))}
-        </tbody>
-      </table>
-      <div class="pagination">
-        {Array.from({ length: totalPages() }, (_, index) => (
-          <button onClick={() => handlePageChange(index + 1)} disabled={currentPage() === index + 1}>
-            {index + 1}
-          </button>
-        ))}
-      </div>
+        </ul>
+        <button onClick={handleConfirmImport}>Confirmar</button>
+      </Modal>
+      {/* Tabla de productos y filtros */}
     </Layout>
   );
 };
