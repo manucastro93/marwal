@@ -20,7 +20,6 @@ exports.crearProducto = async (req, res) => {
       estado,
       usuario_id: req.usuario.id,
     });
-    console.log(req.body)
     if (imagenes && imagenes.length > 0) {
       const imagenesData = imagenes.map(image => ({
         producto_id: nuevoProducto.id,
