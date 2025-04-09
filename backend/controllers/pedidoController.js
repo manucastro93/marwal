@@ -1,64 +1,22 @@
 const { Pedido, Cliente, Usuario, Producto, DetallePedido, Categoria } = require('../models');
-const ipService = require('../services/ipService');
-const logClienteService = require('../services/logClienteService');
-const emailService = require('../services/emailService');
+const pedidoService = require('../services/pedidoService');
 
 exports.crearPedido = async (req, res) => {
   const { cliente, detalles, ip } = req.body;
 
+  if (!cliente.cuit_cuil) {
+    return res.status(400).json({ message: 'Falta el CUIT/CUIL del cliente' });
+  }
+
   try {
-    // 1. Guardar o actualizar cliente
-    if (!cliente.cuit_cuil) {
-      return res.status(400).json({ message: 'Falta el CUIT/CUIL del cliente' });
-    }
-    
-    let clienteDB = await Cliente.findOne({ where: { cuit_cuil: cliente.cuit_cuil } });
-    if (clienteDB) {
-      await clienteDB.update(cliente);
-    } else {
-      clienteDB = await Cliente.create(cliente);
-    }
-
-    // 2. Crear pedido
-    const pedido = await Pedido.create({
-      cliente_id: clienteDB.id,
-      vendedor_id: cliente.vendedor_id ?? null,
-      estado: 'pendiente'
-    });
-
-    // 3. Crear detalles de pedido
-    const detallesDB = await DetallePedido.bulkCreate(
-      detalles.map(d => ({
-        pedido_id: pedido.id,
-        producto_id: d.producto_id,
-        cantidad: d.cantidad,
-        precio: d.precio
-      }))
-    );
-
-    // 4. Registrar IP
-    await ipService.registrarIP(clienteDB.id, ip);
-
-    // 5. Registrar log
-    await logClienteService.crearLog({
-      cliente_id: clienteDB.id,
-      accion: 'checkout',
-      entidad_id: pedido.id,
-      tipo_entidad: 'pedido',
-      detalles: JSON.stringify(detalles),
+    const { cliente: clienteDB, pedido, detalles: detallesDB } = await pedidoService.crearPedidoCompleto({
+      clienteData: cliente,
+      carrito: detalles,
       ip,
-      user_agent: req.headers['user-agent']
-    });
-
-    // 6. Enviar email
-    await emailService.enviarConfirmacionPedido({
-      pedido,
-      cliente: clienteDB,
-      detalles: detallesDB
+      userAgent: req.headers['user-agent']
     });
 
     res.status(201).json({ pedido, detalles: detallesDB });
-
   } catch (error) {
     console.error('Error al crear pedido:', error);
     res.status(500).json({ msg: 'Error al crear pedido', error });

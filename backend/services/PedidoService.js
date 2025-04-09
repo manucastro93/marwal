@@ -11,12 +11,14 @@ const crearPedidoCompleto = async ({ clienteData, carrito, ip, userAgent }) => {
 
   // 2. Registrar IP del cliente
   await registrarIP(cliente.id, ip);
+  const total = carrito.reduce((sum, item) => sum + item.precio * item.cantidad, 0);
 
   // 3. Crear el pedido
   const pedido = await Pedido.create({
     cliente_id: cliente.id,
     vendedor_id: cliente.vendedor_id || 0,
     estado: 'pendiente',
+    total,
   });
 
   // 4. Crear los detalles del pedido
