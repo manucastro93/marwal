@@ -27,6 +27,8 @@ const Productos: Component = () => {
   const [isDetalleModalOpen, setIsDetalleModalOpen] = createSignal(false);
   const [sortColumn, setSortColumn] = createSignal('');
   const [sortOrder, setSortOrder] = createSignal<'asc' | 'desc'>('asc');
+  const [isConfirmDeleteModalOpen, setIsConfirmDeleteModalOpen] = createSignal(false);
+  const [productoToDelete, setProductoToDelete] = createSignal<Producto | null>(null);
   const itemsPerPage = 10;
 
   onMount(() => {
@@ -229,11 +231,36 @@ const Productos: Component = () => {
       </Modal>
 
       <Modal isOpen={isDetalleModalOpen()} onClose={() => setIsDetalleModalOpen(false)}>
-      {selectedProducto() && (
-        <ProductoDetalle producto={selectedProducto()!} categorias={categorias()} onClose={() => setIsDetalleModalOpen(false)} />
-      )}
-    </Modal>
-    
+        {selectedProducto() && (
+          <ProductoDetalle producto={selectedProducto()!} categorias={categorias()} onClose={() => setIsDetalleModalOpen(false)} />
+        )}
+      </Modal>
+      <Modal isOpen={isConfirmDeleteModalOpen()} onClose={() => setIsConfirmDeleteModalOpen(false)}>
+        <h3>¿Confirmar eliminación?</h3>
+        <p>¿Estás seguro de que deseas eliminar el producto <strong>{productoToDelete()?.nombre}</strong>?</p>
+        <div style={{ "margin-top": "1rem", "text-align": "right" }}>
+          <button
+            class="btn btn-secondary"
+            onClick={() => setIsConfirmDeleteModalOpen(false)}
+            style={{ "margin-right": "0.5rem" }}
+          >
+            Cancelar
+          </button>
+          <button
+            class="btn btn-danger"
+            onClick={() => {
+              if (productoToDelete()) {
+                handleDelete(productoToDelete()!.id);
+                setIsConfirmDeleteModalOpen(false);
+                setProductoToDelete(null);
+              }
+            }}
+          >
+            Confirmar
+          </button>
+        </div>
+      </Modal>
+
       <Modal isOpen={isImportModalOpen()} onClose={() => setIsImportModalOpen(false)}>
         <h3>Vista previa de productos importados</h3>
         <table>
@@ -307,9 +334,11 @@ const Productos: Component = () => {
               <td>{producto.descripcion}</td>
               <td>{producto.stock}</td>
               <td>
-              <button class="btn btn-info btn-sm" onClick={() => { setSelectedProducto(producto); setIsDetalleModalOpen(true); }}>Ver detalles</button>
+                <button class="btn btn-info btn-sm" onClick={() => { setSelectedProducto(producto); setIsDetalleModalOpen(true); }}>Ver detalles</button>
                 <button class="btn btn-warning btn-sm" onClick={() => { setEditProducto(producto); setIsEditModalOpen(true); }}>Editar</button>
-                <button class="btn btn-danger btn-sm right" onClick={() => handleDelete(producto.id)}>Eliminar</button>
+                <button class="btn btn-danger btn-sm right" onClick={() => { setProductoToDelete(producto); setIsConfirmDeleteModalOpen(true); }}>
+                  Eliminar
+                </button>
               </td>
             </tr>
           ))}

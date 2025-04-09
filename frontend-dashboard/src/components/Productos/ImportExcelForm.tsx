@@ -41,13 +41,13 @@ const ImportarExcelForm: Component<Props> = ({ onClose, onImport }) => {
   };
 
   return (
-    <div class="import-form">
+    <div class="import-form p-4">
       <h2>Importar productos desde Excel</h2>
-      <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} />
+      <input type="file" accept=".xlsx, .xls" class="form-control mb-3" onChange={handleFileUpload} />
       {productos().length > 0 && (
-        <>
-          <table class="tabla-import">
-            <thead>
+        <div class="table-responsive mb-3" style={{ maxHeight: '400px', overflow: 'auto' }}>
+          <table class="table table-bordered table-striped table-sm">
+            <thead class="table-light">
               <tr>
                 <th>Código</th>
                 <th>Nombre</th>
@@ -60,20 +60,24 @@ const ImportarExcelForm: Component<Props> = ({ onClose, onImport }) => {
             <tbody>
               {productos().map((p, idx) => (
                 <tr>
-                  <td><input value={p.codigo} onInput={e => handleChange(idx, 'codigo', e.currentTarget.value)} /></td>
-                  <td><input value={p.nombre} onInput={e => handleChange(idx, 'nombre', e.currentTarget.value)} /></td>
-                  <td><input value={p.descripcion} onInput={e => handleChange(idx, 'descripcion', e.currentTarget.value)} /></td>
-                  <td><input type="number" value={p.precio} onInput={e => handleChange(idx, 'precio', e.currentTarget.value)} /></td>
-                  <td><input type="number" value={p.stock} onInput={e => handleChange(idx, 'stock', e.currentTarget.value)} /></td>
-                  <td><input value={p.categoria_id} onInput={e => handleChange(idx, 'categoria_id', e.currentTarget.value)} /></td>
+                  <td><input class="form-control" value={p.codigo} onInput={e => handleChange(idx, 'codigo', e.currentTarget.value)} /></td>
+                  <td><input class="form-control" value={p.nombre} onInput={e => handleChange(idx, 'nombre', e.currentTarget.value)} /></td>
+                  <td><input class="form-control" value={p.descripcion} onInput={e => handleChange(idx, 'descripcion', e.currentTarget.value)} /></td>
+                  <td><input class="form-control" type="number" value={p.precio} onInput={e => handleChange(idx, 'precio', e.currentTarget.value)} /></td>
+                  <td><input class="form-control" type="number" value={p.stock} onInput={e => handleChange(idx, 'stock', e.currentTarget.value)} /></td>
+                  <td><input class="form-control" value={p.categoria_id} onInput={e => handleChange(idx, 'categoria_id', e.currentTarget.value)} /></td>
                 </tr>
               ))}
             </tbody>
           </table>
-          <button onClick={handleImport}>Importar productos</button>
-        </>
+        </div>
       )}
-      <button onClick={onClose}>Cerrar</button>
+      <div class="d-flex justify-content-end gap-2">
+        <button class="btn btn-secondary" onClick={onClose}>Cerrar</button>
+        {productos().length > 0 && (
+          <button class="btn btn-primary" onClick={handleImport}>Importar productos</button>
+        )}
+      </div>
     </div>
   );
 };

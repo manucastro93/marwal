@@ -1,4 +1,4 @@
-import { Component, createSignal } from 'solid-js';
+import { Component, createSignal, onMount } from 'solid-js';
 import { Producto } from '../../interfaces/Producto';
 import { Categoria } from '../../interfaces/Categoria';
 
@@ -9,7 +9,14 @@ interface Props {
 }
 
 const ProductoDetalle: Component<Props> = (props) => {
-  const [activeTab, setActiveTab] = createSignal<'info' | 'imagenes'>('info');
+  const [activeTab, setActiveTab] = createSignal<'info' | 'imagenes' | 'ventas'>('info');
+  const [ventas, setVentas] = createSignal<number>(0); // Cantidad total de ventas
+
+  onMount(async () => {
+    // Simulación: reemplazar con llamada real a API cuando esté disponible
+    const simulatedVentas = Math.floor(Math.random() * 100);
+    setVentas(simulatedVentas);
+  });
 
   const getCategoriaNombre = (categoria_id: number) => {
     const categoria = props.categorias.find(c => c.id === categoria_id);
@@ -17,11 +24,12 @@ const ProductoDetalle: Component<Props> = (props) => {
   };
 
   return (
-    <div class="producto-detalle">
+    <div class="producto-detalle p-4">
       <h2>Detalle del Producto</h2>
-      <div class="tabs">
-        <button onClick={() => setActiveTab('info')} class={activeTab() === 'info' ? 'active' : ''}>Información</button>
-        <button onClick={() => setActiveTab('imagenes')} class={activeTab() === 'imagenes' ? 'active' : ''}>Imágenes</button>
+      <div class="tabs mb-3 d-flex gap-2">
+        <button class={`btn btn-outline-primary ${activeTab() === 'info' ? 'active' : ''}`} onClick={() => setActiveTab('info')}>Información</button>
+        <button class={`btn btn-outline-primary ${activeTab() === 'imagenes' ? 'active' : ''}`} onClick={() => setActiveTab('imagenes')}>Imágenes</button>
+        <button class={`btn btn-outline-primary ${activeTab() === 'ventas' ? 'active' : ''}`} onClick={() => setActiveTab('ventas')}>Ventas</button>
       </div>
 
       {activeTab() === 'info' && (
@@ -36,7 +44,7 @@ const ProductoDetalle: Component<Props> = (props) => {
       )}
 
       {activeTab() === 'imagenes' && (
-        <div class="tab-content">
+        <div class="tab-content d-flex flex-wrap gap-3">
           {props.producto.imagenes && props.producto.imagenes.length > 0 ? (
             props.producto.imagenes.map((img) => (
               <img src={img.url} alt="Producto" width="120" style={{ margin: '10px' }} />
@@ -44,6 +52,13 @@ const ProductoDetalle: Component<Props> = (props) => {
           ) : (
             <p>Sin imágenes.</p>
           )}
+        </div>
+      )}
+
+      {activeTab() === 'ventas' && (
+        <div class="tab-content">
+          <p><strong>Total de Ventas:</strong> {ventas()}</p>
+          <p>(Aquí podés agregar una tabla de pedidos relacionados en el futuro)</p>
         </div>
       )}
     </div>
