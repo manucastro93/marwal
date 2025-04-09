@@ -1,5 +1,5 @@
 import { createSignal, onMount } from 'solid-js';
-import paginaService from '../services/paginaService';
+import {paginaService} from '../services/paginaService';
 
 const Header = () => {
   const [logoUrl, setLogoUrl] = createSignal("");
