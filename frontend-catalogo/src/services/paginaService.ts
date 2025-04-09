@@ -1,16 +1,24 @@
-import axios from 'axios';
+import { api } from './api';
 import { Banner, Logo } from '../interfaces/Pagina';
-import { BASE_URL } from '../config';
 
 export const paginaService = {
   obtenerBannersActivos: async (): Promise<Banner[]> => {
-    const response = await axios.get(`${BASE_URL}/banners`);
-    return response.data;
+    try {
+      const { data } = await api.get('/banners');
+      return data;
+    } catch (error: any) {
+      console.error('Error obteniendo banners:', error.message);
+      throw new Error('No se pudieron obtener los banners');
+    }
   },
+
   obtenerLogo: async (): Promise<Logo> => {
-    const response = await axios.get(`${BASE_URL}/logo`);
-    return response.data;
+    try {
+      const { data } = await api.get('/logo');
+      return data;
+    } catch (error: any) {
+      console.error('Error obteniendo logo:', error.message);
+      throw new Error('No se pudo obtener el logo');
+    }
   }
 };
-
-export default paginaService;

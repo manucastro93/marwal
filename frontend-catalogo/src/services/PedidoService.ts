@@ -1,35 +1,24 @@
-import { BASE_URL } from '../config';
-import { Pedido } from "../interfaces/Pedido";
-import { DetallePedido } from "../interfaces/DetallePedido"; // Importar la interfaz DetallePedido
+import { api } from './api';
+import { Pedido } from '../interfaces/Pedido';
+import { DetallePedido } from '../interfaces/DetallePedido';
 
-export const placePedido = async (pedido: Pedido): Promise<Pedido> => {
-  const response = await fetch(`${BASE_URL}/pedidos`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(pedido)
-  });
+export const pedidoService = {
+  placePedido: async (pedido: Pedido): Promise<Pedido> => {
+    try {
+      const { data } = await api.post('/pedidos', pedido);
+      return data;
+    } catch (error: any) {
+      console.error('Error guardando pedido:', error.message);
+      throw new Error('No se pudo guardar el pedido');
+    }
+  },
 
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.error || 'Failed to save pedido');
-  }
-
-  return await response.json();
-};
-
-export const placePedidoConDetalles = async (pedidoId: number, detalles: DetallePedido[]): Promise<void> => {
-  const response = await fetch(`${BASE_URL}/pedidos/${pedidoId}/detalles`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(detalles)
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.error || 'Failed to save detalles del pedido');
+  placePedidoConDetalles: async (pedidoId: number, detalles: DetallePedido[]): Promise<void> => {
+    try {
+      await api.post(`/pedidos/${pedidoId}/detalles`, detalles);
+    } catch (error: any) {
+      console.error('Error guardando detalles del pedido:', error.message);
+      throw new Error('No se pudieron guardar los detalles del pedido');
+    }
   }
 };

@@ -1,17 +1,14 @@
-import axios from 'axios';
-import { Producto } from "../interfaces/Producto";
-import { BASE_URL } from '../config';
+import { api } from './api';
+import { Producto } from '../interfaces/Producto';
 
-const productoService = {
+export const productoService = {
   getProductos: async (): Promise<Producto[]> => {
     try {
-      const response = await axios.get(`${BASE_URL}/productos`);
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching productos:", error);
-      throw error;
+      const { data } = await api.get('/productos');
+      return data;
+    } catch (error: any) {
+      console.error('Error obteniendo productos:', error.message);
+      throw new Error('No se pudieron obtener los productos');
     }
   }
 };
-
-export default productoService;

@@ -1,17 +1,14 @@
-import axios from 'axios';
-import { Vendedor } from "../interfaces/Vendedor";
-import { BASE_URL } from '../config';
+import { api } from './api';
+import { Vendedor } from '../interfaces/Vendedor';
 
-const vendedorService = {
-  getVendedorByLink: async (link: string): Promise<Vendedor[]> => {
+export const vendedorService = {
+  getVendedorByLink: async (link: string): Promise<Vendedor> => {
     try {
-      const response = await axios.get(`${BASE_URL}/vendedores/by-link/${link}`);
-      return response.data.id;
-    } catch (error) {
-      console.error("Error fetching vendedores:", error);
-      throw error;
+      const { data } = await api.get(`/vendedores/by-link/${link}`);
+      return data;
+    } catch (error: any) {
+      console.error('Error obteniendo vendedor:', error.message);
+      throw new Error('No se pudo obtener el vendedor');
     }
   }
 };
-
-export default vendedorService;

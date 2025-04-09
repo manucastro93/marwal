@@ -1,17 +1,14 @@
-import axios from 'axios';
-import { Categoria } from "../interfaces/Categoria";
-import { BASE_URL } from '../config';
+import { api } from './api';
+import { Categoria } from '../interfaces/Categoria';
 
-const categoriaService = {
-  getProductos: async (): Promise<Categoria[]> => {
+export const categoriaService = {
+  getCategorias: async (): Promise<Categoria[]> => {
     try {
-      const response = await axios.get(`${BASE_URL}/categorias`);
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching categorias:", error);
-      throw error;
+      const { data } = await api.get('/categorias');
+      return data;
+    } catch (error: any) {
+      console.error('Error obteniendo categorías:', error.message);
+      throw new Error('No se pudieron obtener las categorías');
     }
   }
 };
-
-export default categoriaService;
