@@ -2,7 +2,7 @@ import { BASE_URL } from '../config';
 import { Cliente } from "../interfaces/Cliente";
 
 export const saveOrUpdateCliente = async (cliente: Cliente): Promise<Cliente> => {
-  const response = await fetch(`${BASE_URL}/clientes`, {
+  const response = await fetch(`${BASE_URL}/clientes/clientes`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
