@@ -236,59 +236,73 @@ const Productos: Component = () => {
         )}
       </Modal>
       <Modal isOpen={isConfirmDeleteModalOpen()} onClose={() => setIsConfirmDeleteModalOpen(false)}>
-        <h3>¿Confirmar eliminación?</h3>
-        <p>¿Estás seguro de que deseas eliminar el producto <strong>{productoToDelete()?.nombre}</strong>?</p>
-        <div style={{ "margin-top": "1rem", "text-align": "right" }}>
-          <button
-            class="btn btn-secondary"
-            onClick={() => setIsConfirmDeleteModalOpen(false)}
-            style={{ "margin-right": "0.5rem" }}
-          >
-            Cancelar
-          </button>
-          <button
-            class="btn btn-danger"
-            onClick={() => {
-              if (productoToDelete()) {
-                handleDelete(productoToDelete()!.id);
-                setIsConfirmDeleteModalOpen(false);
-                setProductoToDelete(null);
-              }
-            }}
-          >
-            Confirmar
-          </button>
+        <div style={{ "display": "flex", "flex-direction": "column", "align-items": "center", "text-align": "center", "padding": "1rem" }}>
+          <div style={{ "font-size": "3rem", "color": "#dc3545", "margin-bottom": "0.5rem" }}>⚠️</div>
+          <h3 style={{ "margin-bottom": "0.5rem" }}>¿Eliminar producto?</h3>
+          <p style={{ "margin-bottom": "1rem" }}>
+            ¿Estás seguro de que deseas eliminar el producto <strong>{productoToDelete()?.nombre}</strong>? Esta acción no se puede deshacer.
+          </p>
+          <div style={{ "display": "flex", "gap": "0.5rem" }}>
+            <button
+              class="btn btn-secondary"
+              onClick={() => setIsConfirmDeleteModalOpen(false)}
+            >
+              Cancelar
+            </button>
+            <button
+              class="btn btn-danger"
+              onClick={() => {
+                if (productoToDelete()) {
+                  handleDelete(productoToDelete()!.id);
+                  setIsConfirmDeleteModalOpen(false);
+                  setProductoToDelete(null);
+                }
+              }}
+            >
+              Confirmar
+            </button>
+          </div>
         </div>
       </Modal>
 
+
       <Modal isOpen={isImportModalOpen()} onClose={() => setIsImportModalOpen(false)}>
-        <h3>Vista previa de productos importados</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Código</th>
-              <th>Nombre</th>
-              <th>Descripción</th>
-              <th>Precio</th>
-              <th>Stock</th>
-              <th>Categoría</th>
-            </tr>
-          </thead>
-          <tbody>
-            {importedProductos().map(producto => (
-              <tr>
-                <td>{producto.codigo}</td>
-                <td>{producto.nombre}</td>
-                <td>{producto.descripcion}</td>
-                <td>{producto.precio}</td>
-                <td>{producto.stock}</td>
-                <td>{getCategoriaNombre(producto.categoria_id)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <button onClick={handleConfirmImport}>Confirmar Importación</button>
+        <div style={{ "max-height": "80vh", "overflow": "hidden", "display": "flex", "flex-direction": "column" }}>
+          <h3 style={{ "margin-bottom": "1rem", "text-align": "center" }}>Vista previa de productos importados</h3>
+
+          <div style={{ "overflow-y": "auto", "flex-grow": 1 }}>
+            <table style={{ "width": "100%", "border-collapse": "collapse" }}>
+              <thead>
+                <tr>
+                  <th style={{ "border": "1px solid #ccc", "padding": "8px" }}>Código</th>
+                  <th style={{ "border": "1px solid #ccc", "padding": "8px" }}>Nombre</th>
+                  <th style={{ "border": "1px solid #ccc", "padding": "8px" }}>Descripción</th>
+                  <th style={{ "border": "1px solid #ccc", "padding": "8px" }}>Precio</th>
+                  <th style={{ "border": "1px solid #ccc", "padding": "8px" }}>Stock</th>
+                  <th style={{ "border": "1px solid #ccc", "padding": "8px" }}>Categoría</th>
+                </tr>
+              </thead>
+              <tbody>
+                {importedProductos().map(producto => (
+                  <tr>
+                    <td style={{ "border": "1px solid #eee", "padding": "8px" }}>{producto.codigo}</td>
+                    <td style={{ "border": "1px solid #eee", "padding": "8px" }}>{producto.nombre}</td>
+                    <td style={{ "border": "1px solid #eee", "padding": "8px" }}>{producto.descripcion}</td>
+                    <td style={{ "border": "1px solid #eee", "padding": "8px" }}>{producto.precio}</td>
+                    <td style={{ "border": "1px solid #eee", "padding": "8px" }}>{producto.stock}</td>
+                    <td style={{ "border": "1px solid #eee", "padding": "8px" }}>{getCategoriaNombre(producto.categoria_id)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div style={{ "margin-top": "1rem", "text-align": "center" }}>
+            <button onClick={handleConfirmImport}>Confirmar Importación</button>
+          </div>
+        </div>
       </Modal>
+
 
       <div class="filters-container">
         <div class="filter-group">

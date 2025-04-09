@@ -58,7 +58,7 @@ const ProductoDetalle: Component<Props> = (props) => {
       {activeTab() === 'ventas' && (
         <div class="tab-content">
           <p><strong>Total de Ventas:</strong> {ventas()}</p>
-          <p>(Aquí podés agregar una tabla de pedidos relacionados en el futuro)</p>
+          <p>(acá van a ir las ventas del producto, estadisticas etc)</p>
         </div>
       )}
     </div>
