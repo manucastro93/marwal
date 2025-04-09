@@ -1,8 +1,21 @@
+export interface DetallePedido {
+  id: number;
+  producto_id: number;
+  cantidad: number;
+  precio: number;
+  pedido_id: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Pedido {
-  id?: number;
+  id: number;
   cliente_id: number;
   vendedor_id: number;
-  estado?: 'Pendiente' | 'En Proceso' | 'Finalizado' | 'Rechazado';
-  createdAt?: string;
-  updated_at?: string;
+  cliente: string;
+  vendedor: string;
+  estado: string;
+  createdAt: string;
+  updatedAt: string;
+  detalles: DetallePedido[]; 
 }

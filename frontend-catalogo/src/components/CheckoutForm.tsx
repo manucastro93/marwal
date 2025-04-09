@@ -4,7 +4,7 @@ import { clienteService } from "../services/clienteService";
 import { pedidoService } from "../services/pedidoService";
 import { Cliente } from "../interfaces/Cliente";
 import { Pedido } from "../interfaces/Pedido";
-import { DetallePedido } from "../interfaces/DetallePedido";
+import { DetallePedido } from "../interfaces/Pedido";
 
 const CheckoutForm = () => {
   const [nombre, setNombre] = createSignal('');

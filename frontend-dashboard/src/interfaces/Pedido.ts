@@ -17,5 +17,5 @@ export interface Pedido {
   estado: string;
   createdAt: string;
   updatedAt: string;
-  detalles: DetallePedido[]; // Añadimos la propiedad detalles
+  detalles: DetallePedido[]; 
 }

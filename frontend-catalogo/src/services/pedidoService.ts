@@ -1,6 +1,5 @@
 import { api } from './api';
-import { Pedido } from '../interfaces/Pedido';
-import { DetallePedido } from '../interfaces/DetallePedido';
+import { Pedido, DetallePedido } from '../interfaces/Pedido';
 
 export const pedidoService = {
   placePedido: async (pedido: Pedido): Promise<Pedido> => {
