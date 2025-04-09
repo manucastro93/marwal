@@ -1,8 +1,15 @@
+/* @jsxImportSource solid-js */
 import { createSignal, onMount } from 'solid-js';
-import {paginaService} from '../services/paginaService';
+import { paginaService } from '../services/paginaService';
 
-const Header = () => {
+interface HeaderProps {
+  onIrAMisPedidos: () => void;
+  onVolverInicio: () => void;
+}
+
+const Header = (props: HeaderProps) => {
   const [logoUrl, setLogoUrl] = createSignal("");
+
   onMount(async () => {
     try {
       const logo = await paginaService.obtenerLogo();
@@ -14,8 +21,17 @@ const Header = () => {
 
   return (
     <header class="header">
-      {logoUrl() ? <img src={logoUrl()} alt="Logo" class="logo-image" /> : "LOGO"}
-      <h1 class="catalogo-online">Catálogo <span>Online</span></h1>
+      <div class="logo-container" onClick={props.onVolverInicio} style={{ cursor: 'pointer' }}>
+        {logoUrl() ? (
+          <img src={logoUrl()} alt="Logo" class="logo-image" />
+        ) : (
+          "LOGO"
+        )}
+        <h1 class="catalogo-online">Catálogo <span>Online</span></h1>
+      </div>
+      <nav>
+        <button class="btn-pedidos" onClick={props.onIrAMisPedidos}>Mis Pedidos</button>
+      </nav>
     </header>
   );
 };
