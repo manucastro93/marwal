@@ -21,6 +21,7 @@ const ImagenProducto = require('./ImagenProducto')(sequelize, Sequelize.DataType
 const LogCliente = require('./LogCliente')(sequelize, Sequelize.DataTypes);
 const Notificacion = require('./Notificacion')(sequelize, Sequelize.DataTypes);
 const Pedido = require('./Pedido')(sequelize, Sequelize.DataTypes);
+const DetallePedido = require('./DetallePedido')(sequelize, Sequelize.DataTypes);
 const Producto = require('./Producto')(sequelize, Sequelize.DataTypes);
 const Usuario = require('./Usuario')(sequelize, Sequelize.DataTypes);
 const Banner = require('./Banner')(sequelize, Sequelize.DataTypes);
