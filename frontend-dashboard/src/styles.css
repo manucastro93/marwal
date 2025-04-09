@@ -115,7 +115,10 @@ body {
   color: #555;
 }
 
-
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+  color: var(--bs-nav-pills-link-active-color);
+  background-color: rgb(207, 207, 207);
+}
 
 /* Content */
 .content {
