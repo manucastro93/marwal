@@ -29,15 +29,14 @@ exports.crearProducto = async (req, res) => {
       }));
       await ImagenProducto.bulkCreate(imagenesData);
     }
-
-    // Incluir imágenes en la respuesta
-    const productoConImagenes = await Producto.findByPk(nuevoProducto.id, {
+    /*const productoConImagenes = await Producto.findByPk(nuevoProducto.id, {
       include: {
         model: ImagenProducto,
         as: 'imagenes',
       },
-    });
-    res.status(201).json(productoConImagenes);
+    });*/
+    console.log(imagenes)
+    res.status(201).json(nuevoProducto);
   } catch (error) {
     res.status(500).json({ msg: 'Error al crear producto', error });
   }
