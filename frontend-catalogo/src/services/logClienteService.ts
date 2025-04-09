@@ -1,5 +1,5 @@
 // services/logClienteService.ts
-import { API_URL } from "../config";
+import { BASE_URL } from "../config";
 
 export const logClienteService = {
   async crearLog(log: {
@@ -11,7 +11,7 @@ export const logClienteService = {
     ip?: string;
     user_agent?: string;
   }) {
-    await fetch(`${API_URL}/logs-clientes`, {
+    await fetch(`${BASE_URL}/logs-clientes`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(log),

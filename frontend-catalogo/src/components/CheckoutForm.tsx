@@ -112,16 +112,7 @@ const CheckoutForm = () => {
       alert("Ocurrió un error al finalizar el pedido.");
     }
   };
-  await ipService.registrarIP(savedCliente.id!, ip);
-  await logClienteService.crearLog({
-    cliente_id: savedCliente.id!,
-    accion: 'checkout',
-    entidad_id: savedPedido.id!,
-    tipo_entidad: 'pedido',
-    detalles: JSON.stringify(detallesConPedidoId),
-    ip,
-    user_agent: navigator.userAgent
-  });
+
   return (
     <form onSubmit={handleSubmit} class="checkout-form">
       <label>Nombre</label>
