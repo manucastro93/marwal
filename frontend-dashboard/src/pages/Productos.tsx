@@ -193,30 +193,30 @@ const Productos: Component = () => {
       <table>
         <thead>
           <tr>
+            <th>Imagen</th>
             <th onClick={() => handleSort('codigo')}>Código {getSortIndicator('codigo')}</th>
             <th onClick={() => handleSort('nombre')}>Nombre {getSortIndicator('nombre')}</th>
             <th onClick={() => handleSort('precio')}>Precio {getSortIndicator('precio')}</th>
             <th onClick={() => handleSort('categoria_id')}>Categoría {getSortIndicator('categoria_id')}</th>
             <th onClick={() => handleSort('descripcion')}>Descripción {getSortIndicator('descripcion')}</th>
             <th onClick={() => handleSort('stock')}>Stock {getSortIndicator('stock')}</th>
-            <th>Imagen</th>
             <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
           {paginatedProductos().map(producto => (
             <tr>
+              <td>
+                {producto.imagenes && producto.imagenes.length > 0 && (
+                  <img src={producto.imagenes[0].url} alt={`Imagen principal`} width="80" />
+                )}
+              </td>
               <td>{producto.codigo}</td>
               <td>{producto.nombre}</td>
               <td>{producto.precio}</td>
               <td>{getCategoriaNombre(producto.categoria_id)}</td>
               <td>{producto.descripcion}</td>
               <td>{producto.stock}</td>
-              <td>
-                {producto.imagenes && producto.imagenes.length > 0 && (
-                  <img src={producto.imagenes[0].url} alt={`Imagen principal`} width="80" />
-                )}
-              </td>
               <td>
                 <button class="btn btn-warning btn-sm" onClick={() => { setEditProducto(producto); setIsEditModalOpen(true); }}>Editar</button>
                 <button class="btn btn-danger btn-sm right" onClick={() => handleDelete(producto.id)}>Eliminar</button>
