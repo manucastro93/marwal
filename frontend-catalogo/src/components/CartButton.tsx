@@ -105,7 +105,11 @@ const CartButton = (props: CartButtonProps) => {
               </div>
             </>
           )}
-          <CheckoutForm />
+          <CheckoutForm
+  carrito={props.carrito()}
+  setCarrito={props.setCarrito}
+  setMostrarCarrito={props.setMostrarCarrito}
+/>
         </div>
       )}
     </div>
