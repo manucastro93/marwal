@@ -8,6 +8,7 @@ import { categoriaService } from '../services/categoriaService';
 import Layout from '../components/Layout/Layout';
 import Modal from '../components/Layout/Modal';
 import ProductoForm from '../components/Productos/ProductoForm';
+import ProductoDetalle from '../components/Productos/ProductoDetalle';
 
 const Productos: Component = () => {
   const [productos, setProductos] = createSignal<Producto[]>([]);
@@ -220,16 +221,19 @@ const Productos: Component = () => {
       <Modal isOpen={isModalOpen()} onClose={() => setIsModalOpen(false)}>
         <ProductoForm initialProducto={newProducto()} onSave={handleSaveNew} onClose={() => setIsModalOpen(false)} />
       </Modal>
+
       <Modal isOpen={isEditModalOpen()} onClose={() => setIsEditModalOpen(false)}>
         {editProducto() && (
           <ProductoForm initialProducto={editProducto()!} onSave={handleSaveEdit} onClose={() => setIsEditModalOpen(false)} />
         )}
       </Modal>
+
       <Modal isOpen={isDetalleModalOpen()} onClose={() => setIsDetalleModalOpen(false)}>
       {selectedProducto() && (
         <ProductoDetalle producto={selectedProducto()!} categorias={categorias()} onClose={() => setIsDetalleModalOpen(false)} />
       )}
     </Modal>
+    
       <Modal isOpen={isImportModalOpen()} onClose={() => setIsImportModalOpen(false)}>
         <h3>Vista previa de productos importados</h3>
         <table>
