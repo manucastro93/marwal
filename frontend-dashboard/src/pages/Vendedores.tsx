@@ -116,7 +116,7 @@ const Vendedores: Component = () => {
                 <td>{vendedor.nombre}</td>
                 <td>{vendedor.email}</td>
                 <td>{vendedor.telefono}</td>
-                <td><button class="btn btn btn-sm" onClick={() => { copiarLink(vendedor.link) }}>Copiar Link</button></td>
+                <td><button class="btn btn-primary btn-sm" onClick={() => { copiarLink(vendedor.link) }}>Copiar Link</button></td>
                 <td>
                   <button class="btn btn-warning btn-sm" onClick={() => { setEditVendedor(vendedor); setIsEditModalOpen(true); }}>Editar</button>
                   <button class="btn btn-danger btn-sm right" onClick={() => vendedor.id && handleDelete(vendedor.id)}>Eliminar</button>
