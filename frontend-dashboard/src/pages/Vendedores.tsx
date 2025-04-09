@@ -26,6 +26,16 @@ const Vendedores: Component = () => {
       });
   });
 
+  const copiarLink = (link: string) => {
+    navigator.clipboard.writeText(`https://marwal.onrender.com/${link}`)
+      .then(() => {
+        showNotification('¡Link copiado al portapapeles!', 'success');
+      })
+      .catch((err) => {
+        console.error('Error al copiar el link:', err);
+        showNotification('Error al copiar el link', 'error');
+      });
+  };
   const handleSaveEdit = (vendedor: Vendedor) => {
     const saveAction = vendedor.id ? vendedorService.actualizarVendedor(vendedor.id, vendedor) : vendedorService.crearVendedor(vendedor);
     saveAction
@@ -73,6 +83,7 @@ const Vendedores: Component = () => {
     setFilteredVendedores(filtered);
   };
 
+
   return (
     <Layout>
       <div class="vendedores">
@@ -105,7 +116,7 @@ const Vendedores: Component = () => {
                 <td>{vendedor.nombre}</td>
                 <td>{vendedor.email}</td>
                 <td>{vendedor.telefono}</td>
-                <td>{'https://marwal.onrender.com/'+vendedor.link}</td>
+                <td><button class="btn btn btn-sm" onClick={() => { copiarLink(vendedor.link) }}>Copiar Link</button></td>
                 <td>
                   <button class="btn btn-warning btn-sm" onClick={() => { setEditVendedor(vendedor); setIsEditModalOpen(true); }}>Editar</button>
                   <button class="btn btn-danger btn-sm right" onClick={() => vendedor.id && handleDelete(vendedor.id)}>Eliminar</button>
