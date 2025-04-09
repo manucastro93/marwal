@@ -1,5 +1,52 @@
-const { Cliente, Pedido } = require('../models');
+const { Cliente, Pedido, Usuario } = require('../models');
 const { validationResult } = require('express-validator');
+
+
+// Crear o actualizar cliente
+exports.crearOActualizarCliente = async (req, res) => {
+  const { nombre, email, telefono, cuit_cuil, direccion, localidad, provincia, ip, vendedor_id } = req.body;
+
+  if (!nombre || !email || !cuit_cuil) {
+    return res.status(400).json({ error: 'Nombre, email y CUIT/CUIL son obligatorios' });
+  }
+
+  try {
+    // Buscar cliente por CUIT/CUIL
+    let cliente = await Cliente.findOne({ where: { cuit_cuil } });
+
+    if (cliente) {
+      // Si existe, actualizar el cliente
+      cliente = await cliente.update({
+        nombre,
+        email,
+        telefono,
+        direccion,
+        localidad,
+        provincia,
+        ip,
+        vendedor_id,
+      });
+      res.status(200).json(cliente);
+    } else {
+      // Si no existe, crear un nuevo cliente
+      cliente = await Cliente.create({
+        nombre,
+        email,
+        telefono,
+        cuit_cuil,
+        direccion,
+        localidad,
+        provincia,
+        ip,
+        vendedor_id,
+      });
+      res.status(201).json(cliente);
+    }
+  } catch (error) {
+    console.error('Error al crear o actualizar el cliente:', error);
+    res.status(500).json({ error: 'Error al crear o actualizar el cliente' });
+  }
+};
 
 // Función para editar un cliente existente
 exports.editarCliente = async (req, res) => {
