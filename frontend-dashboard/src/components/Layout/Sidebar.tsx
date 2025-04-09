@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 
 const Sidebar: Component = () => {
   const user = useAuth();
-  console.log("rol: ",user)
+  console.log("rol: ",user.userRole)
   const menuItems = [
     { label: 'Dashboard', href: '/' },
     { label: 'Usuarios', href: '/usuarios', roles: ['administrador','supremo'] },
