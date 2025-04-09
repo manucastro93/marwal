@@ -56,8 +56,5 @@ module.exports = (sequelize, DataTypes) => {
     timestamps: false,
   });
 
-  Producto.belongsTo(Categoria, { foreignKey: 'categoria_id' });
-  Producto.belongsTo(Usuario, { foreignKey: 'usuario_id' });
-
   return Producto;
 };

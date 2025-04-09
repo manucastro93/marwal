@@ -67,8 +67,6 @@ module.exports = (sequelize, DataTypes) => {
     timestamps: false,
   });
 
-  Cliente.belongsTo(Usuario, { as: 'vendedor', foreignKey: 'vendedor_id' });
-  Cliente.belongsTo(Usuario, { as: 'usuario', foreignKey: 'usuario_id' });
 
   return Cliente;
 };

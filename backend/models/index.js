@@ -36,9 +36,27 @@ Categoria.hasMany(Producto, { foreignKey: 'categoria_id' });
 Pedido.belongsToMany(Producto, { through: 'PedidoProducto', foreignKey: 'pedido_id' });
 Producto.belongsToMany(Pedido, { through: 'PedidoProducto', foreignKey: 'producto_id' });
 
+Producto.hasMany(ImagenProducto, {foreignKey: 'producto_id',as: 'imagenes',});
+ImagenProducto.belongsTo(Producto, { foreignKey: 'producto_id' });
+
 Cliente.belongsTo(Usuario, { foreignKey: 'vendedor_id' });
 Usuario.hasMany(Cliente, { foreignKey: 'vendedor_id' });
 
+Producto.belongsTo(Usuario, { foreignKey: 'usuario_id' });
+
+Pedido.belongsTo(Usuario, { as: 'vendedor', foreignKey: 'vendedor_id' });
+Pedido.belongsTo(Usuario, { as: 'usuario', foreignKey: 'usuario_id' });
+
+Logo.belongsTo(Usuario, { foreignKey: 'usuario_id' });
+
+DetallePedido.belongsTo(Pedido, { foreignKey: 'pedido_id' });
+DetallePedido.belongsTo(Producto, { foreignKey: 'producto_id' });
+
+Categoria.belongsTo(Usuario, { foreignKey: 'usuario_id' });
+
+Cliente.belongsTo(Usuario, { as: 'usuario', foreignKey: 'usuario_id' });
+
+Banner.belongsTo(Usuario, { foreignKey: 'usuario_id' });
 
 module.exports = {
   sequelize,

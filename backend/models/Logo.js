@@ -30,7 +30,5 @@ module.exports = (sequelize, DataTypes) => {
     timestamps: false,
   });
 
-  Logo.belongsTo(Usuario, { foreignKey: 'usuario_id' });
-
   return Logo;
 };

@@ -26,7 +26,5 @@ module.exports = (sequelize, DataTypes) => {
     timestamps: false,
   });
 
-  ImagenProducto.belongsTo(Producto, { foreignKey: 'producto_id' });
-
   return ImagenProducto;
 };

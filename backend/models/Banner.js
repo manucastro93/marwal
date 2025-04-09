@@ -38,7 +38,6 @@ module.exports = (sequelize, DataTypes) => {
     timestamps: false,
   });
 
-  Banner.belongsTo(Usuario, { foreignKey: 'usuario_id' });
 
   return Banner;
 };

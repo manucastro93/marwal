@@ -31,14 +31,14 @@ exports.crearProducto = async (req, res) => {
       console.log(imagenesData);
       await ImagenProducto.bulkCreate(imagenesData);
     }
-    /*const productoConImagenes = await Producto.findByPk(nuevoProducto.id, {
+    const productoConImagenes = await Producto.findByPk(nuevoProducto.id, {
       include: {
         model: ImagenProducto,
         as: 'imagenes',
       },
-    });*/
+    });
     
-    res.status(201).json(nuevoProducto);
+    res.status(201).json(productoConImagenes);
   } catch (error) {
     res.status(500).json({ msg: 'Error al crear producto', error });
   }

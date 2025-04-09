@@ -45,9 +45,5 @@ module.exports = (sequelize, DataTypes) => {
     timestamps: false,
   });
 
-  Pedido.belongsTo(Cliente, { foreignKey: 'cliente_id' });
-  Pedido.belongsTo(Usuario, { as: 'vendedor', foreignKey: 'vendedor_id' });
-  Pedido.belongsTo(Usuario, { as: 'usuario', foreignKey: 'usuario_id' });
-
   return Pedido;
 };

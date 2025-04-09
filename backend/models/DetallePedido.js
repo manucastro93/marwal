@@ -38,8 +38,5 @@ module.exports = (sequelize, DataTypes) => {
     timestamps: false,
   });
 
-  DetallePedido.belongsTo(Pedido, { foreignKey: 'pedido_id' });
-  DetallePedido.belongsTo(Producto, { foreignKey: 'producto_id' });
-
   return DetallePedido;
 };
