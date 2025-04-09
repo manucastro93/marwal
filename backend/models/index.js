@@ -52,6 +52,7 @@ Pedido.belongsTo(Usuario, { as: 'usuario', foreignKey: 'usuario_id' });
 
 Logo.belongsTo(Usuario, { foreignKey: 'usuario_id' });
 
+Pedido.hasMany(DetallePedido, { foreignKey: 'pedido_id' });
 DetallePedido.belongsTo(Pedido, { foreignKey: 'pedido_id' });
 DetallePedido.belongsTo(Producto, { foreignKey: 'producto_id' });
 
