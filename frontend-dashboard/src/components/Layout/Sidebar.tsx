@@ -5,7 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 const Sidebar: Component = () => {
   const userRole = localStorage.getItem('userRole');
   const menuItems = [
-    { label: 'Dashboard', href: '/' },
+    { label: 'Inicio', href: '/home' },
     { label: 'Productos', href: '/productos' },
     { label: 'Pedidos', href: '/pedidos' },
     { label: 'Clientes', href: '/clientes', roles: ['administrador','supremo'] },
