@@ -203,7 +203,14 @@ const Productos: Component = () => {
         showNotification(`Error al importar productos - ${error.message}`, 'error');
       });
   };
-
+  const cellStyle = { "border": "1px solid #eee", "padding": "4px" };
+  const cellHeaderStyle = { "border": "1px solid #ccc", "padding": "8px", "background-color": "#f0f0f0" };
+  
+  const updateImportedProducto = (index: number, key: keyof Producto, value: any) => {
+    const updated = [...importedProductos()];
+    updated[index] = { ...updated[index], [key]: value };
+    setImportedProductos(updated);
+  };
   return (
     <Layout>
       <h1>Productos</h1>
@@ -386,13 +393,6 @@ const Productos: Component = () => {
     </Layout>
   );
 };
-const cellStyle = { "border": "1px solid #eee", "padding": "4px" };
-const cellHeaderStyle = { "border": "1px solid #ccc", "padding": "8px", "background-color": "#f0f0f0" };
 
-const updateImportedProducto = (index: number, key: keyof Producto, value: any) => {
-  const updated = [...importedProductos()];
-  updated[index] = { ...updated[index], [key]: value };
-  setImportedProductos(updated);
-};
 
 export default Productos;
