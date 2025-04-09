@@ -7,7 +7,7 @@ import BannerComponent from "./components/Banner";
 import CartButton from "./components/CartButton";
 import ProductDetails from "./components/ProductDetails";
 import { Producto } from "./interfaces/Producto";
-import vendedorService from "./services/VendedorService";
+import vendedorService from "./services/vendedorService";
 
 const App = () => {
   const [selectedCategoryId, setSelectedCategoryId] = createSignal<number>(0);

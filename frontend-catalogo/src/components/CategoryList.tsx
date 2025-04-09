@@ -1,6 +1,6 @@
 /* @jsxImportSource solid-js */
 import { createSignal, onMount } from "solid-js";
-import categoriaService from "../services/CategoriaService";
+import categoriaService from "../services/categoriaService";
 import { Categoria } from "../interfaces/Categoria";
 
 interface CategoryListProps {
