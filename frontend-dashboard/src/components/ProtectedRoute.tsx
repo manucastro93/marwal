@@ -3,7 +3,7 @@ import { useNavigate } from '@solidjs/router';
 import { useAuth } from '../context/AuthContext';
 
 const ProtectedRoute: Component<{ component: Component, roles?: string[] }> = (props) => {
-  const { isAuthenticated, checkAuth } = useAuth();
+  const { isAuthenticated, checkAuth, userRole } = useAuth();
   const navigate = useNavigate();
   const [authChecked, setAuthChecked] = createSignal(false);
   const [loading, setLoading] = createSignal(true);
@@ -20,6 +20,8 @@ const ProtectedRoute: Component<{ component: Component, roles?: string[] }> = (p
   createEffect(() => {
     if (authChecked() && !isAuthenticated()) {
       navigate('/login');
+    }else if (authChecked() && props.roles && !props.roles.includes(userRole())) {
+      navigate('/home');
     }
   }, [authChecked, isAuthenticated]);
 

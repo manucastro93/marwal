@@ -3,6 +3,7 @@ import { authService } from '../services/authService';
 
 interface AuthContextProps {
   isAuthenticated: () => boolean;
+  userRole: () => string | null;
   login: (usuario: string, contrasena: string) => Promise<void>;
   logout: () => Promise<void>;
   checkAuth: () => Promise<void>;
@@ -12,12 +13,15 @@ const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
 export const AuthProvider: Component<{ children: JSX.Element }> = (props) => {
   const [isAuthenticated, setIsAuthenticated] = createSignal<boolean>(false);
+  const [userRole, setUserRole] = createSignal<string | null>(null);
 
   const login = async (usuario: string, contrasena: string) => {
     try {
       const response = await authService.login(usuario, contrasena);
       localStorage.setItem('token', response.token);
       localStorage.setItem('isAuthenticated', 'true');
+      localStorage.setItem('userRole', response.rol);
+      setUserRole(response.rol);
       setIsAuthenticated(true);
     } catch (error) {
       console.error('AuthContext: login failed', error);
@@ -40,7 +44,9 @@ export const AuthProvider: Component<{ children: JSX.Element }> = (props) => {
   const checkAuth = async () => {
     try {
       const isAuth = localStorage.getItem('isAuthenticated') === 'true';
+      const role = localStorage.getItem('userRole');
       setIsAuthenticated(isAuth);
+      setUserRole(role);
     } catch (error) {
       setIsAuthenticated(false);
       console.error('checkAuth: failed', error);
@@ -53,7 +59,7 @@ export const AuthProvider: Component<{ children: JSX.Element }> = (props) => {
   });
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout, checkAuth }}>
+    <AuthContext.Provider value={{ isAuthenticated, userRole, login, logout, checkAuth }}>
       {props.children}
     </AuthContext.Provider>
   );

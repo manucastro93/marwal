@@ -5,7 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 const Sidebar: Component = () => {
   const auth = useAuth();
   const userRole = auth.user()?.rol;
-
+  console.log("rol:", userRole);
   return (
     <nav class="d-flex flex-column flex-shrink-0 p-3 bg-light" style="width: 280px;">
       <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
