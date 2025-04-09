@@ -1,23 +1,14 @@
 import { api } from './apiService';
-import { Pedido, DetallePedido } from '../interfaces/Pedido';
+import { Pedido, DetallePedido, CrearPedidoPayload } from '../interfaces/Pedido';
 
 export const pedidoService = {
-  placePedido: async (pedido: Pedido): Promise<Pedido> => {
+  crearPedido: async (payload: CrearPedidoPayload): Promise<Pedido> => {
     try {
-      const { data } = await api.post('/pedidos', pedido);
+      const { data } = await api.post('/pedidos/crear', payload);
       return data;
     } catch (error: any) {
-      console.error('Error guardando pedido:', error.message);
-      throw new Error('No se pudo guardar el pedido');
-    }
-  },
-
-  placePedidoConDetalles: async (pedidoId: number, detalles: DetallePedido[]): Promise<void> => {
-    try {
-      await api.post(`/pedidos/${pedidoId}/detalles`, detalles);
-    } catch (error: any) {
-      console.error('Error guardando detalles del pedido:', error.message);
-      throw new Error('No se pudieron guardar los detalles del pedido');
+      console.error('Error al crear el pedido completo:', error.message);
+      throw new Error('No se pudo crear el pedido completo');
     }
   }
 };
