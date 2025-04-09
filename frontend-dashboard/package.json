@@ -23,7 +23,8 @@
     "chart.js": "^4.4.8",
     "flatpickr": "^4.6.13",
     "solid-datepicker": "^0.0.1",
-    "solid-js": "^1.9.5"
+    "solid-js": "^1.9.5",
+    "xlsx": "^0.18.5"
   },
   "main": "index.js",
   "keywords": [],
