@@ -27,7 +27,6 @@ const Usuario = require('./Usuario')(sequelize, Sequelize.DataTypes);
 const Banner = require('./Banner')(sequelize, Sequelize.DataTypes);
 const Logo = require('./Logo')(sequelize, Sequelize.DataTypes);
 const IP = require('./IP')(sequelize, Sequelize.DataTypes);
-const LogCliente = require('./LogCliente')(sequelize, Sequelize.DataTypes);
 
 // Definir asociaciones
 Cliente.hasMany(Pedido, { foreignKey: 'cliente_id' });
