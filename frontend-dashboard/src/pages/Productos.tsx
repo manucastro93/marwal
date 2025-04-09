@@ -22,8 +22,8 @@ const Productos: Component = () => {
   const [currentPage, setCurrentPage] = createSignal(1);
   const [isModalOpen, setIsModalOpen] = createSignal(false);
   const [isEditModalOpen, setIsEditModalOpen] = createSignal(false);
-  const [sortColumn, setSortColumn] = createSignal('');
-  const [sortOrder, setSortOrder] = createSignal<'asc' | 'desc'>('asc');
+  const [sortColumn, setSortColumn] = createSignal('codigo'); // Orden inicial por "codigo"
+  const [sortOrder, setSortOrder] = createSignal<'asc' | 'desc'>('asc'); // Orden ascendente por defecto
   const itemsPerPage = 10;
 
   onMount(() => {
@@ -65,6 +65,12 @@ const Productos: Component = () => {
     reader.readAsBinaryString(file);
   };
 
+  const handleTableInputChange = (index: number, key: keyof Producto, value: any) => {
+    const updatedProductos = [...productosAImportar()];
+    updatedProductos[index][key] = value;
+    setProductosAImportar(updatedProductos);
+  };
+
   const handleConfirmImport = async () => {
     try {
       await productoService.importarProductos(productosAImportar());
@@ -91,56 +97,6 @@ const Productos: Component = () => {
       });
   };
 
-  const handleSaveEdit = (producto: Producto) => {
-    console.log('Datos del producto a actualizar:', producto);
-    productoService.actualizarProducto(producto.id, producto)
-      .then((updatedProducto) => {
-        const updatedProductos = productos().map(p => p.id === updatedProducto.id ? updatedProducto : p);
-        setProductos(updatedProductos);
-        setFilteredProductos(updatedProductos);
-        showNotification('Producto actualizado con éxito', 'success');
-        setEditProducto(null);
-        setIsEditModalOpen(false);
-      })
-      .catch((error) => {
-        console.error('Error al actualizar el producto:', error);
-        showNotification(`Error al actualizar el producto - ${error.message}`, 'error');
-      });
-  };
-
-  const handleDelete = (id: number) => {
-    productoService.eliminarProducto(id)
-      .then(() => {
-        const updatedProductos = productos().filter(p => p.id !== id);
-        setProductos(updatedProductos);
-        setFilteredProductos(updatedProductos);
-        showNotification('Producto eliminado con éxito', 'success');
-      })
-      .catch((error) => {
-        console.error('Error al eliminar el producto:', error);
-        showNotification(`Error al eliminar el producto - ${error.message}`, 'error');
-      });
-  };
-
-  const handleSearch = (e: Event) => {
-    const value = (e.target as HTMLInputElement).value;
-    setSearchTerm(value);
-    filterProductos(value, selectedCategoria());
-  };
-
-  const handleCategoriaChange = (e: Event) => {
-    const categoria = (e.currentTarget as HTMLSelectElement).value;
-    setSelectedCategoria(categoria);
-    filterProductos(searchTerm(), categoria);
-  };
-
-  const handleSort = (column: string) => {
-    const newSortOrder = sortOrder() === 'asc' ? 'desc' : 'asc';
-    setSortColumn(column);
-    setSortOrder(newSortOrder);
-    sortProductos(column, newSortOrder);
-  };
-
   const sortProductos = (column: string, order: 'asc' | 'desc') => {
     const sorted = [...filteredProductos()].sort((a, b) => {
       const valueA = a[column as keyof Producto];
@@ -159,116 +115,48 @@ const Productos: Component = () => {
     setFilteredProductos(sorted);
   };
 
-  const filterProductos = (term: string, categoria: string) => {
-    const filtered = productos().filter(producto => {
-      const matchesTerm = producto.nombre.toLowerCase().includes(term.toLowerCase()) ||
-                          (producto.descripcion && producto.descripcion.toLowerCase().includes(term.toLowerCase()));
-      const matchesCategoria = !categoria || producto.categoria_id.toString() === categoria;
-      return matchesTerm && matchesCategoria;
-    });
-    setFilteredProductos(filtered);
-    setCurrentPage(1);
-  };
-
-  const totalPages = () => Math.ceil(filteredProductos().length / itemsPerPage);
-
-  const paginatedProductos = () => {
-    const start = (currentPage() - 1) * itemsPerPage;
-    const end = start + itemsPerPage;
-    return filteredProductos().slice(start, end);
-  };
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
-
-  const getCategoriaNombre = (categoria_id: number) => {
-    const categoria = categorias().find(cat => cat.id === categoria_id);
-    return categoria ? categoria.nombre : 'Desconocida';
-  };
-
-  const getSortIndicator = (column: string) => {
-    if (sortColumn() === column) {
-      return sortOrder() === 'asc' ? ' ▲' : ' ▼';
-    }
-    return '';
-  };
   return (
     <Layout>
       <h1>Productos</h1>
       <div class="actions">
-        <button onClick={() => setIsModalOpen(true)}>Nuevo Producto</button>
-        <input type="file" accept=".xlsx" onChange={handleFileUpload} />
+        <button class="btn btn-primary" onClick={() => setIsModalOpen(true)}>Nuevo Producto</button>
+        <label class="btn btn-secondary">
+          <span>📂 Importar Excel</span>
+          <input type="file" accept=".xlsx" onChange={handleFileUpload} style={{ display: 'none' }} />
+        </label>
       </div>
       <Modal isOpen={isModalOpen()} onClose={() => setIsModalOpen(false)}>
         <ProductoForm initialProducto={newProducto()} onSave={handleSaveNew} onClose={() => setIsModalOpen(false)} />
       </Modal>
       <Modal isOpen={isImportModalOpen()} onClose={() => setIsImportModalOpen(false)}>
-        <h2>Confirmar Importación</h2>
-        <ul>
-          {productosAImportar().map((producto, index) => (
-            <li key={index}>{producto.nombre} - {producto.descripcion}</li>
-          ))}
-        </ul>
-        <button onClick={handleConfirmImport}>Confirmar</button>
-      </Modal>
-      <div class="filters-container">
-        <div class="filter-group">
-          <label>Buscar Producto</label>
-          <input type="text" placeholder="Buscar..." value={searchTerm()} onInput={handleSearch} />
-        </div>
-        <div class="filter-group">
-          <label>Filtrar por Categoría</label>
-          <select value={selectedCategoria()} onChange={handleCategoriaChange}>
-            <option value="">Todas</option>
-            {categorias().map(categoria => (
-              <option value={categoria.id.toString()}>{categoria.nombre}</option>
-            ))}
-          </select>
-        </div>
-      </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Imagen</th>
-            <th onClick={() => handleSort('codigo')}>Código {getSortIndicator('codigo')}</th>
-            <th onClick={() => handleSort('nombre')}>Nombre {getSortIndicator('nombre')}</th>
-            <th onClick={() => handleSort('precio')}>Precio {getSortIndicator('precio')}</th>
-            <th onClick={() => handleSort('categoria_id')}>Categoría {getSortIndicator('categoria_id')}</th>
-            <th onClick={() => handleSort('descripcion')}>Descripción {getSortIndicator('descripcion')}</th>
-            <th onClick={() => handleSort('stock')}>Stock {getSortIndicator('stock')}</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {paginatedProductos().map(producto => (
+        <h2>Productos a importar</h2>
+        <table>
+          <thead>
             <tr>
-              <td>
-                {producto.imagenes && producto.imagenes.length > 0 && (
-                  <img src={producto.imagenes[0].url} alt={`Imagen principal`} width="80" />
-                )}
-              </td>
-              <td>{producto.codigo}</td>
-              <td>{producto.nombre}</td>
-              <td>{producto.precio}</td>
-              <td>{getCategoriaNombre(producto.categoria_id)}</td>
-              <td>{producto.descripcion}</td>
-              <td>{producto.stock}</td>
-              <td>
-                <button class="btn btn-warning btn-sm" onClick={() => { setEditProducto(producto); setIsEditModalOpen(true); }}>Editar</button>
-                <button class="btn btn-danger btn-sm right" onClick={() => handleDelete(producto.id)}>Eliminar</button>
-              </td>
+              <th>Código</th>
+              <th>Nombre</th>
+              <th>Descripción</th>
+              <th>Precio</th>
+              <th>Categoría</th>
+              <th>Stock</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-      <div class="pagination">
-        {Array.from({ length: totalPages() }, (_, index) => (
-          <button onClick={() => handlePageChange(index + 1)} disabled={currentPage() === index + 1}>
-            {index + 1}
-          </button>
-        ))}
-      </div>
+          </thead>
+          <tbody>
+            {productosAImportar().map((producto, index) => (
+              <tr>
+                <td><input value={producto.codigo} onInput={(e) => handleTableInputChange(index, 'codigo', (e.target as HTMLInputElement).value)} /></td>
+                <td><input value={producto.nombre} onInput={(e) => handleTableInputChange(index, 'nombre', (e.target as HTMLInputElement).value)} /></td>
+                <td><input value={producto.descripcion} onInput={(e) => handleTableInputChange(index, 'descripcion', (e.target as HTMLInputElement).value)} /></td>
+                <td><input value={producto.precio} type="number" onInput={(e) => handleTableInputChange(index, 'precio', Number((e.target as HTMLInputElement).value))} /></td>
+                <td><input value={producto.categoria_id} type="number" onInput={(e) => handleTableInputChange(index, 'categoria_id', Number((e.target as HTMLInputElement).value))} /></td>
+                <td><input value={producto.stock} type="number" onInput={(e) => handleTableInputChange(index, 'stock', Number((e.target as HTMLInputElement).value))} /></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <button class="btn btn-success" onClick={handleConfirmImport}>Confirmar Importación</button>
+      </Modal>
+      {/* Tabla de productos y filtros */}
     </Layout>
   );
 };
