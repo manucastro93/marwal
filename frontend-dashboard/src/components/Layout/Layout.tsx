@@ -2,7 +2,7 @@ import { Component, createSignal, onMount, JSX } from "solid-js";
 import { usuarioService } from '../../services/usuarioService';
 import { authService } from '../../services/authService';
 import paginaService from '../../services/paginaService';
-import Sidebar from '../Layout/Sidebar'; // Asegurate que la ruta sea correcta
+import Sidebar from './Layout/Sidebar'; 
 
 interface LayoutProps {
   children: JSX.Element;
