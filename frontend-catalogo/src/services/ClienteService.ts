@@ -1,34 +1,27 @@
+import axios from 'axios';
 import { BASE_URL } from '../config';
 import { Cliente } from "../interfaces/Cliente";
 
-export const saveOrUpdateCliente = async (cliente: Cliente): Promise<Cliente> => {
-  const response = await fetch(`${BASE_URL}/clientes/clientes`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(cliente)
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.error || 'Failed to save client');
-  }
-
-  return await response.json();
-};
-
-export const getClienteByIp = async (ip: string): Promise<Cliente | null> => {
-  const response = await fetch(`${BASE_URL}/clientes/ip/${ip}`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json'
+const clienterService = {
+  saveOrUpdateCliente = async (cliente: Cliente): Promise<Cliente[]> => {
+    try {
+      const response = await axios.post(`${BASE_URL}/clientes/clientes`, cliente);
+      return response.data;
     }
-  });
-
-  if (!response.ok) {
-    return null;
+    catch (error) {
+        console.error("Error guardar cliente:", error);
+        throw error;
+    }
+  },
+  getClienteByIp = async (ip: string): Promise<Cliente | null> => {
+    try {
+      const response = await axios.get(`${BASE_URL}/clientes/ip/${ip}`);
+      return response.data;
+    }
+    catch (error) {
+        console.error("Error guardar cliente:", error);
+        throw error;
+    }
   }
-
-  return await response.json();
-};
+}
+export default clienteService;

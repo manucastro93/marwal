@@ -267,41 +267,58 @@ const Productos: Component = () => {
 
 
       <Modal isOpen={isImportModalOpen()} onClose={() => setIsImportModalOpen(false)}>
-        <div style={{ "max-height": "80vh", "overflow": "hidden", "display": "flex", "flex-direction": "column" }}>
-          <h3 style={{ "margin-bottom": "1rem", "text-align": "center" }}>Vista previa de productos importados</h3>
+  <div style={{ "max-height": "80vh", "overflow": "hidden", "display": "flex", "flex-direction": "column" }}>
+    <h3 style={{ "margin-bottom": "1rem", "text-align": "center" }}>Vista previa de productos importados (editable)</h3>
+    
+    <div style={{ "overflow-y": "auto", "flex-grow": 1 }}>
+      <table style={{ "width": "100%", "border-collapse": "collapse" }}>
+        <thead>
+          <tr>
+            <th style={cellHeaderStyle}>Código</th>
+            <th style={cellHeaderStyle}>Nombre</th>
+            <th style={cellHeaderStyle}>Descripción</th>
+            <th style={cellHeaderStyle}>Precio</th>
+            <th style={cellHeaderStyle}>Stock</th>
+            <th style={cellHeaderStyle}>Categoría</th>
+          </tr>
+        </thead>
+        <tbody>
+          {importedProductos().map((producto, index) => (
+            <tr>
+              <td style={cellStyle}>
+                <input type="text" value={producto.codigo} onInput={(e) => updateImportedProducto(index, 'codigo', e.currentTarget.value)} />
+              </td>
+              <td style={cellStyle}>
+                <input type="text" value={producto.nombre} onInput={(e) => updateImportedProducto(index, 'nombre', e.currentTarget.value)} />
+              </td>
+              <td style={cellStyle}>
+                <input type="text" value={producto.descripcion} onInput={(e) => updateImportedProducto(index, 'descripcion', e.currentTarget.value)} />
+              </td>
+              <td style={cellStyle}>
+                <input type="number" value={producto.precio} onInput={(e) => updateImportedProducto(index, 'precio', parseFloat(e.currentTarget.value))} />
+              </td>
+              <td style={cellStyle}>
+                <input type="number" value={producto.stock} onInput={(e) => updateImportedProducto(index, 'stock', parseInt(e.currentTarget.value))} />
+              </td>
+              <td style={cellStyle}>
+                <select value={producto.categoria_id} onChange={(e) => updateImportedProducto(index, 'categoria_id', parseInt(e.currentTarget.value))}>
+                  {categorias().map(categoria => (
+                    <option value={categoria.id}>{categoria.nombre}</option>
+                  ))}
+                </select>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
 
-          <div style={{ "overflow-y": "auto", "flex-grow": 1 }}>
-            <table style={{ "width": "100%", "border-collapse": "collapse" }}>
-              <thead>
-                <tr>
-                  <th style={{ "border": "1px solid #ccc", "padding": "8px" }}>Código</th>
-                  <th style={{ "border": "1px solid #ccc", "padding": "8px" }}>Nombre</th>
-                  <th style={{ "border": "1px solid #ccc", "padding": "8px" }}>Descripción</th>
-                  <th style={{ "border": "1px solid #ccc", "padding": "8px" }}>Precio</th>
-                  <th style={{ "border": "1px solid #ccc", "padding": "8px" }}>Stock</th>
-                  <th style={{ "border": "1px solid #ccc", "padding": "8px" }}>Categoría</th>
-                </tr>
-              </thead>
-              <tbody>
-                {importedProductos().map(producto => (
-                  <tr>
-                    <td style={{ "border": "1px solid #eee", "padding": "8px" }}>{producto.codigo}</td>
-                    <td style={{ "border": "1px solid #eee", "padding": "8px" }}>{producto.nombre}</td>
-                    <td style={{ "border": "1px solid #eee", "padding": "8px" }}>{producto.descripcion}</td>
-                    <td style={{ "border": "1px solid #eee", "padding": "8px" }}>{producto.precio}</td>
-                    <td style={{ "border": "1px solid #eee", "padding": "8px" }}>{producto.stock}</td>
-                    <td style={{ "border": "1px solid #eee", "padding": "8px" }}>{getCategoriaNombre(producto.categoria_id)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+    <div style={{ "margin-top": "1rem", "text-align": "center" }}>
+      <button onClick={handleConfirmImport}>Confirmar Importación</button>
+    </div>
+  </div>
+</Modal>
 
-          <div style={{ "margin-top": "1rem", "text-align": "center" }}>
-            <button onClick={handleConfirmImport}>Confirmar Importación</button>
-          </div>
-        </div>
-      </Modal>
 
 
       <div class="filters-container">
@@ -368,6 +385,14 @@ const Productos: Component = () => {
       </div>
     </Layout>
   );
+};
+const cellStyle = { "border": "1px solid #eee", "padding": "4px" };
+const cellHeaderStyle = { "border": "1px solid #ccc", "padding": "8px", "background-color": "#f0f0f0" };
+
+const updateImportedProducto = (index: number, key: keyof Producto, value: any) => {
+  const updated = [...importedProductos()];
+  updated[index] = { ...updated[index], [key]: value };
+  setImportedProductos(updated);
 };
 
 export default Productos;
