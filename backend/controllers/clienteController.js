@@ -38,13 +38,20 @@ exports.editarCliente = async (req, res) => {
 // Función para buscar todos los clientes (limitado por vendedor_id para vendedores)
 exports.buscarClientes = async (req, res) => {
   try {
-    if(req.usuario.rol){
     const clientes = req.usuario.rol === 'vendedor'
       ? await Cliente.findAll({ where: { vendedor_id: req.usuario.id } })
       : await Cliente.findAll();
-    }else{
+
+    res.status(200).json(clientes);
+  } catch (error) {
+    res.status(500).json({ msg: 'Error al buscar clientes', error });
+  }
+};
+
+// Función para buscar todos los clientes desde el catalogo
+exports.buscarClientesCatalogo = async (req, res) => {
+  try {
       await Cliente.findAll();
-    }
     res.status(200).json(clientes);
   } catch (error) {
     res.status(500).json({ msg: 'Error al buscar clientes', error });

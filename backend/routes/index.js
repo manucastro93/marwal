@@ -49,7 +49,7 @@ router.get('/categorias', categoriaController.buscarCategorias);
 // Rutas para el clienteController
 router.put('/clientes/:id', validarToken, validarRol(['vendedor', 'administrador', 'supremo']), validarCliente, clienteController.editarCliente);
 router.get('/clientes', validarToken, validarRol(['vendedor', 'administrador', 'supremo']), clienteController.buscarClientes);
-router.get('catalogo/clientes', clienteController.buscarClientes);
+router.get('catalogo/clientes', clienteController.buscarClientesCatalogo);
 router.get('/clientes/ip/:ip', clienteController.buscarClientePorIp);
 router.get('/clientes/:id', validarToken, validarRol(['vendedor', 'administrador', 'supremo']), clienteController.buscarClientePorId);
 router.get('/metricas/clientes', validarToken, validarRol(['administrador', 'supremo']), clienteController.buscarMetricasClientes);
