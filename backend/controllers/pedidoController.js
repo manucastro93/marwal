@@ -8,6 +8,10 @@ exports.crearPedido = async (req, res) => {
 
   try {
     // 1. Guardar o actualizar cliente
+    if (!cliente.cuit_cuil) {
+      return res.status(400).json({ message: 'Falta el CUIT/CUIL del cliente' });
+    }
+    
     let clienteDB = await Cliente.findOne({ where: { cuit_cuil: cliente.cuit_cuil } });
     if (clienteDB) {
       await clienteDB.update(cliente);

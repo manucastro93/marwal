@@ -41,6 +41,10 @@ const CheckoutForm: Component<CheckoutFormProps> = (props) => {
           nombre: cliente().nombre,
           email: cliente().email,
           telefono: cliente().telefono,
+          cuit_cuil: cliente().cuit_cuil,
+          direccion: cliente().direccion,
+          localidad: cliente().localidad,
+          provincia: cliente().provincia,
         },
         detalles,
       });
