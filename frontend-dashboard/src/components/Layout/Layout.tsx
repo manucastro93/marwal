@@ -2,6 +2,7 @@ import { Component, createSignal, onMount, JSX } from "solid-js";
 import { usuarioService } from '../../services/usuarioService';
 import { authService } from '../../services/authService';
 import paginaService from '../../services/paginaService';
+import Sidebar from '../Layout/Sidebar'; // Asegurate que la ruta sea correcta
 
 interface LayoutProps {
   children: JSX.Element;
@@ -10,6 +11,7 @@ interface LayoutProps {
 const Layout: Component<LayoutProps> = (props) => {
   const [usuario, setUsername] = createSignal("");
   const [logoUrl, setLogoUrl] = createSignal("");
+
   onMount(async () => {
     try {
       const user = await usuarioService.obtenerUsuarioConectado();
@@ -30,7 +32,6 @@ const Layout: Component<LayoutProps> = (props) => {
     }
   };
 
-
   return (
     <div class="home-container">
       <header class="header">
@@ -43,18 +44,9 @@ const Layout: Component<LayoutProps> = (props) => {
           <button class="btn btn-outline-danger" type="button" onClick={handleLogout}>Cerrar Sesión</button>
         </div>
       </header>
-      <main class="main-content">
-        <aside class="sidebar">
-          <ul class="sidebar-list">
-            <li class="sidebar-item"><a href="/productos" class="sidebar-link">Productos</a></li>
-            <li class="sidebar-item"><a href="/categorias" class="sidebar-link">Categorías</a></li>
-            <li class="sidebar-item"><a href="/vendedores" class="sidebar-link">Vendedores</a></li>
-            <li class="sidebar-item"><a href="/pedidos" class="sidebar-link">Pedidos</a></li>
-            <li class="sidebar-item"><a href="/clientes" class="sidebar-link">Clientes</a></li>
-            <li class="sidebar-item"><a href="/pagina" class="sidebar-link">Página</a></li>
-          </ul>
-        </aside>
-        <section class="content">
+      <main class="main-content d-flex">
+        <Sidebar /> {}
+        <section class="content p-3" style="flex: 1;">
           {props.children}
         </section>
       </main>
