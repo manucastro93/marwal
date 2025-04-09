@@ -63,10 +63,7 @@ exports.buscarClientePorIp = async (req, res) => {
   const { ip } = req.params;
 
   try {
-    const cliente = req.usuario.rol === 'vendedor'
-      ? await Cliente.findOne({ where: { ip, vendedor_id: req.usuario.id } })
-      : await Cliente.findOne({ where: { ip } });
-
+      await Cliente.findOne({ where: { ip } });
     if (!cliente) {
       return res.status(404).json({ msg: 'Cliente no encontrado' });
     }
