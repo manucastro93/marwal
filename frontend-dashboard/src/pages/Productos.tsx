@@ -1,4 +1,5 @@
 import { Component, createSignal, onMount } from 'solid-js';
+import * as XLSX from 'xlsx';
 import { showNotification } from '../components/Layout/Notification';
 import { Producto } from '../interfaces/Producto';
 import { Categoria } from '../interfaces/Categoria';
@@ -19,6 +20,8 @@ const Productos: Component = () => {
   const [currentPage, setCurrentPage] = createSignal(1);
   const [isModalOpen, setIsModalOpen] = createSignal(false);
   const [isEditModalOpen, setIsEditModalOpen] = createSignal(false);
+  const [isImportModalOpen, setIsImportModalOpen] = createSignal(false);
+  const [importedProductos, setImportedProductos] = createSignal<Producto[]>([]);
   const [sortColumn, setSortColumn] = createSignal('');
   const [sortOrder, setSortOrder] = createSignal<'asc' | 'desc'>('asc');
   const itemsPerPage = 10;
@@ -61,7 +64,6 @@ const Productos: Component = () => {
   };
 
   const handleSaveEdit = (producto: Producto) => {
-    console.log('Datos del producto a actualizar:', producto);
     productoService.actualizarProducto(producto.id, producto)
       .then((updatedProducto) => {
         const updatedProductos = productos().map(p => p.id === updatedProducto.id ? updatedProducto : p);
@@ -114,15 +116,9 @@ const Productos: Component = () => {
     const sorted = [...filteredProductos()].sort((a, b) => {
       const valueA = a[column as keyof Producto];
       const valueB = b[column as keyof Producto];
-
       if (valueA === undefined || valueB === undefined) return 0;
-
-      if (valueA < valueB) {
-        return order === 'asc' ? -1 : 1;
-      }
-      if (valueA > valueB) {
-        return order === 'asc' ? 1 : -1;
-      }
+      if (valueA < valueB) return order === 'asc' ? -1 : 1;
+      if (valueA > valueB) return order === 'asc' ? 1 : -1;
       return 0;
     });
     setFilteredProductos(sorted);
@@ -131,7 +127,7 @@ const Productos: Component = () => {
   const filterProductos = (term: string, categoria: string) => {
     const filtered = productos().filter(producto => {
       const matchesTerm = producto.nombre.toLowerCase().includes(term.toLowerCase()) ||
-                          (producto.descripcion && producto.descripcion.toLowerCase().includes(term.toLowerCase()));
+        (producto.descripcion && producto.descripcion.toLowerCase().includes(term.toLowerCase()));
       const matchesCategoria = !categoria || producto.categoria_id.toString() === categoria;
       return matchesTerm && matchesCategoria;
     });
@@ -163,10 +159,62 @@ const Productos: Component = () => {
     return '';
   };
 
+  const handleExcelImport = async (e: Event) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+
+    const data = await file.arrayBuffer();
+    const workbook = XLSX.read(data);
+    const sheetName = workbook.SheetNames[0];
+    const worksheet = workbook.Sheets[sheetName];
+    const json = XLSX.utils.sheet_to_json<any>(worksheet);
+
+    const productosExcel: Producto[] = json.map(row => ({
+      id: 0,
+      codigo: row.codigo ?? '',
+      nombre: row.nombre ?? '',
+      descripcion: row.descripcion ?? '',
+      precio: parseFloat(row.precio ?? 0),
+      stock: parseInt(row.stock ?? 0),
+      categoria_id: parseInt(row.categoria_id ?? 0),
+      imagenes: [],
+    }));
+
+    setImportedProductos(productosExcel);
+    setIsImportModalOpen(true);
+  };
+
+  const handleConfirmImport = () => {
+    Promise.all(importedProductos().map(p => productoService.crearProducto(p)))
+      .then((nuevos) => {
+        const updated = [...productos(), ...nuevos];
+        setProductos(updated);
+        setFilteredProductos(updated);
+        showNotification('Productos importados con éxito', 'success');
+        setIsImportModalOpen(false);
+      })
+      .catch((error) => {
+        console.error('Error en la importación:', error);
+        showNotification(`Error al importar productos - ${error.message}`, 'error');
+      });
+  };
+
   return (
     <Layout>
       <h1>Productos</h1>
+
+      <input
+        type="file"
+        accept=".xlsx"
+        id="excel-input"
+        style={{ display: 'none' }}
+        onChange={handleExcelImport}
+      />
+      <button onClick={() => document.getElementById('excel-input')?.click()}>
+        Importar desde Excel
+      </button>
       <button onClick={() => setIsModalOpen(true)}>Nuevo Producto</button>
+
       <Modal isOpen={isModalOpen()} onClose={() => setIsModalOpen(false)}>
         <ProductoForm initialProducto={newProducto()} onSave={handleSaveNew} onClose={() => setIsModalOpen(false)} />
       </Modal>
@@ -175,6 +223,35 @@ const Productos: Component = () => {
           <ProductoForm initialProducto={editProducto()!} onSave={handleSaveEdit} onClose={() => setIsEditModalOpen(false)} />
         )}
       </Modal>
+      <Modal isOpen={isImportModalOpen()} onClose={() => setIsImportModalOpen(false)}>
+        <h3>Vista previa de productos importados</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Nombre</th>
+              <th>Descripción</th>
+              <th>Precio</th>
+              <th>Stock</th>
+              <th>Categoría</th>
+            </tr>
+          </thead>
+          <tbody>
+            {importedProductos().map(producto => (
+              <tr>
+                <td>{producto.codigo}</td>
+                <td>{producto.nombre}</td>
+                <td>{producto.descripcion}</td>
+                <td>{producto.precio}</td>
+                <td>{producto.stock}</td>
+                <td>{getCategoriaNombre(producto.categoria_id)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <button onClick={handleConfirmImport}>Confirmar Importación</button>
+      </Modal>
+
       <div class="filters-container">
         <div class="filter-group">
           <label>Buscar Producto</label>
@@ -190,6 +267,7 @@ const Productos: Component = () => {
           </select>
         </div>
       </div>
+
       <table>
         <thead>
           <tr>
@@ -208,7 +286,7 @@ const Productos: Component = () => {
             <tr>
               <td>
                 {producto.imagenes && producto.imagenes.length > 0 && (
-                  <img src={producto.imagenes[0].url} alt={`Imagen principal`} width="80" />
+                  <img src={producto.imagenes[0].url} alt="Imagen principal" width="80" />
                 )}
               </td>
               <td>{producto.codigo}</td>
@@ -225,6 +303,7 @@ const Productos: Component = () => {
           ))}
         </tbody>
       </table>
+
       <div class="pagination">
         {Array.from({ length: totalPages() }, (_, index) => (
           <button onClick={() => handlePageChange(index + 1)} disabled={currentPage() === index + 1}>
