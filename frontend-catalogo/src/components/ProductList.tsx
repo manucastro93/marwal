@@ -24,7 +24,6 @@ const ProductList = (props: ProductListProps) => {
   const fetchProductos = async () => {
     try {
       const data = await productoService.getProductos();
-      console.log("Productos fetched:", data); // Log de productos obtenidos
       setProductos(data);
     } catch (error) {
       console.error("Error fetching productos:", error);
@@ -39,7 +38,6 @@ const ProductList = (props: ProductListProps) => {
     if (props.searchQuery) {
       filtered = filtered.filter(producto => producto.nombre.toLowerCase().includes(props.searchQuery.toLowerCase()));
     }
-    console.log("Filtered Productos:", filtered); // Log de productos filtrados
     setFilteredProductos(filtered);
     setCurrentPage(1); // Reset to first page on filter
   };
@@ -66,10 +64,6 @@ const ProductList = (props: ProductListProps) => {
 
   // Logs adicionales para verificar índices de paginación
   createEffect(() => {
-    console.log(`Current Page: ${currentPage()}`);
-    console.log(`Index of First Product: ${indexOfFirstProduct()}`);
-    console.log(`Index of Last Product: ${indexOfLastProduct()}`);
-    console.log("Current Products:", currentProducts());
   });
 
   onMount(() => {
