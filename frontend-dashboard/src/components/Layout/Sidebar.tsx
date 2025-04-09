@@ -3,7 +3,7 @@ import { A } from '@solidjs/router';
 import { useAuth } from '../../context/AuthContext';
 
 const Sidebar: Component = () => {
-  const userRole = useAuth();
+  const { userRole } = useAuth();
   console.log("rol: ",userRole)
   const menuItems = [
     { label: 'Dashboard', href: '/' },
@@ -21,7 +21,7 @@ const Sidebar: Component = () => {
     !item.roles || item.roles.includes(userRole);
 
   return (
-    <nav class="d-flex flex-column flex-shrink-0 p-3 bg-light" style="width: 280px;">
+    <nav class="sidebar d-flex flex-column flex-shrink-0 p-3 bg-light" style="width: 280px;">
       <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
         <span class="fs-4">Admin Panel</span>
       </a>

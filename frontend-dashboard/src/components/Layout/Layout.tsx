@@ -45,7 +45,7 @@ const Layout: Component<LayoutProps> = (props) => {
         </div>
       </header>
       <main class="main-content d-flex">
-        <Sidebar class="sidebar"/> {}
+        <Sidebar/> {}
         <section class="content p-3" style="flex: 1;">
           {props.children}
         </section>
